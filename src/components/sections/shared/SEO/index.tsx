@@ -1,8 +1,9 @@
-interface SEOProps {
-  children?: React.ReactNode
-  className?: string
-}
-
-export function SEO({ children, className }: SEOProps) {
-  return <div className={className}>{children}</div>
+export function JsonLd({ data }: { data: Record<string, unknown> }) {
+  return (
+    <script
+      type="application/ld+json"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  )
 }

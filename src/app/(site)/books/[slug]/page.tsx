@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
+import { JsonLd } from '@/components/sections/shared/SEO'
 import { books } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
 
@@ -14,15 +15,40 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: PageProps): Metadata {
   const book = books.find((b) => b.slug === params.slug)
-  return { title: book ? book.title : 'Book' }
+  if (!book) return { title: 'Book' }
+  return {
+    title: book.title,
+    description: book.description,
+    openGraph: { title: book.title, description: book.description, type: 'book' },
+  }
 }
 
 export default function BookDetailPage({ params }: PageProps) {
   const book = books.find((b) => b.slug === params.slug)
   if (!book) notFound()
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Book',
+    name: book.title,
+    author: { '@type': 'Person', name: 'Salim Cyrus' },
+    description: book.description,
+    ...(book.status === 'available' && book.priceKes
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: book.priceKes,
+            priceCurrency: 'KES',
+            availability: 'https://schema.org/InStock',
+            url: book.paystackUrl,
+          },
+        }
+      : { offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder' } }),
+  }
+
   return (
     <section className="bg-cream">
+      <JsonLd data={jsonLd} />
       <div className="mx-auto max-w-content px-6 py-20">
         <h1 className="font-heading text-4xl font-bold text-navy sm:text-5xl">{book.title}</h1>
         {book.subtitle && (

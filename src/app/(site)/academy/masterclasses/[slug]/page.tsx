@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
+import { JsonLd } from '@/components/sections/shared/SEO'
 import { programs } from '@/lib/data/programs'
 import { formatCurrency } from '@/lib/utils/currency'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
@@ -15,15 +16,36 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: PageProps): Metadata {
   const program = programs.find((p) => p.slug === params.slug)
-  return { title: program ? program.name : 'Program' }
+  if (!program) return { title: 'Program' }
+  return {
+    title: program.name,
+    description: program.description,
+    openGraph: { title: program.name, description: program.description },
+  }
 }
 
 export default function ProgramDetailPage({ params }: PageProps) {
   const program = programs.find((p) => p.slug === params.slug)
   if (!program) notFound()
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    serviceType: program.name,
+    provider: { '@type': 'Person', name: 'Salim Cyrus' },
+    description: program.description,
+    offers: {
+      '@type': 'Offer',
+      price: program.priceKes,
+      priceCurrency: 'KES',
+      url: program.paystackUrl,
+      ...(program.recurring ? { eligibleDuration: 'P1M' } : {}),
+    },
+  }
+
   return (
     <section className="bg-cream">
+      <JsonLd data={jsonLd} />
       <div className="mx-auto max-w-content px-6 py-20">
         <div className="flex flex-wrap items-center gap-3">
           <span className="rounded-full bg-gold-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold-500">

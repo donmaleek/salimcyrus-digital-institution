@@ -33,7 +33,7 @@ const mediaLogos = [
     height: 200,
   },
   { name: 'University of Nairobi', initials: 'UON' },
-  { name: 'Kashari Soft Consultants', initials: 'KSC' },
+  { name: 'Amour Software Consultants', initials: 'ASC' },
   { name: 'Mount Kenya University', initials: 'MKU' },
 ]
 

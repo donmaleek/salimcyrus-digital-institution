@@ -42,10 +42,6 @@ select:focus-visible {
   animation: media-logo-scroll 28s linear infinite;
 }
 
-.media-logo-track:hover {
-  animation-play-state: paused;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .media-logo-track {
     animation: none;

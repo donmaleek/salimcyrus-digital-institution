@@ -21,7 +21,7 @@ test('homepage hero includes the sliding media recognition strip', async ({
     'Forbes',
     'Goalcast',
     'University of Nairobi',
-    'Kashari Soft Consultants',
+    'Amour Software Consultants',
     'Mount Kenya University',
   ]) {
     await expect(strip.getByRole('img', { name })).toBeVisible()
@@ -36,6 +36,11 @@ test('homepage hero includes the sliding media recognition strip', async ({
       .locator('.media-logo-track')
       .evaluate((element) => getComputedStyle(element).animationName)
   ).toBe('media-logo-scroll')
+  expect(
+    await strip
+      .locator('.media-logo-track')
+      .evaluate((element) => getComputedStyle(element).animationIterationCount)
+  ).toBe('infinite')
 })
 
 test('desktop navigation has generous spacing without wrapping', async ({

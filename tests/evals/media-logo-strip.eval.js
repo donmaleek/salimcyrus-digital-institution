@@ -39,8 +39,12 @@ const checks = [
     'logos repeat for a seamless loop',
     source.includes('<LogoGroup />') && source.includes('<LogoGroup hidden />'),
   ],
-  ['continuous animation exists', css.includes('@keyframes media-logo-scroll')],
-  ['hover pauses the strip', css.includes('animation-play-state: paused')],
+  [
+    'continuous infinite animation exists',
+    css.includes('@keyframes media-logo-scroll') &&
+      css.includes('media-logo-scroll 28s linear infinite'),
+  ],
+  ['animation does not pause on hover', !css.includes('animation-play-state')],
   [
     'reduced motion disables animation',
     /prefers-reduced-motion[\s\S]*media-logo-track[\s\S]*animation: none/.test(
@@ -53,7 +57,7 @@ const checks = [
       source.includes(logo),
   ]),
   ['University of Nairobi is rendered', source.includes("initials: 'UON'")],
-  ['Kashari Soft Consultants is rendered', source.includes("initials: 'KSC'")],
+  ['Amour Software Consultants is rendered', source.includes("initials: 'ASC'")],
   ['Mount Kenya University is rendered', source.includes("initials: 'MKU'")],
 ]
 

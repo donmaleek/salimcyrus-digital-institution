@@ -30,8 +30,9 @@ const checks = [
     speakingPage.includes('/images/salim/speaking-keynote.webp'),
   ],
   [
-    'desktop heroes match the landscape art ratio',
-    pageHero.includes('lg:aspect-[1672/941]'),
+    'desktop heroes trim twenty pixels from the lower edge',
+    pageHero.includes('lg:h-[calc(56.2799vw-20px)]') &&
+      pageHero.includes('lg:object-top'),
   ],
   [
     'mobile heroes match the portrait art ratio',
@@ -68,8 +69,9 @@ const checks = [
   ['mobile contrast gradient is present', /bg-gradient-to-b/.test(source)],
   ['desktop contrast gradient is present', /lg:bg-gradient-to-r/.test(source)],
   [
-    'homepage desktop ratio matches its landscape artwork',
-    /lg:aspect-\[1672\/941\]/.test(source),
+    'homepage trims the same desktop lower edge',
+    source.includes('lg:h-[calc(56.2799vw-20px)]') &&
+      source.includes('lg:object-top'),
   ],
   [
     'hero has an accessible labelled region',

@@ -24,7 +24,7 @@ export function Hero() {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:aspect-[1672/941]"
+      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:h-[calc(56.2799vw-20px)] lg:aspect-auto"
       data-testid="home-hero"
     >
       <picture>
@@ -32,7 +32,7 @@ export function Hero() {
         <img
           {...desktopImage}
           alt={alt}
-          className="object-cover object-center"
+          className="object-cover object-center lg:object-top"
         />
       </picture>
 

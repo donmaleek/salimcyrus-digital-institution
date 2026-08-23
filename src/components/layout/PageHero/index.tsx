@@ -42,7 +42,7 @@ export function PageHero({
 
   return (
     <section
-      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:aspect-[1672/941]"
+      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:h-[calc(56.2799vw-20px)] lg:aspect-auto"
       data-testid="page-hero"
     >
       <picture>
@@ -51,7 +51,7 @@ export function PageHero({
           {...desktopImage}
           alt=""
           data-testid="page-hero-full-image"
-          className="object-cover object-center"
+          className="object-cover object-center lg:object-top"
         />
       </picture>
       <div className="absolute inset-0 bg-gradient-to-b from-navy/15 via-navy/10 to-navy/95 lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/55 lg:to-navy/10" />

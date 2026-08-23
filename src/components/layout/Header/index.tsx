@@ -10,7 +10,7 @@ export function Header() {
         <Link
           href="/"
           aria-label="Salim Cyrus — Home"
-          className="font-signature text-4xl leading-none text-gold sm:text-5xl"
+          className="whitespace-nowrap font-signature text-3xl leading-none text-gold sm:text-4xl"
         >
           Salim Cyrus
         </Link>

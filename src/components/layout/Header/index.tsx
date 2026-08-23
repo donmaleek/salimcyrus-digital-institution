@@ -18,7 +18,7 @@ export function Header() {
           : 'sticky top-0 z-50 border-b border-white/10 bg-navy'
       }
     >
-      <div className="mx-auto flex max-w-content items-center justify-between px-6 py-2">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3 lg:px-8">
         <Link
           href="/"
           aria-label="Salim Cyrus — Home"

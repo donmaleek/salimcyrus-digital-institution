@@ -5,6 +5,20 @@ test('homepage loads', async ({ page }) => {
   await expect(page).toHaveTitle(/Salim Cyrus/)
 })
 
+test('desktop navigation has generous spacing without wrapping', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+
+  const nav = page.getByRole('navigation', { name: 'Primary' })
+  await expect(nav).toBeVisible()
+
+  const links = nav.getByRole('link')
+  const first = await links.nth(0).boundingBox()
+  const second = await links.nth(1).boundingBox()
+  expect(second.x - (first.x + first.width)).toBeGreaterThanOrEqual(8)
+  expect(second.y).toBe(first.y)
+})
+
 test('keynote hero keeps Salim and primary actions visible on desktop', async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 })
   await page.goto('/')

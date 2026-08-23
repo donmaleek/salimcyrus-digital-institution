@@ -3,12 +3,12 @@ import { mainNav } from '@/lib/data/navigation'
 
 export function Navigation() {
   return (
-    <nav className="hidden xl:flex items-center" aria-label="Primary">
+    <nav className="hidden items-center gap-2 xl:flex" aria-label="Primary">
       {mainNav.map((item) => (
         <div key={item.href} className="group relative">
           <Link
             href={item.href}
-            className="flex items-center whitespace-nowrap px-2.5 py-2 font-heading text-[15px] text-cream/90 transition-colors hover:text-gold-200"
+            className="flex items-center whitespace-nowrap px-3 py-3 font-heading text-[15px] tracking-[0.035em] text-cream/90 transition-colors hover:text-gold-200"
           >
             {item.label}
           </Link>

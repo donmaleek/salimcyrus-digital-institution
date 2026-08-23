@@ -30,17 +30,14 @@ const checks = [
     speakingPage.includes('/images/salim/speaking-keynote.webp'),
   ],
   [
-    'page heroes use a reduced viewport-aware height',
-    pageHero.includes('h-[min(640px,100svh)]'),
+    'page heroes use a cinematic viewport-aware height',
+    pageHero.includes('h-[min(760px,100svh)]'),
   ],
   [
-    'page hero image width remains balanced',
-    pageHero.includes('max-w-[1280px]'),
+    'page hero images cover the full section',
+    pageHero.includes('object-cover object-center'),
   ],
-  [
-    'page hero images remain fully visible',
-    pageHero.includes('object-contain object-center'),
-  ],
+  ['page hero imagery spans the viewport', pageHero.includes('sizes="100vw"')],
   ['page hero visual fills the section', /<Image[\s\S]*?fill/.test(pageHero)],
   [
     'page hero titles use executive display sizing',

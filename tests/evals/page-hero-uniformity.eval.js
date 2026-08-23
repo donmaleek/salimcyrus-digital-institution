@@ -35,16 +35,16 @@ const checks = [
     pageHero.includes('data-testid="page-hero"'),
   ],
   [
-    'shared hero has responsive balanced imagery',
-    pageHero.includes('(min-width: 1280px) 1280px, 100vw'),
+    'shared hero has responsive full-width imagery',
+    pageHero.includes('sizes="100vw"'),
   ],
   [
-    'topic images display without cropping',
-    pageHero.includes('object-contain object-center'),
+    'topic images cover the complete hero canvas',
+    pageHero.includes('object-cover object-center'),
   ],
   [
-    'hero uses a reduced viewport-aware height',
-    pageHero.includes('h-[min(640px,100svh)]'),
+    'hero uses a cinematic viewport-aware height',
+    pageHero.includes('h-[min(760px,100svh)]'),
   ],
   [
     'shared hero includes the continuation cue',

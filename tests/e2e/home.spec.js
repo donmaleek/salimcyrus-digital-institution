@@ -56,9 +56,8 @@ test('landscape image remains visible in a desktop page hero', async ({
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
 
   const imageBox = await image.boundingBox()
-  expect(imageBox.width).toBeGreaterThanOrEqual(1200)
-  expect(imageBox.width).toBeLessThanOrEqual(1280)
-  expect(imageBox.height).toBeGreaterThanOrEqual(540)
+  expect(imageBox.width).toBeGreaterThanOrEqual(1900)
+  expect(imageBox.height).toBeGreaterThanOrEqual(680)
   await expect
     .poll(() => image.evaluate((element) => element.naturalWidth))
     .toBeGreaterThan(0)
@@ -102,7 +101,7 @@ test('keynote hero remains usable at a narrow mobile viewport', async ({
   expect(heroBox.height).toBeLessThanOrEqual(812)
 })
 
-test('page hero fits below navigation and shows the entire image', async ({
+test('page hero sits behind navigation and fills the canvas', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 768 })
@@ -114,7 +113,7 @@ test('page hero fits below navigation and shows the entire image', async ({
   const image = hero.locator('img')
 
   expect(headerBox.y).toBe(heroBox.y)
-  expect(heroBox.height).toBeLessThanOrEqual(640)
+  expect(heroBox.height).toBeLessThanOrEqual(760)
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
   expect(
     await page
@@ -123,5 +122,5 @@ test('page hero fits below navigation and shows the entire image', async ({
   ).toBe('rgba(0, 0, 0, 0)')
   expect(
     await image.evaluate((element) => getComputedStyle(element).objectFit)
-  ).toBe('contain')
+  ).toBe('cover')
 })

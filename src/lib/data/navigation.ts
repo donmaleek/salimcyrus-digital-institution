@@ -23,10 +23,8 @@ export const mainNav: NavItem[] = [
       { label: 'Masterclasses', href: '/academy/masterclasses' },
     ],
   },
-  { label: 'Knowledge Centre', href: '/knowledge-centre' },
-  { label: 'Ask Salim', href: '/ask-salim' },
-  { label: 'Journal', href: '/journal' },
   { label: 'Books', href: '/books' },
+  { label: 'Knowledge Centre', href: '/knowledge-centre' },
   {
     label: 'Halisi Hub Connect',
     href: '/halisi-hub-connect',
@@ -36,6 +34,8 @@ export const mainNav: NavItem[] = [
       { label: 'Impact', href: '/halisi-hub-connect/impact' },
     ],
   },
+  { label: 'Journal', href: '/journal' },
+  { label: 'Ask Salim', href: '/ask-salim' },
   { label: 'Contact', href: '/contact' },
 ]
 

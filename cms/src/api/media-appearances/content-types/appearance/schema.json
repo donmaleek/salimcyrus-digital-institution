@@ -1,0 +1,19 @@
+{
+  "kind": "collectionType",
+  "collectionName": "media-appearances",
+  "info": {
+    "singularName": "appearance",
+    "pluralName": "media-appearances",
+    "displayName": "Appearance"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

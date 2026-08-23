@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+cms/node_modules/
+
+# next.js
+.next/
+out/
+
+# strapi
+cms/.tmp/
+cms/build/
+cms/dist/
+
+# env
+.env
+.env.local
+.env.production
+.env.staging
+cms/.env
+
+# misc
+.DS_Store
+*.log
+npm-debug.log*
+coverage/
+*.tsbuildinfo

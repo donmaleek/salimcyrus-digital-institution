@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salimcyrus-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: salimcyrus-web
+  template:
+    metadata:
+      labels:
+        app: salimcyrus-web
+    spec:
+      containers:
+        - name: web
+          image: salimcyrus-web:latest
+          ports:
+            - containerPort: 3000

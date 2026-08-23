@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ContactForm } from '@/components/forms/ContactForm'
+import { Button } from '@/components/ui/Button'
+import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -25,11 +27,20 @@ export default function ContactPage() {
             Contact
           </p>
           <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
-            How Can We Help?
+            Calm Clarity for Serious People
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-navy-600">
-            Choose the pathway that fits, or send a general message below.
+            I don&apos;t coach for hype. I coach for decisions. Tell me what you&apos;re holding
+            and we build the system that returns you to yourself.
           </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Button href={WHATSAPP_URL} size="lg">
+              Message on WhatsApp
+            </Button>
+            <Button href={`mailto:${CONTACT_EMAIL}`} variant="outline" size="lg">
+              {CONTACT_EMAIL}
+            </Button>
+          </div>
         </div>
       </section>
 

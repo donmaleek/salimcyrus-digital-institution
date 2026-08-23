@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import { Story } from '@/components/sections/about/Story'
 import { Philosophy } from '@/components/sections/about/Philosophy'
 import { FrameworksDisplay } from '@/components/sections/about/FrameworksDisplay'
 import { OriginTimeline } from '@/components/sections/about/OriginTimeline'
+import { Credentials } from '@/components/sections/about/Credentials'
 
 export const metadata: Metadata = {
   title: 'About Salim Cyrus',
@@ -25,9 +27,11 @@ export default function AboutPage() {
           </p>
         </div>
       </section>
+      <Story />
       <OriginTimeline />
       <Philosophy />
       <FrameworksDisplay />
+      <Credentials />
     </>
   )
 }

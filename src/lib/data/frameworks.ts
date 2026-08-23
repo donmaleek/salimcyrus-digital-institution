@@ -4,6 +4,7 @@ export interface FrameworkDefinition {
 }
 
 export const frameworks: FrameworkDefinition[] = [
+  { name: 'The Reset Framework', steps: ['Diagnose', 'Clarify', 'Build', 'Execute'] },
   { name: 'Purpose Framework', steps: ['Identity', 'Calling', 'Assignment', 'Responsibility', 'Legacy'] },
   { name: 'Relationship Framework', steps: ['Identity', 'Character', 'Compatibility', 'Communication', 'Covenant'] },
   { name: 'Manhood Framework', steps: ['Identity', 'Responsibility', 'Discipline', 'Leadership', 'Legacy'] },

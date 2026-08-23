@@ -1,19 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Button } from '@/components/ui/Button'
+import { books } from '@/lib/data/books'
+import { formatCurrency } from '@/lib/utils/currency'
 
 export const metadata: Metadata = {
   title: 'Books',
-  description: 'Books by Salim Cyrus, including The Greatest Tragedy Is Not Death... It Is a Life Without Purpose.',
+  description: 'Books by Salim Cyrus — practical mirrors, not motivation.',
 }
-
-const books = [
-  {
-    slug: 'the-greatest-tragedy',
-    title: 'The Greatest Tragedy Is Not Death...',
-    subtitle: 'It Is a Life Without Purpose',
-    editions: ['Paperback', 'Digital Edition', 'Signed Author Edition'],
-  },
-]
 
 export default function BooksPage() {
   return (
@@ -23,31 +17,59 @@ export default function BooksPage() {
           Books
         </p>
         <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
-          The Legacy Shelf
+          Books That Confront What You Avoid
         </h1>
+        <p className="mt-6 max-w-2xl text-lg text-navy-600">Practical mirrors, not motivation.</p>
 
         <div className="mt-14 grid gap-8 sm:grid-cols-2">
           {books.map((book) => (
-            <Link
-              key={book.slug}
-              href={`/books/${book.slug}`}
-              className="rounded-2xl border border-navy-100 bg-white p-8 transition-shadow hover:shadow-lg"
-            >
+            <div key={book.slug} className="flex flex-col rounded-2xl border border-navy-100 bg-white p-8">
               <h2 className="font-heading text-2xl font-semibold text-navy">{book.title}</h2>
-              <p className="mt-1 font-heading text-lg italic text-navy-500">{book.subtitle}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {book.editions.map((edition) => (
-                  <span
-                    key={edition}
-                    className="rounded-full bg-navy-50 px-3 py-1 text-xs font-medium text-navy-600"
-                  >
-                    {edition}
+              {book.subtitle && (
+                <p className="mt-1 font-heading text-lg italic text-navy-500">{book.subtitle}</p>
+              )}
+              <p className="mt-4 flex-1 text-sm text-navy-600">{book.description}</p>
+              <div className="mt-6 flex items-center justify-between">
+                {book.status === 'available' && book.priceKes ? (
+                  <span className="text-xl font-bold text-navy">{formatCurrency(book.priceKes)}</span>
+                ) : (
+                  <span className="text-sm font-semibold uppercase tracking-wide text-navy-400">
+                    Coming Soon
                   </span>
-                ))}
+                )}
+                {book.status === 'available' && book.paystackUrl ? (
+                  <Button href={book.paystackUrl} size="sm">
+                    Buy Now
+                  </Button>
+                ) : (
+                  <Button href="/contact" variant="outline" size="sm">
+                    Get Notified
+                  </Button>
+                )}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
+
+        <div className="mt-16 rounded-2xl border border-gold-200 bg-gold-50 p-8 text-center">
+          <h2 className="font-heading text-xl font-semibold text-navy">
+            Want a Reset in One Page?
+          </h2>
+          <p className="mt-2 text-sm text-navy-600">
+            A downloadable checklist to map the next decisive move.
+          </p>
+          <Button href="/resources/free-guides" className="mt-6">
+            Download the Reset Checklist
+          </Button>
+        </div>
+
+        <p className="mt-8 text-sm text-navy-400">
+          Looking for the full digital library?{' '}
+          <Link href="/resources/digital-library" className="font-semibold text-gold-500 hover:underline">
+            Browse it here
+          </Link>
+          .
+        </p>
       </div>
     </section>
   )

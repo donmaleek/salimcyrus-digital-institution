@@ -2,9 +2,10 @@
 
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
+import { CONTACT_EMAIL } from '@/lib/utils/constants'
 
 export function ContactForm() {
-  const [values, setValues] = useState({ name: '', email: '', message: '' })
+  const [values, setValues] = useState({ name: '', email: '', whatsapp: '', message: '' })
 
   function update(field: keyof typeof values) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -13,8 +14,10 @@ export function ContactForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const body = encodeURIComponent(values.message + `\n\nFrom: ${values.name} (${values.email})`)
-    window.location.href = `mailto:hello@salimcyrus.com?subject=Website%20Enquiry&body=${body}`
+    const body = encodeURIComponent(
+      `${values.message}\n\nFrom: ${values.name} (${values.email})\nWhatsApp: ${values.whatsapp}`
+    )
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=Website%20Enquiry&body=${body}`
   }
 
   return (
@@ -35,6 +38,15 @@ export function ContactForm() {
           required
           value={values.email}
           onChange={update('email')}
+          className="mt-1 w-full rounded-lg border border-navy-200 px-4 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold"
+        />
+      </label>
+      <label className="block text-sm font-medium text-navy-700">
+        WhatsApp
+        <input
+          value={values.whatsapp}
+          onChange={update('whatsapp')}
+          placeholder="+254 7XX XXX XXX"
           className="mt-1 w-full rounded-lg border border-navy-200 px-4 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold"
         />
       </label>

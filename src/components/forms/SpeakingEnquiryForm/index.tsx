@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
+import { CONTACT_EMAIL } from '@/lib/utils/constants'
 
 export function SpeakingEnquiryForm() {
   const [values, setValues] = useState({
@@ -25,7 +26,7 @@ export function SpeakingEnquiryForm() {
     const body = Object.entries(values)
       .map(([key, value]) => `${key}: ${value}`)
       .join('%0D%0A')
-    window.location.href = `mailto:booking@salimcyrus.com?subject=Speaking%20Enquiry&body=${body}`
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=Speaking%20Enquiry&body=${body}`
   }
 
   return (

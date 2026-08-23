@@ -1,5 +1,7 @@
+import Link from 'next/link'
 import { FooterLinks } from './FooterLinks'
 import { NewsletterSignup } from './NewsletterSignup'
+import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
 
 export function Footer() {
   return (
@@ -12,6 +14,14 @@ export function Footer() {
               Relationship Coach | Speaker | Author | Kingdom Strategist. Empowering minds.
               Reforming hearts. Restoring purpose through truth and wisdom.
             </p>
+            <div className="mt-4 flex flex-col gap-1 text-sm text-cream/80">
+              <Link href={WHATSAPP_URL} className="hover:text-gold">
+                WhatsApp
+              </Link>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-gold">
+                {CONTACT_EMAIL}
+              </a>
+            </div>
             <div className="mt-8">
               <NewsletterSignup />
             </div>

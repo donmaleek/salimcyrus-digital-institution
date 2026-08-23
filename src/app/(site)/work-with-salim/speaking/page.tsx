@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { PageHero } from '@/components/layout/PageHero'
 import { SpeakingEnquiryForm } from '@/components/forms/SpeakingEnquiryForm'
 
 export const metadata: Metadata = {
@@ -14,26 +15,22 @@ const topics = [
 export default function SpeakingPage() {
   return (
     <>
-      <section className="border-b border-navy-100 bg-cream">
-        <div className="mx-auto max-w-content px-6 py-20">
-          <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-            Speaking
-          </p>
-          <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
-            Book Salim Cyrus
-          </h1>
-          <div className="mt-10 flex flex-wrap gap-3">
-            {topics.map((topic) => (
-              <span
-                key={topic}
-                className="rounded-full border border-navy-200 bg-white px-4 py-2 text-sm text-navy-700"
-              >
-                {topic}
-              </span>
-            ))}
-          </div>
+      <PageHero
+        eyebrow="Speaking"
+        title="Book Salim Cyrus"
+        image={{ src: '/images/salim/speaking.webp', alt: 'Salim Cyrus speaking', width: 840, height: 1125 }}
+      >
+        <div className="mt-10 flex flex-wrap gap-3">
+          {topics.map((topic) => (
+            <span
+              key={topic}
+              className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-cream/90"
+            >
+              {topic}
+            </span>
+          ))}
         </div>
-      </section>
+      </PageHero>
 
       <section className="bg-navy-50">
         <div className="mx-auto max-w-content px-6 py-16">

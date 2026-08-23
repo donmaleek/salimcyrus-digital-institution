@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ContactForm } from '@/components/forms/ContactForm'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { PageHero } from '@/components/layout/PageHero'
 import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
 
 export const metadata: Metadata = {
@@ -21,28 +22,21 @@ const pathways = [
 export default function ContactPage() {
   return (
     <>
-      <section className="border-b border-navy-100 bg-cream">
-        <div className="mx-auto max-w-content px-6 py-20">
-          <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-            Contact
-          </p>
-          <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
-            Calm Clarity for Serious People
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-navy-600">
-            I don&apos;t coach for hype. I coach for decisions. Tell me what you&apos;re holding
-            and we build the system that returns you to yourself.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
+      <PageHero
+        eyebrow="Contact"
+        title="Calm Clarity for Serious People"
+        description="I don't coach for hype. I coach for decisions. Tell me what you're holding and we build the system that returns you to yourself."
+        actions={
+          <>
             <Button href={WHATSAPP_URL} size="lg">
               Message on WhatsApp
             </Button>
-            <Button href={`mailto:${CONTACT_EMAIL}`} variant="outline" size="lg">
+            <Button href={`mailto:${CONTACT_EMAIL}`} variant="outline-inverse" size="lg">
               {CONTACT_EMAIL}
             </Button>
-          </div>
-        </div>
-      </section>
+          </>
+        }
+      />
 
       <section className="bg-navy-50">
         <div className="mx-auto max-w-content px-6 py-16">

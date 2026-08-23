@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { PageHero } from '@/components/layout/PageHero'
 import { books } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
 
@@ -13,15 +14,10 @@ export const metadata: Metadata = {
 
 export default function BooksPage() {
   return (
-    <section className="bg-cream">
+    <>
+      <PageHero eyebrow="Books" title="Books That Confront What You Avoid" description="Practical mirrors, not motivation." />
+      <section className="bg-cream">
       <div className="mx-auto max-w-content px-6 py-20">
-        <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-          Books
-        </p>
-        <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
-          Books That Confront What You Avoid
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg text-navy-600">Practical mirrors, not motivation.</p>
 
         <div className="mt-14 grid gap-8 sm:grid-cols-2">
           {books.map((book) => (
@@ -82,6 +78,7 @@ export default function BooksPage() {
           .
         </p>
       </div>
-    </section>
+      </section>
+    </>
   )
 }

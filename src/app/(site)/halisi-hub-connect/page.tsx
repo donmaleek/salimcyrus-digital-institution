@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { PageHero } from '@/components/layout/PageHero'
 
 export const metadata: Metadata = {
   title: 'Halisi Hub Connect',
@@ -16,20 +17,21 @@ const links = [
 export default function HalisiHubConnectPage() {
   return (
     <>
-      <section className="border-b border-navy-100 bg-navy">
-        <div className="mx-auto max-w-content px-6 py-24 text-center">
-          <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold">
-            Halisi Hub Connect
-          </p>
-          <h1 className="mt-4 font-heading text-4xl font-bold text-cream sm:text-5xl">
+      <PageHero
+        eyebrow="Halisi Hub Connect"
+        title={
+          <>
             Awakening Wisdom. Restoring Identity.
             <br /> Cultivating Purposeful Living.
-          </h1>
-          <Button href="/halisi-hub-connect/community" size="lg" className="mt-10">
+          </>
+        }
+        align="center"
+        actions={
+          <Button href="/halisi-hub-connect/community" size="lg">
             Join the Community
           </Button>
-        </div>
-      </section>
+        }
+      />
 
       <section className="bg-cream">
         <div className="mx-auto max-w-content px-6 py-20">

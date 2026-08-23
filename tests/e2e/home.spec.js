@@ -5,6 +5,22 @@ test('homepage loads', async ({ page }) => {
   await expect(page).toHaveTitle(/Salim Cyrus/)
 })
 
+test('footer uses the cinematic background with readable content', async ({
+  page,
+}) => {
+  await page.goto('/')
+  const footer = page.getByTestId('site-footer')
+  await footer.scrollIntoViewIfNeeded()
+  await expect(footer).toBeVisible()
+  await expect(footer.getByText('Wisdom for purposeful living')).toBeVisible()
+
+  const background = footer.locator('img[alt=""]')
+  await expect(background).toBeVisible()
+  expect(await background.evaluate((image) => image.naturalWidth)).toBeGreaterThan(
+    1000
+  )
+})
+
 test('homepage hero includes the sliding media recognition strip', async ({
   page,
 }) => {

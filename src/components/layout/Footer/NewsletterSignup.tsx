@@ -26,13 +26,13 @@ export function NewsletterSignup() {
 
   return (
     <div>
-      <h3 className="font-heading text-sm font-semibold uppercase tracking-wide text-cream/60">
+      <h3 className="font-heading text-xs font-semibold uppercase tracking-[0.22em] text-gold">
         The Halisi Insight
       </h3>
-      <p className="mt-2 max-w-xs text-sm text-cream/80">
+      <p className="mt-3 max-w-sm text-sm leading-6 text-cream/75">
         One Truth. One Question. One Transformation. Delivered weekly.
       </p>
-      <form onSubmit={handleSubmit} className="mt-4 flex max-w-xs gap-2">
+      <form onSubmit={handleSubmit} className="mt-5 flex max-w-sm gap-2">
         <label htmlFor="footer-newsletter-email" className="sr-only">
           Email address
         </label>
@@ -43,7 +43,7 @@ export function NewsletterSignup() {
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-full border border-cream/20 bg-navy-900 px-4 py-2 text-sm text-cream placeholder:text-cream/40 focus:outline-none focus:ring-2 focus:ring-gold"
+          className="w-full rounded-full border border-cream/25 bg-black/25 px-4 py-2 text-sm text-cream shadow-inner backdrop-blur-sm placeholder:text-cream/40 focus:outline-none focus:ring-2 focus:ring-gold"
         />
         <Button type="submit" size="sm" loading={status === 'loading'}>
           Join

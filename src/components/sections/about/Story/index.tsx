@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 const paragraphs = [
   'The first time I guided someone through a tough pivot, I felt the same calm curiosity that I now bring to every session. Coaching has never been about quick fixes for me — it has always been about creating rituals that honor our full humanity, noticing the stories we repeat, and designing practical systems that keep people anchored through change.',
   'I studied psychology and later immersed myself in embodiment practices because I wanted a framework that honored both heart and strategy. Along the way I led workshops for restless executives and weary parents, and it became clear: the work that lights me up is helping good people rebuild trust with themselves — not because they are broken, but because they are stretched thin.',
@@ -14,14 +16,30 @@ export function Story() {
   return (
     <section className="border-t border-navy-100 bg-cream">
       <div className="mx-auto max-w-content px-6 py-20">
-        <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-          Story
-        </p>
-        <h2 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">My Story.</h2>
-        <div className="mt-8 max-w-3xl space-y-6 text-navy-600">
-          {paragraphs.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,340px)_1fr] lg:items-start">
+          <div className="relative mx-auto w-full max-w-xs overflow-hidden rounded-3xl bg-navy-50 lg:mx-0 lg:max-w-none">
+            <Image
+              src="/images/salim/story.webp"
+              alt="Salim Cyrus"
+              width={784}
+              height={1360}
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          <div>
+            <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
+              Story
+            </p>
+            <h2 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
+              My Story.
+            </h2>
+            <div className="mt-8 max-w-2xl space-y-6 text-navy-600">
+              {paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-3">

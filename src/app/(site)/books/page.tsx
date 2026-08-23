@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { books } from '@/lib/data/books'
@@ -24,27 +25,38 @@ export default function BooksPage() {
 
         <div className="mt-14 grid gap-8 sm:grid-cols-2">
           {books.map((book) => (
-            <div key={book.slug} className="flex flex-col rounded-2xl border border-navy-100 bg-white p-8">
-              <h2 className="font-heading text-2xl font-semibold text-navy">{book.title}</h2>
-              {book.subtitle && (
-                <p className="mt-1 font-heading text-lg italic text-navy-500">{book.subtitle}</p>
-              )}
-              <p className="mt-4 flex-1 text-sm text-navy-600">{book.description}</p>
-              <div className="mt-6 flex items-center justify-between">
-                {book.status === 'available' && book.priceKes ? (
-                  <span className="text-xl font-bold text-navy">{formatCurrency(book.priceKes)}</span>
+            <div key={book.slug} className="flex gap-6 rounded-2xl border border-navy-100 bg-white p-6">
+              <div className="relative h-40 w-40 shrink-0 overflow-hidden rounded-xl bg-navy-50 sm:h-48 sm:w-48">
+                {book.cover ? (
+                  <Image src={book.cover} alt={book.title} fill className="object-cover" />
                 ) : (
-                  <Badge variant="navy">Coming Soon</Badge>
+                  <div className="flex h-full items-center justify-center p-4 text-center font-heading text-sm text-navy-300">
+                    {book.title}
+                  </div>
                 )}
-                {book.status === 'available' && book.paystackUrl ? (
-                  <Button href={book.paystackUrl} size="sm">
-                    Buy Now
-                  </Button>
-                ) : (
-                  <Button href="/contact" variant="outline" size="sm">
-                    Get Notified
-                  </Button>
+              </div>
+              <div className="flex flex-1 flex-col">
+                <h2 className="font-heading text-xl font-semibold text-navy">{book.title}</h2>
+                {book.subtitle && (
+                  <p className="mt-1 font-heading text-sm italic text-navy-500">{book.subtitle}</p>
                 )}
+                <p className="mt-3 flex-1 text-sm text-navy-600">{book.description}</p>
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                  {book.status === 'available' && book.priceKes ? (
+                    <span className="text-lg font-bold text-navy">{formatCurrency(book.priceKes)}</span>
+                  ) : (
+                    <Badge variant="navy">Coming Soon</Badge>
+                  )}
+                  {book.status === 'available' && book.paystackUrl ? (
+                    <Button href={book.paystackUrl} size="sm">
+                      Buy Now
+                    </Button>
+                  ) : (
+                    <Button href="/contact" variant="outline" size="sm">
+                      Get Notified
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
 import { Spinner } from '@/components/ui/Spinner'
 
-type Variant = 'primary' | 'secondary' | 'outline' | 'ghost'
+type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'outline-inverse' | 'ghost-inverse'
 type Size = 'sm' | 'md' | 'lg'
 
 const base =
@@ -13,6 +13,12 @@ const variants: Record<Variant, string> = {
   secondary: 'bg-navy text-cream hover:bg-navy-700',
   outline: 'border border-navy text-navy hover:bg-navy hover:text-cream',
   ghost: 'text-navy hover:bg-navy-50',
+  // For use on dark (navy) backgrounds — kept as distinct variants rather than
+  // overriding outline/ghost via className, since conflicting Tailwind utility
+  // classes (e.g. text-navy and text-cream both present) resolve by stylesheet
+  // source order, not by position in the class list, which is unpredictable.
+  'outline-inverse': 'border border-cream text-cream hover:bg-cream hover:text-navy',
+  'ghost-inverse': 'text-cream/70 hover:bg-white/10 hover:text-cream',
 }
 
 const sizes: Record<Size, string> = {

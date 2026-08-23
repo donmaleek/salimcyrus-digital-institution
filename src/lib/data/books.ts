@@ -6,6 +6,7 @@ export interface BookEntry {
   priceKes?: number
   status: 'available' | 'upcoming'
   paystackUrl?: string
+  cover?: string
 }
 
 export const books: BookEntry[] = [
@@ -17,6 +18,7 @@ export const books: BookEntry[] = [
     priceKes: 1499,
     status: 'available',
     paystackUrl: 'https://paystack.com/buy/concealed-redemption-wimdwx',
+    cover: '/images/books/concealed-redemption.webp',
   },
   {
     slug: 'the-great-deception',
@@ -26,6 +28,7 @@ export const books: BookEntry[] = [
     priceKes: 1499,
     status: 'available',
     paystackUrl: 'https://paystack.com/buy/the-great-deception-rnjacy',
+    cover: '/images/books/the-great-deception.webp',
   },
   {
     slug: 'the-greatest-tragedy',

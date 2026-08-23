@@ -15,7 +15,7 @@ export function CtaSection() {
           <Button href="/work-with-salim/coaching" size="lg">
             Book a Session
           </Button>
-          <Button href="/contact" variant="outline" size="lg" className="border-cream text-cream hover:bg-cream hover:text-navy">
+          <Button href="/contact" variant="outline-inverse" size="lg">
             Contact Salim
           </Button>
         </div>

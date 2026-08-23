@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Accordion } from '@/components/ui/Accordion'
 import { JsonLd } from '@/components/sections/shared/SEO'
@@ -65,24 +66,35 @@ export default function CoachingPage() {
   return (
     <>
       <section className="border-b border-navy-100 bg-cream">
-        <div className="mx-auto max-w-content px-6 py-20">
-          <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-            Private Coaching
-          </p>
-          <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
-            Private Coaching for Leaders in Transition
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-navy-600">
-            Clarity, structure, and accountability for people ready to stop negotiating with the
-            same problems.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Button href="/contact" size="lg">
-              Contact Me
-            </Button>
-            <Button href={WHATSAPP_URL} variant="outline" size="lg">
-              Message on WhatsApp
-            </Button>
+        <div className="mx-auto grid max-w-content items-center gap-10 px-6 py-20 lg:grid-cols-[1fr_auto]">
+          <div>
+            <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
+              Private Coaching
+            </p>
+            <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
+              Private Coaching for Leaders in Transition
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg text-navy-600">
+              Clarity, structure, and accountability for people ready to stop negotiating with the
+              same problems.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Button href="/contact" size="lg">
+                Contact Me
+              </Button>
+              <Button href={WHATSAPP_URL} variant="outline" size="lg">
+                Message on WhatsApp
+              </Button>
+            </div>
+          </div>
+          <div className="relative mx-auto w-full max-w-[260px] overflow-hidden rounded-3xl bg-navy-50 lg:mx-0">
+            <Image
+              src="/images/salim/coaching.webp"
+              alt="Salim Cyrus"
+              width={840}
+              height={1125}
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </section>

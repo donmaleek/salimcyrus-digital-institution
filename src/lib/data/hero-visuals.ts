@@ -37,5 +37,9 @@ const HERO_VISUALS: Record<string, string> = {
 }
 
 export function getHeroVisual(eyebrow: string) {
-  return HERO_VISUALS[eyebrow] ?? '/images/salim/keynote-hero.webp'
+  const desktop = HERO_VISUALS[eyebrow] ?? '/images/salim/keynote-hero.webp'
+  return {
+    desktop,
+    mobile: desktop.replace('.webp', '-mobile.webp'),
+  }
 }

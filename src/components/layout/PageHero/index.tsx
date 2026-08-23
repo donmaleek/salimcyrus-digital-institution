@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import Image from 'next/image'
+import { getImageProps } from 'next/image'
 import { ScrollCue } from '@/components/ui/ScrollCue'
 import { getHeroVisual } from '@/lib/data/hero-visuals'
 
@@ -23,32 +23,38 @@ export function PageHero({
 }: PageHeroProps) {
   const isCenter = align === 'center'
   const visual = getHeroVisual(eyebrow)
+  const { props: desktopImage } = getImageProps({
+    src: visual.desktop,
+    alt: '',
+    fill: true,
+    priority: true,
+    sizes: '100vw',
+  })
+  const {
+    props: { srcSet: mobileSrcSet },
+  } = getImageProps({
+    src: visual.mobile,
+    alt: '',
+    fill: true,
+    priority: true,
+    sizes: '100vw',
+  })
 
   return (
     <section
-      className="relative isolate flex h-[min(760px,100svh)] min-h-[680px] overflow-hidden bg-navy"
+      className="relative isolate flex aspect-[941/1672] min-h-[680px] overflow-hidden bg-navy lg:aspect-[1672/941] lg:min-h-0"
       data-testid="page-hero"
     >
-      <Image
-        src={visual}
-        alt=""
-        fill
-        sizes="100vw"
-        aria-hidden="true"
-        className="scale-105 object-cover object-center opacity-45 blur-md"
-      />
-      <div className="absolute inset-x-0 top-16 aspect-video sm:top-20 lg:inset-0 lg:aspect-auto">
-        <Image
-          src={visual}
+      <picture>
+        <source media="(max-width: 1023px)" srcSet={mobileSrcSet} />
+        <img
+          {...desktopImage}
           alt=""
-          fill
-          priority
-          sizes="100vw"
           data-testid="page-hero-full-image"
-          className="object-contain object-center"
+          className="object-cover object-center"
         />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-navy/5 via-navy/20 to-navy lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/55 lg:to-navy/15" />
+      </picture>
+      <div className="absolute inset-0 bg-gradient-to-b from-navy/15 via-navy/10 to-navy/95 lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/55 lg:to-navy/10" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,27,45,0.35)_0%,transparent_25%)]" />
 
       <div className="relative mx-auto flex w-full max-w-content items-end px-6 pb-24 pt-28 sm:pb-24 sm:pt-28 lg:items-center lg:px-8 lg:pt-24">

@@ -36,15 +36,16 @@ const checks = [
   ],
   [
     'shared hero has responsive full-width imagery',
-    pageHero.includes('sizes="100vw"'),
+    pageHero.includes("sizes: '100vw'"),
   ],
   [
-    'topic images remain fully visible without cropping',
-    pageHero.includes('object-contain object-center'),
+    'topic images fill their breakpoint-specific canvas',
+    pageHero.includes('object-cover object-center'),
   ],
   [
-    'hero uses a cinematic viewport-aware height',
-    pageHero.includes('h-[min(760px,100svh)]'),
+    'hero uses matched landscape and portrait ratios',
+    pageHero.includes('aspect-[941/1672]') &&
+      pageHero.includes('lg:aspect-[1672/941]'),
   ],
   [
     'shared hero includes the continuation cue',
@@ -58,6 +59,16 @@ const checks = [
     `${asset} exists and is assigned`,
     fs.existsSync(path.join(root, 'public/images/salim', asset)) &&
       visuals.includes(asset),
+  ]),
+  ...generatedAssets.map((asset) => [
+    `${asset.replace('.webp', '-mobile.webp')} exists`,
+    fs.existsSync(
+      path.join(
+        root,
+        'public/images/salim',
+        asset.replace('.webp', '-mobile.webp')
+      )
+    ),
   ]),
 ]
 

@@ -113,7 +113,7 @@ test('page hero sits behind navigation and fills the canvas', async ({
   const image = hero.getByTestId('page-hero-full-image')
 
   expect(headerBox.y).toBe(heroBox.y)
-  expect(heroBox.height).toBeLessThanOrEqual(760)
+  expect(heroBox.width / heroBox.height).toBeCloseTo(1672 / 941, 1)
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
   expect(
     await page
@@ -122,10 +122,10 @@ test('page hero sits behind navigation and fills the canvas', async ({
   ).toBe('rgba(0, 0, 0, 0)')
   expect(
     await image.evaluate((element) => getComputedStyle(element).objectFit)
-  ).toBe('contain')
+  ).toBe('cover')
 })
 
-test('mobile page hero keeps the full topic image above its copy', async ({
+test('mobile page hero uses portrait art that fills its canvas', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 })
@@ -133,13 +133,17 @@ test('mobile page hero keeps the full topic image above its copy', async ({
 
   const hero = page.getByTestId('page-hero')
   const image = page.getByTestId('page-hero-full-image')
-  const heading = hero.getByRole('heading')
-  const imageBox = await image.boundingBox()
-  const headingBox = await heading.boundingBox()
+  const heroBox = await hero.boundingBox()
 
   expect(
     await image.evaluate((element) => getComputedStyle(element).objectFit)
-  ).toBe('contain')
-  expect(imageBox.y + imageBox.height).toBeLessThanOrEqual(headingBox.y + 1)
+  ).toBe('cover')
+  await expect
+    .poll(() => image.evaluate((element) => element.currentSrc))
+    .toContain('media-hero-mobile.webp')
+  expect(heroBox.width / heroBox.height).toBeCloseTo(941 / 1672, 1)
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth)
+  ).toBeLessThanOrEqual(390)
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
 })

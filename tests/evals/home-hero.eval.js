@@ -30,25 +30,25 @@ const checks = [
     speakingPage.includes('/images/salim/speaking-keynote.webp'),
   ],
   [
-    'page heroes use a cinematic viewport-aware height',
-    pageHero.includes('h-[min(760px,100svh)]'),
+    'desktop heroes match the landscape art ratio',
+    pageHero.includes('lg:aspect-[1672/941]'),
   ],
   [
-    'page heroes have a softened full-bleed backdrop',
-    pageHero.includes('opacity-45 blur-md'),
+    'mobile heroes match the portrait art ratio',
+    pageHero.includes('aspect-[941/1672]'),
   ],
   [
-    'page hero foreground images remain uncropped',
-    pageHero.includes('object-contain object-center'),
+    'page hero images fill their matching canvas',
+    pageHero.includes('object-cover object-center'),
   ],
-  ['page hero visual fills the section', /<Image[\s\S]*?fill/.test(pageHero)],
+  ['page hero visual fills the section', /fill: true/.test(pageHero)],
   [
     'page hero titles use executive display sizing',
     pageHero.includes('lg:text-7xl'),
   ],
   [
     'above-the-fold page hero images load with priority',
-    /<Image[\s\S]*?priority/.test(pageHero),
+    /priority: true/.test(pageHero),
   ],
   ['hero images are preload-prioritized', /priority: true/.test(source)],
   ['images have responsive sizing', /sizes: '100vw'/.test(source)],

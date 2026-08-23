@@ -23,22 +23,22 @@ export function PageHero({ eyebrow, title, description, actions, align = 'left',
       </div>
 
       <div
-        className={`relative mx-auto max-w-content px-6 py-24 sm:py-28 lg:py-32 ${
+        className={`relative mx-auto max-w-content px-6 py-20 sm:py-24 lg:py-24 ${
           image
             ? `grid items-center gap-10 ${
                 isLandscapeImage
-                  ? 'lg:grid-cols-[minmax(0,1fr)_minmax(440px,640px)] lg:gap-14'
-                  : 'lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-14'
+                  ? 'lg:grid-cols-[minmax(0,1fr)_minmax(400px,560px)] lg:gap-12'
+                  : 'lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12'
               }`
             : ''
         }`}
       >
         <div className={isCenter ? 'mx-auto text-center' : ''}>
-          <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+          <p className="font-body text-sm font-semibold uppercase tracking-[0.24em] text-gold sm:text-base">
             {eyebrow}
           </p>
           <h1
-            className={`mt-4 max-w-3xl font-heading text-4xl font-bold leading-tight text-cream sm:text-5xl lg:text-6xl ${
+            className={`mt-4 max-w-3xl font-heading text-5xl font-bold leading-[1.02] text-cream sm:text-6xl lg:text-7xl ${
               isCenter ? 'mx-auto' : ''
             }`}
           >
@@ -46,7 +46,7 @@ export function PageHero({ eyebrow, title, description, actions, align = 'left',
           </h1>
           {description && (
             <p
-              className={`mt-6 max-w-2xl text-lg leading-relaxed text-cream/80 sm:text-xl ${
+              className={`mt-6 max-w-2xl text-xl leading-relaxed text-cream/85 sm:text-2xl ${
                 isCenter ? 'mx-auto' : ''
               }`}
             >
@@ -62,7 +62,7 @@ export function PageHero({ eyebrow, title, description, actions, align = 'left',
         {image && (
           <div
             className={`relative mx-auto w-full overflow-hidden rounded-3xl bg-navy-800/50 ring-1 ring-white/10 lg:mx-0 ${
-              isLandscapeImage ? 'max-w-[640px]' : 'max-w-[320px]'
+              isLandscapeImage ? 'max-w-[560px]' : 'max-w-[280px]'
             }`}
           >
             <Image
@@ -71,7 +71,7 @@ export function PageHero({ eyebrow, title, description, actions, align = 'left',
               width={image.width}
               height={image.height}
               priority
-              sizes={isLandscapeImage ? '(min-width: 1024px) 640px, 100vw' : '(min-width: 1024px) 320px, 100vw'}
+              sizes={isLandscapeImage ? '(min-width: 1024px) 560px, 100vw' : '(min-width: 1024px) 280px, 100vw'}
               className={`h-full w-full object-cover ${isLandscapeImage ? 'aspect-video' : ''}`}
             />
           </div>

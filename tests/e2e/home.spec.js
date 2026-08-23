@@ -28,8 +28,8 @@ test('landscape image remains visible in a desktop page hero', async ({ page }) 
   await expect(image).toBeVisible()
 
   const imageBox = await image.boundingBox()
-  expect(imageBox.width).toBeGreaterThanOrEqual(440)
-  expect(imageBox.height).toBeGreaterThanOrEqual(247)
+  expect(imageBox.width).toBeGreaterThanOrEqual(400)
+  expect(imageBox.height).toBeGreaterThanOrEqual(225)
   await expect.poll(() => image.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0)
 })
 

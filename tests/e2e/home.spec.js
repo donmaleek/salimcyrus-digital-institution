@@ -5,7 +5,9 @@ test('homepage loads', async ({ page }) => {
   await expect(page).toHaveTitle(/Salim Cyrus/)
 })
 
-test('desktop navigation has generous spacing without wrapping', async ({ page }) => {
+test('desktop navigation has generous spacing without wrapping', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
 
@@ -19,46 +21,80 @@ test('desktop navigation has generous spacing without wrapping', async ({ page }
   expect(second.y).toBe(first.y)
 })
 
-test('keynote hero keeps Salim and primary actions visible on desktop', async ({ page }) => {
+test('keynote hero keeps Salim and primary actions visible on desktop', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1920, height: 1080 })
   await page.goto('/')
 
   const hero = page.getByTestId('home-hero')
   await expect(hero).toBeVisible()
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
-  await expect(hero.getByRole('img', { name: /Salim Cyrus presenting/i })).toBeVisible()
+  await expect(
+    hero.getByRole('img', { name: /Salim Cyrus presenting/i })
+  ).toBeVisible()
   await expect(hero.getByRole('heading', { name: 'Salim Cyrus' })).toBeVisible()
   await expect(hero.getByRole('link', { name: 'Book a Session' })).toBeVisible()
-  await expect(hero.getByRole('link', { name: 'Book Salim to Speak' })).toBeVisible()
+  await expect(
+    hero.getByRole('link', { name: 'Book Salim to Speak' })
+  ).toBeVisible()
 
   const heroBox = await hero.boundingBox()
   expect(heroBox.width / heroBox.height).toBeCloseTo(1672 / 941, 1)
 })
 
-test('landscape image remains visible in a desktop page hero', async ({ page }) => {
+test('landscape image remains visible in a desktop page hero', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1920, height: 1080 })
   await page.goto('/work-with-salim/speaking')
 
-  const image = page.getByRole('img', { name: 'Salim Cyrus delivering a keynote on stage' })
+  const hero = page.getByTestId('page-hero')
+  const image = hero.locator('img')
+  await expect(hero).toBeVisible()
   await expect(image).toBeVisible()
-  await expect(page.getByText('Scroll to explore')).toBeVisible()
+  await expect(hero.getByText('Scroll to explore')).toBeVisible()
 
   const imageBox = await image.boundingBox()
-  expect(imageBox.width).toBeGreaterThanOrEqual(400)
-  expect(imageBox.height).toBeGreaterThanOrEqual(225)
-  await expect.poll(() => image.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0)
+  expect(imageBox.width).toBeGreaterThanOrEqual(1900)
+  expect(imageBox.height).toBeGreaterThanOrEqual(700)
+  await expect
+    .poll(() => image.evaluate((element) => element.naturalWidth))
+    .toBeGreaterThan(0)
 })
 
-test('keynote hero remains usable at a narrow mobile viewport', async ({ page }) => {
+for (const [route, asset] of [
+  ['/academy', 'academy-hero.webp'],
+  ['/knowledge-centre', 'knowledge-hero.webp'],
+  ['/halisi-hub-connect', 'community-hero.webp'],
+  ['/media', 'media-hero.webp'],
+]) {
+  test(`${route} uses its topic-specific hero image`, async ({ page }) => {
+    await page.goto(route)
+    const image = page.getByTestId('page-hero').locator('img')
+    await expect(image).toBeVisible()
+    await expect
+      .poll(() => image.evaluate((element) => element.currentSrc))
+      .toContain(asset)
+  })
+}
+
+test('keynote hero remains usable at a narrow mobile viewport', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 375, height: 812 })
   await page.goto('/')
 
   const hero = page.getByTestId('home-hero')
   await expect(hero).toBeVisible()
-  await expect(hero.getByRole('img', { name: /Salim Cyrus presenting/i })).toBeVisible()
+  await expect(
+    hero.getByRole('img', { name: /Salim Cyrus presenting/i })
+  ).toBeVisible()
   await expect(hero.getByRole('heading', { name: 'Salim Cyrus' })).toBeVisible()
   await expect(hero.getByRole('link', { name: 'Book a Session' })).toBeVisible()
-  await expect(hero.getByRole('link', { name: 'Book Salim to Speak' })).toBeVisible()
+  await expect(
+    hero.getByRole('link', { name: 'Book Salim to Speak' })
+  ).toBeVisible()
 
   const heroBox = await hero.boundingBox()
   expect(heroBox.width).toBeLessThanOrEqual(375)

@@ -54,21 +54,22 @@ const checks = [
   ['images have responsive sizing', /sizes: '100vw'/.test(source)],
   [
     'mobile art direction is selected by media query',
-    /max-width: 639px/.test(source),
+    /max-width: 1023px/.test(source),
   ],
   [
     'mobile art direction uses the portrait image',
     source.includes('/images/salim/keynote-hero-mobile.webp'),
   ],
   [
-    'mobile crop protects Salim on the right',
-    /object-\[72%_center\]/.test(source),
+    'mobile portrait fills its matching frame',
+    /aspect-\[941\/1672\]/.test(source) &&
+      /object-cover object-center/.test(source),
   ],
   ['mobile contrast gradient is present', /bg-gradient-to-b/.test(source)],
   ['desktop contrast gradient is present', /lg:bg-gradient-to-r/.test(source)],
   [
-    'homepage hero stays within the visible viewport',
-    /h-\[100svh\]/.test(source),
+    'homepage desktop ratio matches its landscape artwork',
+    /lg:aspect-\[1672\/941\]/.test(source),
   ],
   [
     'hero has an accessible labelled region',

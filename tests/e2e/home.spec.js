@@ -40,7 +40,11 @@ test('keynote hero keeps Salim and primary actions visible on desktop', async ({
   ).toBeVisible()
 
   const heroBox = await hero.boundingBox()
-  expect(heroBox.height).toBeLessThanOrEqual(720)
+  const cueBox = await hero.getByText('Scroll to explore').boundingBox()
+  expect(heroBox.width / heroBox.height).toBeCloseTo(1672 / 941, 1)
+  expect(
+    heroBox.y + heroBox.height - (cueBox.y + cueBox.height)
+  ).toBeGreaterThanOrEqual(40)
 })
 
 test('landscape image remains visible in a desktop page hero', async ({
@@ -99,6 +103,9 @@ test('keynote hero remains usable at a narrow mobile viewport', async ({
   const heroBox = await hero.boundingBox()
   expect(heroBox.width).toBeLessThanOrEqual(375)
   expect(heroBox.height).toBeLessThanOrEqual(812)
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth)
+  ).toBeLessThanOrEqual(375)
 })
 
 test('page hero sits behind navigation and fills the canvas', async ({

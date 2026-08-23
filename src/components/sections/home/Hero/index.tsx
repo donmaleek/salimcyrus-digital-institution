@@ -24,15 +24,15 @@ export function Hero() {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative isolate flex h-[100svh] min-h-[620px] max-h-[720px] overflow-hidden bg-navy"
+      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:aspect-[1672/941]"
       data-testid="home-hero"
     >
       <picture>
-        <source media="(max-width: 639px)" srcSet={mobileSrcSet} />
+        <source media="(max-width: 1023px)" srcSet={mobileSrcSet} />
         <img
           {...desktopImage}
           alt={alt}
-          className="object-cover object-[72%_center] sm:object-center"
+          className="object-cover object-center"
         />
       </picture>
 

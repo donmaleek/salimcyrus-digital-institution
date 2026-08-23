@@ -42,7 +42,7 @@ export function PageHero({
 
   return (
     <section
-      className="relative isolate flex aspect-[941/1672] min-h-[680px] overflow-hidden bg-navy lg:aspect-[1672/941] lg:min-h-0"
+      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:aspect-[1672/941]"
       data-testid="page-hero"
     >
       <picture>

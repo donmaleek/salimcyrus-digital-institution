@@ -39,7 +39,7 @@ export function MobileNav() {
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block text-base font-medium text-cream"
+                  className="block font-heading text-lg text-cream"
                 >
                   {item.label}
                 </Link>
@@ -50,7 +50,7 @@ export function MobileNav() {
                         <Link
                           href={child.href}
                           onClick={() => setOpen(false)}
-                          className="block text-sm text-cream/70"
+                          className="block font-heading text-base text-cream/70"
                         >
                           {child.label}
                         </Link>

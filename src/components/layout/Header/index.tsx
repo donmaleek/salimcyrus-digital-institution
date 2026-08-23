@@ -35,7 +35,7 @@ export function Header() {
             size="sm"
             className="hidden border border-gold bg-gold text-navy-900 hover:bg-gold-300 sm:inline-flex"
           >
-            Book Salim
+            Book
           </Button>
           <MobileNav />
         </div>

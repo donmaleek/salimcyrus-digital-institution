@@ -24,7 +24,13 @@ export function PageHero({ eyebrow, title, description, actions, align = 'left',
 
       <div
         className={`relative mx-auto max-w-content px-6 py-20 sm:py-24 ${
-          image ? 'grid items-center gap-10 lg:grid-cols-[1fr_auto]' : ''
+          image
+            ? `grid items-center gap-10 ${
+                isLandscapeImage
+                  ? 'lg:grid-cols-[minmax(0,1fr)_minmax(360px,520px)]'
+                  : 'lg:grid-cols-[minmax(0,1fr)_260px]'
+              }`
+            : ''
         }`}
       >
         <div className={isCenter ? 'mx-auto text-center' : ''}>

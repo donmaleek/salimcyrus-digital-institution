@@ -23,7 +23,7 @@ export function Hero() {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative isolate flex min-h-[760px] overflow-hidden bg-navy sm:min-h-[780px] lg:min-h-[720px]"
+      className="relative isolate flex min-h-[760px] overflow-hidden bg-navy sm:min-h-[780px] lg:aspect-[1672/941] lg:min-h-0"
       data-testid="home-hero"
     >
       <picture>

@@ -14,7 +14,7 @@ export function MobileNav() {
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-navy-700"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-cream"
       >
         <span className="sr-only">Toggle navigation</span>
         {open ? (
@@ -31,15 +31,15 @@ export function MobileNav() {
       {open && (
         <nav
           aria-label="Mobile"
-          className="absolute inset-x-0 top-full z-30 max-h-[80vh] overflow-y-auto border-t border-navy-100 bg-cream shadow-lg"
+          className="absolute inset-x-0 top-full z-30 max-h-[80vh] overflow-y-auto border-t border-white/20 bg-navy-900/95 shadow-lg backdrop-blur"
         >
-          <ul className="flex flex-col divide-y divide-navy-100">
+          <ul className="flex flex-col divide-y divide-white/10">
             {mainNav.map((item) => (
               <li key={item.href} className="px-6 py-3">
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block text-base font-medium text-navy-700"
+                  className="block text-base font-medium text-cream"
                 >
                   {item.label}
                 </Link>
@@ -50,7 +50,7 @@ export function MobileNav() {
                         <Link
                           href={child.href}
                           onClick={() => setOpen(false)}
-                          className="block text-sm text-navy-500"
+                          className="block text-sm text-cream/70"
                         >
                           {child.label}
                         </Link>

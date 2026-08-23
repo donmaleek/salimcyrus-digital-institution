@@ -24,7 +24,7 @@ export function Hero() {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:h-[calc(56.2799vw-60px)] lg:aspect-auto"
+      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:h-[calc(56.2799vw-80px)] lg:aspect-auto"
       data-testid="home-hero"
     >
       <picture>

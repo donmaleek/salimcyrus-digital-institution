@@ -41,7 +41,7 @@ test('keynote hero keeps Salim and primary actions visible on desktop', async ({
 
   const heroBox = await hero.boundingBox()
   const cueBox = await hero.getByText('Scroll to explore').boundingBox()
-  expect(heroBox.height).toBeCloseTo((heroBox.width * 941) / 1672 - 60, 0)
+  expect(heroBox.height).toBeCloseTo((heroBox.width * 941) / 1672 - 80, 0)
   expect(
     heroBox.y + heroBox.height - (cueBox.y + cueBox.height)
   ).toBeGreaterThanOrEqual(40)
@@ -120,7 +120,7 @@ test('page hero sits behind navigation and fills the canvas', async ({
   const image = hero.getByTestId('page-hero-full-image')
 
   expect(headerBox.y).toBe(heroBox.y)
-  expect(heroBox.height).toBeCloseTo((heroBox.width * 941) / 1672 - 60, 0)
+  expect(heroBox.height).toBeCloseTo((heroBox.width * 941) / 1672 - 80, 0)
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
   expect(
     await page

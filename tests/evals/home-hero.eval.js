@@ -31,7 +31,7 @@ const checks = [
   ],
   [
     'desktop heroes include the additional lower-edge trim',
-    pageHero.includes('lg:h-[calc(56.2799vw-60px)]') &&
+    pageHero.includes('lg:h-[calc(56.2799vw-80px)]') &&
       pageHero.includes('lg:object-top'),
   ],
   [
@@ -70,7 +70,7 @@ const checks = [
   ['desktop contrast gradient is present', /lg:bg-gradient-to-r/.test(source)],
   [
     'homepage trims the same desktop lower edge',
-    source.includes('lg:h-[calc(56.2799vw-60px)]') &&
+    source.includes('lg:h-[calc(56.2799vw-80px)]') &&
       source.includes('lg:object-top'),
   ],
   [

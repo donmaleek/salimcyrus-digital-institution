@@ -26,21 +26,23 @@ export function PageHero({
 
   return (
     <section
-      className="relative isolate flex h-[calc(100svh-64px)] min-h-[540px] max-h-[680px] overflow-hidden bg-navy"
+      className="relative isolate flex h-[min(640px,100svh)] min-h-[560px] overflow-hidden bg-navy"
       data-testid="page-hero"
     >
-      <Image
-        src={visual}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="object-contain object-center"
-      />
+      <div className="absolute inset-0 left-1/2 w-full max-w-[1280px] -translate-x-1/2">
+        <Image
+          src={visual}
+          alt=""
+          fill
+          priority
+          sizes="(min-width: 1280px) 1280px, 100vw"
+          className="object-contain object-center"
+        />
+      </div>
       <div className="absolute inset-0 bg-gradient-to-b from-navy/30 via-navy/20 to-navy/95 lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/65 lg:to-navy/10" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,27,45,0.35)_0%,transparent_25%)]" />
 
-      <div className="relative mx-auto flex w-full max-w-content items-center px-6 pb-20 pt-16 sm:pb-20 lg:px-8 lg:pt-16">
+      <div className="relative mx-auto flex w-full max-w-content items-center px-6 pb-20 pt-24 sm:pb-20 sm:pt-24 lg:px-8 lg:pt-20">
         <div
           className={isCenter ? 'mx-auto max-w-4xl text-center' : 'max-w-3xl'}
         >

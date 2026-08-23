@@ -30,10 +30,13 @@ const checks = [
     speakingPage.includes('/images/salim/speaking-keynote.webp'),
   ],
   [
-    'page heroes fit beneath the navigation',
-    pageHero.includes('h-[calc(100svh-64px)]'),
+    'page heroes use a reduced viewport-aware height',
+    pageHero.includes('h-[min(640px,100svh)]'),
   ],
-  ['page hero height remains restrained', pageHero.includes('max-h-[680px]')],
+  [
+    'page hero image width remains balanced',
+    pageHero.includes('max-w-[1280px]'),
+  ],
   [
     'page hero images remain fully visible',
     pageHero.includes('object-contain object-center'),

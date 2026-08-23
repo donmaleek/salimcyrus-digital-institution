@@ -1,23 +1,11 @@
-'use client'
-
-import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Navigation } from './Navigation'
 import { MobileNav } from './MobileNav'
 
 export function Header() {
-  const pathname = usePathname()
-  const isHome = pathname === '/'
-
   return (
-    <header
-      className={
-        isHome
-          ? 'absolute inset-x-0 top-0 z-50 bg-transparent'
-          : 'sticky top-0 z-50 border-b border-white/10 bg-navy'
-      }
-    >
+    <header className="absolute inset-x-0 top-0 z-50 bg-transparent">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-3 lg:px-8">
         <Link
           href="/"

@@ -56,7 +56,8 @@ test('landscape image remains visible in a desktop page hero', async ({
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
 
   const imageBox = await image.boundingBox()
-  expect(imageBox.width).toBeGreaterThanOrEqual(1900)
+  expect(imageBox.width).toBeGreaterThanOrEqual(1200)
+  expect(imageBox.width).toBeLessThanOrEqual(1280)
   expect(imageBox.height).toBeGreaterThanOrEqual(540)
   await expect
     .poll(() => image.evaluate((element) => element.naturalWidth))
@@ -112,8 +113,14 @@ test('page hero fits below navigation and shows the entire image', async ({
   const heroBox = await hero.boundingBox()
   const image = hero.locator('img')
 
-  expect(heroBox.height).toBeLessThanOrEqual(768 - headerBox.height + 1)
+  expect(headerBox.y).toBe(heroBox.y)
+  expect(heroBox.height).toBeLessThanOrEqual(640)
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
+  expect(
+    await page
+      .locator('header')
+      .evaluate((element) => getComputedStyle(element).backgroundColor)
+  ).toBe('rgba(0, 0, 0, 0)')
   expect(
     await image.evaluate((element) => getComputedStyle(element).objectFit)
   ).toBe('contain')

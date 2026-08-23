@@ -43,9 +43,9 @@ const checks = [
     pageHero.includes('object-cover object-center'),
   ],
   [
-    'hero uses portrait mobile art and a twenty-pixel desktop trim',
+    'hero uses portrait mobile art and the additional desktop trim',
     pageHero.includes('aspect-[941/1672]') &&
-      pageHero.includes('lg:h-[calc(56.2799vw-20px)]'),
+      pageHero.includes('lg:h-[calc(56.2799vw-60px)]'),
   ],
   [
     'shared hero includes the continuation cue',

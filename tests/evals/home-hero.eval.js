@@ -30,8 +30,8 @@ const checks = [
     speakingPage.includes('/images/salim/speaking-keynote.webp'),
   ],
   [
-    'desktop heroes trim twenty pixels from the lower edge',
-    pageHero.includes('lg:h-[calc(56.2799vw-20px)]') &&
+    'desktop heroes include the additional lower-edge trim',
+    pageHero.includes('lg:h-[calc(56.2799vw-60px)]') &&
       pageHero.includes('lg:object-top'),
   ],
   [
@@ -70,7 +70,7 @@ const checks = [
   ['desktop contrast gradient is present', /lg:bg-gradient-to-r/.test(source)],
   [
     'homepage trims the same desktop lower edge',
-    source.includes('lg:h-[calc(56.2799vw-20px)]') &&
+    source.includes('lg:h-[calc(56.2799vw-60px)]') &&
       source.includes('lg:object-top'),
   ],
   [

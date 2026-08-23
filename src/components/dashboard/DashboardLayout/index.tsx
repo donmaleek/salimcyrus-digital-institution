@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SignOutButton } from '@/components/dashboard/SignOutButton'
 
 const navItems = [
   { label: 'Overview', href: '/dashboard' },
@@ -8,7 +9,12 @@ const navItems = [
   { label: 'My Account', href: '/dashboard/my-account' },
 ]
 
-export function DashboardLayout({ children }: { children: React.ReactNode }) {
+interface DashboardLayoutProps {
+  children: React.ReactNode
+  userName?: string | null
+}
+
+export function DashboardLayout({ children, userName }: DashboardLayoutProps) {
   return (
     <div className="flex min-h-screen bg-cream">
       <aside className="hidden w-64 shrink-0 border-r border-navy-100 bg-white p-6 lg:block">
@@ -27,7 +33,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
       </aside>
-      <main className="flex-1 px-6 py-10 sm:px-10">{children}</main>
+      <div className="flex-1">
+        <header className="flex items-center justify-between border-b border-navy-100 bg-white px-6 py-4 sm:px-10">
+          <p className="text-sm text-navy-500">
+            {userName ? `Signed in as ${userName}` : ''}
+          </p>
+          <SignOutButton />
+        </header>
+        <main className="px-6 py-10 sm:px-10">{children}</main>
+      </div>
     </div>
   )
 }

@@ -14,10 +14,6 @@ export default function RegisterPage() {
           Salim Cyrus
         </Link>
         <h1 className="mt-8 font-heading text-2xl font-bold text-navy">Create Your Account</h1>
-        <p className="mt-2 text-xs text-navy-400">
-          Account creation is not yet connected to a real database — this form is UI-complete,
-          pending backend wiring.
-        </p>
         <div className="mt-8 rounded-2xl border border-navy-100 bg-white p-8">
           <RegisterForm />
         </div>

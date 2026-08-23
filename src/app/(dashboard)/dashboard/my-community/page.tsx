@@ -1,4 +1,9 @@
+import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
+
+export const metadata: Metadata = {
+  title: 'My Community',
+}
 
 export default function MyCommunityPage() {
   return (
@@ -6,7 +11,7 @@ export default function MyCommunityPage() {
       <h1 className="font-heading text-2xl font-bold text-navy">My Community</h1>
       <div className="mt-8 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
         <p className="text-navy-400">Join the Hekima Inner Circle to unlock community access.</p>
-        <Button href="/academy/masterclasses" className="mt-6">
+        <Button href="/academy/masterclasses/hekima-inner-circle" className="mt-6">
           View Membership
         </Button>
       </div>

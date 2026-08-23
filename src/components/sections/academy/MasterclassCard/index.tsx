@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { formatCurrency } from '@/lib/utils/currency'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
@@ -14,7 +15,11 @@ export function MasterclassCard({ program }: { program: Program }) {
           {program.duration}
         </span>
       </div>
-      <h3 className="mt-4 font-heading text-xl font-semibold text-navy">{program.name}</h3>
+      <h3 className="mt-4 font-heading text-xl font-semibold text-navy">
+        <Link href={`/academy/masterclasses/${program.slug}`} className="hover:text-gold-500">
+          {program.name}
+        </Link>
+      </h3>
       <p className="mt-1 text-sm font-medium text-navy-500">{program.focus}</p>
       <p className="mt-4 text-sm text-navy-600">{program.description}</p>
 

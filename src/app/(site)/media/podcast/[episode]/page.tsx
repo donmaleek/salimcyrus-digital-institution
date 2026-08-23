@@ -1,12 +1,21 @@
+import type { Metadata } from 'next'
+import { NotPublished } from '@/components/sections/shared/NotPublished'
+
 interface PageProps {
   params: { episode: string }
 }
 
-export default function Page({ params }: PageProps) {
+export const metadata: Metadata = {
+  title: 'Episode',
+}
+
+export default function PodcastEpisodePage({ params }: PageProps) {
   return (
-    <main>
-      <h1>Podcast Detail</h1>
-      <p>{params.episode}</p>
-    </main>
+    <NotPublished
+      label="Episode"
+      slug={params.episode}
+      backHref="/media/podcast"
+      backLabel="Back to Podcast"
+    />
   )
 }

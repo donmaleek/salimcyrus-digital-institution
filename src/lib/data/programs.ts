@@ -1,4 +1,5 @@
 export interface Program {
+  slug: string
   name: string
   tag: string
   duration: string
@@ -15,6 +16,7 @@ export interface Program {
 
 export const programs: Program[] = [
   {
+    slug: 'identity-reformation-program',
     name: 'The Identity Reformation Program',
     tag: 'Flagship',
     duration: '8-12 Weeks',
@@ -31,6 +33,7 @@ export const programs: Program[] = [
     paystackUrl: 'https://paystack.shop/pay/jgbl6hhq7v',
   },
   {
+    slug: 'kingdom-mentality-masterclass',
     name: 'Kingdom Mentality Masterclass',
     tag: 'Membership',
     duration: 'Monthly Subscription',
@@ -45,6 +48,7 @@ export const programs: Program[] = [
     paystackUrl: 'https://paystack.shop/pay/p2j14f4bbo',
   },
   {
+    slug: 'defining-manhood-bootcamp',
     name: 'Defining Manhood Bootcamp',
     tag: 'Men Only',
     duration: 'Bootcamp',
@@ -58,6 +62,7 @@ export const programs: Program[] = [
     paystackUrl: 'https://paystack.shop/pay/997xi94hc4',
   },
   {
+    slug: 'relationship-intelligence-program',
     name: 'Relationship Intelligence Program',
     tag: 'Relationships',
     duration: 'Cohort or Private',
@@ -71,6 +76,7 @@ export const programs: Program[] = [
     paystackUrl: 'https://paystack.shop/pay/6v8heotsk5',
   },
   {
+    slug: 'discipline-and-execution-system',
     name: 'The Discipline and Execution System',
     tag: 'Execution',
     duration: '30-60 Days',
@@ -84,6 +90,7 @@ export const programs: Program[] = [
     paystackUrl: 'https://paystack.shop/pay/e2i5qf7s4v',
   },
   {
+    slug: 'hekima-inner-circle',
     name: 'Hekima Inner Circle',
     tag: 'Inner Circle',
     duration: 'Premium Membership',
@@ -97,6 +104,7 @@ export const programs: Program[] = [
     paystackUrl: 'https://paystack.shop/pay/501d4mbx4c',
   },
   {
+    slug: 'healing-and-restoration-intensive',
     name: 'Healing and Restoration Intensive',
     tag: 'Healing',
     duration: 'Intensive',

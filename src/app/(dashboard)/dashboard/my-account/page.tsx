@@ -1,5 +1,10 @@
+import type { Metadata } from 'next'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+
+export const metadata: Metadata = {
+  title: 'My Account',
+}
 
 export default function MyAccountPage() {
   return (

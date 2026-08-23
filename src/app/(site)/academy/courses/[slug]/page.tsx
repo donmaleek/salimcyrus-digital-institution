@@ -1,12 +1,21 @@
+import type { Metadata } from 'next'
+import { NotPublished } from '@/components/sections/shared/NotPublished'
+
 interface PageProps {
   params: { slug: string }
 }
 
-export default function Page({ params }: PageProps) {
+export const metadata: Metadata = {
+  title: 'Course',
+}
+
+export default function CourseDetailPage({ params }: PageProps) {
   return (
-    <main>
-      <h1>Courses Detail</h1>
-      <p>{params.slug}</p>
-    </main>
+    <NotPublished
+      label="Course"
+      slug={params.slug}
+      backHref="/academy/courses"
+      backLabel="Back to Courses"
+    />
   )
 }

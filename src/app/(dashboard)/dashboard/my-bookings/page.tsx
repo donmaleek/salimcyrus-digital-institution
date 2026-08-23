@@ -1,4 +1,9 @@
+import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
+
+export const metadata: Metadata = {
+  title: 'My Bookings',
+}
 
 export default function MyBookingsPage() {
   return (

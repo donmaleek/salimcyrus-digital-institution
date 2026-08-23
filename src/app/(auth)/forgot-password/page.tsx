@@ -1,19 +1,12 @@
-'use client'
-
-import { useState, type FormEvent } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Input } from '@/components/ui/Input'
-import { Button } from '@/components/ui/Button'
+import { ForgotPasswordForm } from '@/components/forms/ForgotPasswordForm'
+
+export const metadata: Metadata = {
+  title: 'Reset Password',
+}
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setSent(true)
-  }
-
   return (
     <main className="flex min-h-screen items-center justify-center bg-cream px-6 py-16">
       <div className="w-full max-w-sm">
@@ -26,24 +19,7 @@ export default function ForgotPasswordPage() {
           wiring.
         </p>
         <div className="mt-8 rounded-2xl border border-navy-100 bg-white p-8">
-          {sent ? (
-            <p className="text-navy-600">
-              If an account exists for that email, a reset link has been sent.
-            </p>
-          ) : (
-            <form onSubmit={handleSubmit} className="grid gap-4">
-              <Input
-                label="Email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Button type="submit" className="justify-self-start">
-                Send Reset Link
-              </Button>
-            </form>
-          )}
+          <ForgotPasswordForm />
         </div>
         <p className="mt-6 text-sm text-navy-500">
           <Link href="/login" className="font-semibold text-gold-500 hover:underline">

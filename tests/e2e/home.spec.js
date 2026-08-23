@@ -5,6 +5,39 @@ test('homepage loads', async ({ page }) => {
   await expect(page).toHaveTitle(/Salim Cyrus/)
 })
 
+test('homepage hero includes the sliding media recognition strip', async ({
+  page,
+}) => {
+  await page.goto('/')
+
+  const hero = page.getByTestId('home-hero')
+  const strip = hero.getByRole('complementary', { name: 'Media recognition' })
+  await expect(strip).toBeVisible()
+  for (const name of [
+    'Disrupt Africa',
+    'Entrepreneur',
+    'OWN',
+    'Think Sales & Profit',
+    'Forbes',
+    'Goalcast',
+    'University of Nairobi',
+    'Kashari Soft Consultants',
+    'Mount Kenya University',
+  ]) {
+    await expect(strip.getByRole('img', { name })).toBeVisible()
+  }
+
+  const stripBox = await strip.boundingBox()
+  const cueBox = await hero.getByText('Scroll to explore').boundingBox()
+  expect(cueBox.y - (stripBox.y + stripBox.height)).toBeGreaterThanOrEqual(38)
+  expect(cueBox.y - (stripBox.y + stripBox.height)).toBeLessThanOrEqual(42)
+  expect(
+    await strip
+      .locator('.media-logo-track')
+      .evaluate((element) => getComputedStyle(element).animationName)
+  ).toBe('media-logo-scroll')
+})
+
 test('desktop navigation has generous spacing without wrapping', async ({
   page,
 }) => {

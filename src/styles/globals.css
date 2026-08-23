@@ -28,3 +28,26 @@ select:focus-visible {
   outline: 2px solid #c9a227;
   outline-offset: 2px;
 }
+
+@keyframes media-logo-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.media-logo-track {
+  animation: media-logo-scroll 28s linear infinite;
+}
+
+.media-logo-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-logo-track {
+    animation: none;
+  }
+}

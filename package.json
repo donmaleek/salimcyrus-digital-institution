@@ -13,6 +13,7 @@
     "eval:navigation": "node tests/evals/navigation.eval.js",
     "eval:scroll-cue": "node tests/evals/scroll-cue.eval.js",
     "eval:page-heroes": "node tests/evals/page-hero-uniformity.eval.js",
+    "eval:media-logos": "node tests/evals/media-logo-strip.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

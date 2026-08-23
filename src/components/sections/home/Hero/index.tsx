@@ -1,6 +1,7 @@
 import { getImageProps } from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { ScrollCue } from '@/components/ui/ScrollCue'
+import { SocialProofBar } from '@/components/sections/home/SocialProofBar'
 
 export function Hero() {
   const alt = 'Salim Cyrus presenting a keynote to a live audience'
@@ -39,7 +40,7 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-navy/25 via-navy/5 to-navy/95 sm:from-navy/20 sm:via-transparent sm:to-navy/90 lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/55 lg:to-transparent" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,27,45,0.25)_0%,transparent_24%)]" />
 
-      <div className="relative mx-auto flex w-full max-w-content items-end px-6 pb-20 pt-28 sm:pb-24 lg:items-center lg:pb-16 lg:pt-20">
+      <div className="relative mx-auto flex w-full max-w-content items-end px-6 pb-44 pt-24 sm:pb-44 lg:items-center lg:pb-28 lg:pt-20">
         <div className="max-w-xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-gold sm:text-sm">
             Speaker · Author · Transformational Leader
@@ -68,6 +69,7 @@ export function Hero() {
           </div>
         </div>
       </div>
+      <SocialProofBar />
       <ScrollCue />
     </section>
   )

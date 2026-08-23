@@ -18,7 +18,12 @@ export default function SpeakingPage() {
       <PageHero
         eyebrow="Speaking"
         title="Book Salim Cyrus"
-        image={{ src: '/images/salim/speaking.webp', alt: 'Salim Cyrus speaking', width: 840, height: 1125 }}
+        image={{
+          src: '/images/salim/speaking-keynote.webp',
+          alt: 'Salim Cyrus delivering a keynote on stage',
+          width: 1672,
+          height: 941,
+        }}
       >
         <div className="mt-10 flex flex-wrap gap-3">
           {topics.map((topic) => (

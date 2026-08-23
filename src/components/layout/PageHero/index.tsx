@@ -13,6 +13,7 @@ interface PageHeroProps {
 
 export function PageHero({ eyebrow, title, description, actions, align = 'left', image, children }: PageHeroProps) {
   const isCenter = align === 'center' && !image
+  const isLandscapeImage = image && image.width > image.height
 
   return (
     <section className="relative overflow-hidden bg-navy">
@@ -53,13 +54,17 @@ export function PageHero({ eyebrow, title, description, actions, align = 'left',
         </div>
 
         {image && (
-          <div className="relative mx-auto w-full max-w-[260px] overflow-hidden rounded-3xl bg-navy-800/50 ring-1 ring-white/10 lg:mx-0">
+          <div
+            className={`relative mx-auto w-full overflow-hidden rounded-3xl bg-navy-800/50 ring-1 ring-white/10 lg:mx-0 ${
+              isLandscapeImage ? 'max-w-[520px]' : 'max-w-[260px]'
+            }`}
+          >
             <Image
               src={image.src}
               alt={image.alt}
               width={image.width}
               height={image.height}
-              className="h-full w-full object-cover"
+              className={`h-full w-full object-cover ${isLandscapeImage ? 'aspect-video' : ''}`}
             />
           </div>
         )}

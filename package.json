@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test": "jest",
     "test:e2e": "playwright test",
+    "eval:hero": "node tests/evals/home-hero.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

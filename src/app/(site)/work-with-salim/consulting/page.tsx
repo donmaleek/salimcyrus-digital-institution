@@ -1,7 +1,39 @@
-export default function Page() {
+import type { Metadata } from 'next'
+import { Button } from '@/components/ui/Button'
+
+export const metadata: Metadata = {
+  title: 'Consulting',
+  description: 'Leadership, relationships, and personal development consulting with Salim Cyrus.',
+}
+
+const areas = [
+  { title: 'Leadership', description: 'Building teams, delegation, accountability, decision-making, culture.' },
+  { title: 'Relationships', description: 'Marriage and family strategy for organizations and communities.' },
+  { title: 'Personal Development', description: 'Purpose, identity, and character formation programs.' },
+]
+
+export default function ConsultingPage() {
   return (
-    <main>
-      <h1>Consulting</h1>
-    </main>
+    <section className="bg-cream">
+      <div className="mx-auto max-w-content px-6 py-20">
+        <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
+          Consulting
+        </p>
+        <h1 className="mt-4 font-heading text-4xl font-bold text-navy sm:text-5xl">
+          Leadership, Relationships &amp; Personal Development
+        </h1>
+        <div className="mt-12 grid gap-6 sm:grid-cols-3">
+          {areas.map((area) => (
+            <div key={area.title} className="rounded-2xl border border-navy-100 bg-white p-6">
+              <h2 className="font-heading text-lg font-semibold text-navy">{area.title}</h2>
+              <p className="mt-2 text-sm text-navy-500">{area.description}</p>
+            </div>
+          ))}
+        </div>
+        <Button href="/contact" size="lg" className="mt-12">
+          Start a Consulting Enquiry
+        </Button>
+      </div>
+    </section>
   )
 }

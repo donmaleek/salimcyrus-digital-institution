@@ -34,10 +34,13 @@ const checks = [
     pageHero.includes('h-[min(760px,100svh)]'),
   ],
   [
-    'page hero images cover the full section',
-    pageHero.includes('object-cover object-center'),
+    'page heroes have a softened full-bleed backdrop',
+    pageHero.includes('opacity-45 blur-md'),
   ],
-  ['page hero imagery spans the viewport', pageHero.includes('sizes="100vw"')],
+  [
+    'page hero foreground images remain uncropped',
+    pageHero.includes('object-contain object-center'),
+  ],
   ['page hero visual fills the section', /<Image[\s\S]*?fill/.test(pageHero)],
   [
     'page hero titles use executive display sizing',

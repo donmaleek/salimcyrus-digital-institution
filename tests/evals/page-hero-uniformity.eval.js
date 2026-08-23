@@ -39,8 +39,8 @@ const checks = [
     pageHero.includes('sizes="100vw"'),
   ],
   [
-    'topic images cover the complete hero canvas',
-    pageHero.includes('object-cover object-center'),
+    'topic images remain fully visible without cropping',
+    pageHero.includes('object-contain object-center'),
   ],
   [
     'hero uses a cinematic viewport-aware height',

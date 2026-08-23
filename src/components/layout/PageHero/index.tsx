@@ -33,14 +33,25 @@ export function PageHero({
         src={visual}
         alt=""
         fill
-        priority
         sizes="100vw"
-        className="object-cover object-center"
+        aria-hidden="true"
+        className="scale-105 object-cover object-center opacity-45 blur-md"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-navy/30 via-navy/20 to-navy/95 lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/65 lg:to-navy/10" />
+      <div className="absolute inset-x-0 top-16 aspect-video sm:top-20 lg:inset-0 lg:aspect-auto">
+        <Image
+          src={visual}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          data-testid="page-hero-full-image"
+          className="object-contain object-center"
+        />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-navy/5 via-navy/20 to-navy lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/55 lg:to-navy/15" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,27,45,0.35)_0%,transparent_25%)]" />
 
-      <div className="relative mx-auto flex w-full max-w-content items-center px-6 pb-24 pt-28 sm:pb-24 sm:pt-28 lg:px-8 lg:pt-24">
+      <div className="relative mx-auto flex w-full max-w-content items-end px-6 pb-24 pt-28 sm:pb-24 sm:pt-28 lg:items-center lg:px-8 lg:pt-24">
         <div
           className={isCenter ? 'mx-auto max-w-4xl text-center' : 'max-w-3xl'}
         >

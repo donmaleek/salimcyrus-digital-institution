@@ -50,7 +50,7 @@ test('landscape image remains visible in a desktop page hero', async ({
   await page.goto('/work-with-salim/speaking')
 
   const hero = page.getByTestId('page-hero')
-  const image = hero.locator('img')
+  const image = hero.getByTestId('page-hero-full-image')
   await expect(hero).toBeVisible()
   await expect(image).toBeVisible()
   await expect(hero.getByText('Scroll to explore')).toBeVisible()
@@ -71,7 +71,7 @@ for (const [route, asset] of [
 ]) {
   test(`${route} uses its topic-specific hero image`, async ({ page }) => {
     await page.goto(route)
-    const image = page.getByTestId('page-hero').locator('img')
+    const image = page.getByTestId('page-hero-full-image')
     await expect(image).toBeVisible()
     await expect
       .poll(() => image.evaluate((element) => element.currentSrc))
@@ -110,7 +110,7 @@ test('page hero sits behind navigation and fills the canvas', async ({
   const headerBox = await page.locator('header').boundingBox()
   const hero = page.getByTestId('page-hero')
   const heroBox = await hero.boundingBox()
-  const image = hero.locator('img')
+  const image = hero.getByTestId('page-hero-full-image')
 
   expect(headerBox.y).toBe(heroBox.y)
   expect(heroBox.height).toBeLessThanOrEqual(760)
@@ -122,5 +122,24 @@ test('page hero sits behind navigation and fills the canvas', async ({
   ).toBe('rgba(0, 0, 0, 0)')
   expect(
     await image.evaluate((element) => getComputedStyle(element).objectFit)
-  ).toBe('cover')
+  ).toBe('contain')
+})
+
+test('mobile page hero keeps the full topic image above its copy', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/media')
+
+  const hero = page.getByTestId('page-hero')
+  const image = page.getByTestId('page-hero-full-image')
+  const heading = hero.getByRole('heading')
+  const imageBox = await image.boundingBox()
+  const headingBox = await heading.boundingBox()
+
+  expect(
+    await image.evaluate((element) => getComputedStyle(element).objectFit)
+  ).toBe('contain')
+  expect(imageBox.y + imageBox.height).toBeLessThanOrEqual(headingBox.y + 1)
+  await expect(hero.getByText('Scroll to explore')).toBeVisible()
 })

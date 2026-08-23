@@ -28,8 +28,9 @@ test('landscape image remains visible in a desktop page hero', async ({ page }) 
   await expect(image).toBeVisible()
 
   const imageBox = await image.boundingBox()
-  expect(imageBox.width).toBeGreaterThanOrEqual(360)
-  expect(imageBox.height).toBeGreaterThanOrEqual(200)
+  expect(imageBox.width).toBeGreaterThanOrEqual(440)
+  expect(imageBox.height).toBeGreaterThanOrEqual(247)
+  await expect.poll(() => image.evaluate((element) => element.naturalWidth)).toBeGreaterThan(0)
 })
 
 test('keynote hero remains usable at a narrow mobile viewport', async ({ page }) => {

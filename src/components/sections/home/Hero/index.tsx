@@ -16,11 +16,8 @@ export function Hero() {
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy/70 to-transparent" />
 
       <div className="relative mx-auto w-full max-w-content px-6 pb-20 pt-16 sm:pb-28 lg:pb-32">
-        <div className="max-w-2xl">
-          <p className="font-body text-xs font-semibold uppercase tracking-[0.24em] text-gold-200 sm:text-sm">
-            Relationship Coach &middot; Speaker &middot; Author
-          </p>
-          <h1 className="mt-5 max-w-xl font-heading text-5xl font-bold leading-[0.95] text-cream sm:text-6xl lg:text-8xl">
+        <div className="max-w-3xl">
+          <h1 className="font-heading text-7xl font-bold leading-[0.9] text-cream sm:text-8xl lg:text-[9rem]">
             Salim Cyrus
           </h1>
           <p className="mt-7 max-w-lg text-lg leading-relaxed text-cream/90 sm:text-xl">

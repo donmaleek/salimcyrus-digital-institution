@@ -1,5 +1,6 @@
 import { getImageProps } from 'next/image'
 import { Button } from '@/components/ui/Button'
+import { ScrollCue } from '@/components/ui/ScrollCue'
 
 export function Hero() {
   const alt = 'Salim Cyrus presenting a keynote to a live audience'
@@ -62,6 +63,7 @@ export function Hero() {
           </div>
         </div>
       </div>
+      <ScrollCue />
     </section>
   )
 }

@@ -25,6 +25,7 @@ test('keynote hero keeps Salim and primary actions visible on desktop', async ({
 
   const hero = page.getByTestId('home-hero')
   await expect(hero).toBeVisible()
+  await expect(hero.getByText('Scroll to explore')).toBeVisible()
   await expect(hero.getByRole('img', { name: /Salim Cyrus presenting/i })).toBeVisible()
   await expect(hero.getByRole('heading', { name: 'Salim Cyrus' })).toBeVisible()
   await expect(hero.getByRole('link', { name: 'Book a Session' })).toBeVisible()
@@ -40,6 +41,7 @@ test('landscape image remains visible in a desktop page hero', async ({ page }) 
 
   const image = page.getByRole('img', { name: 'Salim Cyrus delivering a keynote on stage' })
   await expect(image).toBeVisible()
+  await expect(page.getByText('Scroll to explore')).toBeVisible()
 
   const imageBox = await image.boundingBox()
   expect(imageBox.width).toBeGreaterThanOrEqual(400)

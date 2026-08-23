@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import Image from 'next/image'
+import { ScrollCue } from '@/components/ui/ScrollCue'
 
 interface PageHeroProps {
   eyebrow: string
@@ -77,6 +78,7 @@ export function PageHero({ eyebrow, title, description, actions, align = 'left',
           </div>
         )}
       </div>
+      <ScrollCue />
     </section>
   )
 }

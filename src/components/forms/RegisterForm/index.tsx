@@ -57,7 +57,7 @@ export function RegisterForm() {
         onChange={update('password')}
       />
       {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
-      <Button type="submit" disabled={status === 'loading'} className="justify-self-start">
+      <Button type="submit" loading={status === 'loading'} className="justify-self-start">
         {status === 'loading' ? 'Creating account…' : 'Create Account'}
       </Button>
     </form>

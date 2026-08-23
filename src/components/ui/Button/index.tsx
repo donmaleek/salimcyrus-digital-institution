@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
+import { Spinner } from '@/components/ui/Spinner'
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost'
 type Size = 'sm' | 'md' | 'lg'
@@ -25,6 +26,7 @@ interface CommonProps {
   variant?: Variant
   size?: Size
   className?: string
+  loading?: boolean
 }
 
 interface ButtonAsButton extends CommonProps, Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -42,6 +44,7 @@ export function Button({
   variant = 'primary',
   size = 'md',
   className = '',
+  loading = false,
   href,
   ...props
 }: ButtonProps) {
@@ -56,7 +59,13 @@ export function Button({
   }
 
   return (
-    <button className={classes} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
+    <button
+      className={classes}
+      disabled={loading || (props as ButtonHTMLAttributes<HTMLButtonElement>).disabled}
+      aria-busy={loading}
+      {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+    >
+      {loading && <Spinner size={16} />}
       {children}
     </button>
   )

@@ -45,7 +45,7 @@ export function NewsletterSignup() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-full border border-cream/20 bg-navy-900 px-4 py-2 text-sm text-cream placeholder:text-cream/40 focus:outline-none focus:ring-2 focus:ring-gold"
         />
-        <Button type="submit" size="sm" disabled={status === 'loading'}>
+        <Button type="submit" size="sm" loading={status === 'loading'}>
           Join
         </Button>
       </form>

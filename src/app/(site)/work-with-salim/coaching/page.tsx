@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
+import { Accordion } from '@/components/ui/Accordion'
+import { JsonLd } from '@/components/sections/shared/SEO'
 import { CoachingPackageCard } from '@/components/sections/coaching/CoachingPackageCard'
 import { PricingTable } from '@/components/sections/coaching/PricingTable'
 import { coachingProcess, coachingStats, coachingFaqs } from '@/lib/data/coaching-offers'
@@ -8,6 +10,16 @@ import { WHATSAPP_URL } from '@/lib/utils/constants'
 export const metadata: Metadata = {
   title: 'Coaching',
   description: 'Private coaching for leaders in transition — clarity, structure, and accountability with Salim Cyrus.',
+}
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: coachingFaqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a },
+  })),
 }
 
 const packages = [
@@ -150,16 +162,12 @@ export default function CoachingPage() {
       </section>
 
       <section className="bg-cream">
+        <JsonLd data={faqJsonLd} />
         <div className="mx-auto max-w-content px-6 py-20">
           <h2 className="font-heading text-2xl font-bold text-navy">FAQ</h2>
-          <dl className="mt-8 divide-y divide-navy-100">
-            {coachingFaqs.map((faq) => (
-              <div key={faq.q} className="py-6">
-                <dt className="font-heading text-lg font-semibold text-navy">{faq.q}</dt>
-                <dd className="mt-2 text-navy-600">{faq.a}</dd>
-              </div>
-            ))}
-          </dl>
+          <div className="mt-8">
+            <Accordion items={coachingFaqs.map((f) => ({ question: f.q, answer: f.a }))} />
+          </div>
         </div>
       </section>
     </>

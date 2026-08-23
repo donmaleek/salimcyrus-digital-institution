@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { Accordion } from '@/components/ui/Accordion'
+import { JsonLd } from '@/components/sections/shared/SEO'
 
 export const metadata: Metadata = {
   title: 'FAQ',
@@ -6,34 +8,40 @@ export const metadata: Metadata = {
 }
 
 const faqs = [
-  { q: 'How much does coaching cost?', a: 'Pricing is listed on the Coaching page, starting at KES 3,500 for a single session.' },
-  { q: 'How do I book?', a: 'Use the "Book a Session" button anywhere on the site, or the Contact page.' },
-  { q: 'Is coaching online?', a: 'Yes — sessions are conducted online, with in-person availability for select engagements.' },
-  { q: 'Do you coach couples?', a: 'Yes, couples coaching is available alongside individual coaching.' },
-  { q: 'Do you coach internationally?', a: 'Yes — international clients can pay by card at checkout.' },
-  { q: 'How do payments work?', a: 'M-PESA and card payments are supported for Kenyan clients; international clients pay by card.' },
-  { q: 'What happens after booking?', a: 'You will receive a confirmation with session details and any preparation notes.' },
-  { q: 'Can I cancel?', a: 'See the Refund/Cancellation Policy for full terms.' },
-  { q: 'Is coaching confidential?', a: 'Yes, sessions are treated as confidential.' },
-  { q: 'Do you provide therapy?', a: 'Coaching is not a substitute for licensed therapy or medical care — see the Coaching Disclaimer.' },
-  { q: 'Do you provide financial/investment advice?', a: 'Business content is educational and not individualized financial or investment advice.' },
+  { question: 'How much does coaching cost?', answer: 'Pricing for each session type is shown on the Coaching page and at checkout.' },
+  { question: 'How do I book?', answer: 'Use the "Book a Session" button anywhere on the site, or the Contact page.' },
+  { question: 'Is coaching online?', answer: 'Yes — sessions are conducted online, with in-person availability for select engagements.' },
+  { question: 'Do you coach couples?', answer: 'Yes, couples coaching is available alongside individual coaching.' },
+  { question: 'Do you coach internationally?', answer: 'Yes — international clients can pay by card at checkout.' },
+  { question: 'How do payments work?', answer: 'M-PESA and card payments are supported for Kenyan clients; international clients pay by card.' },
+  { question: 'What happens after booking?', answer: 'You will receive a confirmation with session details and any preparation notes.' },
+  { question: 'Can I cancel?', answer: 'See the Refund/Cancellation Policy for full terms.' },
+  { question: 'Is coaching confidential?', answer: 'Yes, sessions are treated as confidential.' },
+  { question: 'Do you provide therapy?', answer: 'Coaching is not a substitute for licensed therapy or medical care — see the Coaching Disclaimer.' },
+  { question: 'Do you provide financial/investment advice?', answer: 'Business content is educational and not individualized financial or investment advice.' },
 ]
 
 export default function FaqPage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }
+
   return (
     <section className="bg-cream">
+      <JsonLd data={jsonLd} />
       <div className="mx-auto max-w-content px-6 py-20">
         <h1 className="font-heading text-4xl font-bold text-navy sm:text-5xl">
           Frequently Asked Questions
         </h1>
-        <dl className="mt-12 divide-y divide-navy-100">
-          {faqs.map((faq) => (
-            <div key={faq.q} className="py-6">
-              <dt className="font-heading text-lg font-semibold text-navy">{faq.q}</dt>
-              <dd className="mt-2 text-navy-600">{faq.a}</dd>
-            </div>
-          ))}
-        </dl>
+        <div className="mt-12">
+          <Accordion items={faqs.map((f) => ({ question: f.question, answer: f.answer }))} />
+        </div>
       </div>
     </section>
   )

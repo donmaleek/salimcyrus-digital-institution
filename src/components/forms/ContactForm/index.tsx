@@ -2,10 +2,12 @@
 
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
+import { useToast } from '@/components/ui/Toast'
 import { CONTACT_EMAIL } from '@/lib/utils/constants'
 
 export function ContactForm() {
   const [values, setValues] = useState({ name: '', email: '', whatsapp: '', message: '' })
+  const { showToast } = useToast()
 
   function update(field: keyof typeof values) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -18,6 +20,8 @@ export function ContactForm() {
       `${values.message}\n\nFrom: ${values.name} (${values.email})\nWhatsApp: ${values.whatsapp}`
     )
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=Website%20Enquiry&body=${body}`
+    showToast('Opening your email client to send the message…')
+    setValues({ name: '', email: '', whatsapp: '', message: '' })
   }
 
   return (

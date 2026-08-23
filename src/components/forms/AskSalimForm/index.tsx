@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
+import { useToast } from '@/components/ui/Toast'
 import { CONTACT_EMAIL } from '@/lib/utils/constants'
 
 const categories = ['Relationships', 'Marriage', 'Manhood', 'Purpose', 'Business', 'Kingdom', 'Leadership']
@@ -10,11 +11,15 @@ export function AskSalimForm() {
   const [category, setCategory] = useState(categories[0])
   const [question, setQuestion] = useState('')
   const [name, setName] = useState('')
+  const { showToast } = useToast()
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const body = encodeURIComponent(`Category: ${category}\n\nQuestion: ${question}\n\nFrom: ${name}`)
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=Ask%20Salim&body=${body}`
+    showToast('Opening your email client to send the question…')
+    setQuestion('')
+    setName('')
   }
 
   return (

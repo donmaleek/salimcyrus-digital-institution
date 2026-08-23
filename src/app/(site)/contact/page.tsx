@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { ContactForm } from '@/components/forms/ContactForm'
 import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
 
 export const metadata: Metadata = {
@@ -48,14 +48,10 @@ export default function ContactPage() {
         <div className="mx-auto max-w-content px-6 py-16">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {pathways.map((pathway) => (
-              <Link
-                key={pathway.href}
-                href={pathway.href}
-                className="rounded-2xl border border-navy-100 bg-white p-6 transition-shadow hover:shadow-lg"
-              >
+              <Card key={pathway.href} href={pathway.href}>
                 <p className="font-medium text-navy">{pathway.label}</p>
                 <p className="mt-1 text-sm font-semibold text-gold-500">{pathway.action} &rarr;</p>
-              </Link>
+              </Card>
             ))}
           </div>
         </div>

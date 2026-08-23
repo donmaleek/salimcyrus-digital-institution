@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import { books } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
 
@@ -33,9 +34,7 @@ export default function BooksPage() {
                 {book.status === 'available' && book.priceKes ? (
                   <span className="text-xl font-bold text-navy">{formatCurrency(book.priceKes)}</span>
                 ) : (
-                  <span className="text-sm font-semibold uppercase tracking-wide text-navy-400">
-                    Coming Soon
-                  </span>
+                  <Badge variant="navy">Coming Soon</Badge>
                 )}
                 {book.status === 'available' && book.paystackUrl ? (
                   <Button href={book.paystackUrl} size="sm">

@@ -35,7 +35,7 @@ export function AccountForm({ initialName, email }: AccountFormProps) {
       <Input label="Email" type="email" disabled value={email} />
       {status === 'success' && <p className="text-sm text-gold-600">Saved.</p>}
       {status === 'error' && <p className="text-sm text-red-600">Could not save changes.</p>}
-      <Button type="submit" disabled={status === 'loading'} variant="outline" className="justify-self-start">
+      <Button type="submit" loading={status === 'loading'} variant="outline" className="justify-self-start">
         {status === 'loading' ? 'Saving…' : 'Save Changes'}
       </Button>
     </form>

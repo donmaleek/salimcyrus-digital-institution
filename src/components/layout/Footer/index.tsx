@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { FooterLinks } from './FooterLinks'
 import { NewsletterSignup } from './NewsletterSignup'
+import { SocialIcon } from '@/components/ui/SocialIcon'
 import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
 
 export function Footer() {
@@ -21,6 +22,10 @@ export function Footer() {
               <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-gold">
                 {CONTACT_EMAIL}
               </a>
+            </div>
+            <div className="mt-4 flex gap-3">
+              <SocialIcon name="whatsapp" href={WHATSAPP_URL} label="Chat on WhatsApp" />
+              <SocialIcon name="email" href={`mailto:${CONTACT_EMAIL}`} label="Send an email" />
             </div>
             <div className="mt-8">
               <NewsletterSignup />

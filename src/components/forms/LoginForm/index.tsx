@@ -40,7 +40,7 @@ export function LoginForm() {
       {status === 'error' && (
         <p className="text-sm text-red-600">Invalid email or password.</p>
       )}
-      <Button type="submit" disabled={status === 'loading'} className="justify-self-start">
+      <Button type="submit" loading={status === 'loading'} className="justify-self-start">
         {status === 'loading' ? 'Signing in…' : 'Sign In'}
       </Button>
     </form>

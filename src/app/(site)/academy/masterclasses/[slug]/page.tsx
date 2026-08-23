@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { programs } from '@/lib/data/programs'
 import { formatCurrency } from '@/lib/utils/currency'
@@ -48,9 +49,7 @@ export default function ProgramDetailPage({ params }: PageProps) {
       <JsonLd data={jsonLd} />
       <div className="mx-auto max-w-content px-6 py-20">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-gold-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold-500">
-            {program.tag}
-          </span>
+          <Badge>{program.tag}</Badge>
           <span className="text-xs font-semibold uppercase tracking-wide text-navy-400">
             {program.duration}
           </span>

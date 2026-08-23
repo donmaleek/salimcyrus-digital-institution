@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import { JsonLd } from '@/components/sections/shared/SEO'
+import { ToastProvider } from '@/components/ui/Toast'
 import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
 
 const playfair = Playfair_Display({
@@ -76,7 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <JsonLd data={jsonLd} />
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   )

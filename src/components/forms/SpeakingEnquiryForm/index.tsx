@@ -2,19 +2,23 @@
 
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
+import { useToast } from '@/components/ui/Toast'
 import { CONTACT_EMAIL } from '@/lib/utils/constants'
 
+const initialValues = {
+  organization: '',
+  eventType: '',
+  date: '',
+  location: '',
+  audienceSize: '',
+  topic: '',
+  budget: '',
+  contact: '',
+}
+
 export function SpeakingEnquiryForm() {
-  const [values, setValues] = useState({
-    organization: '',
-    eventType: '',
-    date: '',
-    location: '',
-    audienceSize: '',
-    topic: '',
-    budget: '',
-    contact: '',
-  })
+  const [values, setValues] = useState(initialValues)
+  const { showToast } = useToast()
 
   function update(field: keyof typeof values) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -27,6 +31,8 @@ export function SpeakingEnquiryForm() {
       .map(([key, value]) => `${key}: ${value}`)
       .join('%0D%0A')
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=Speaking%20Enquiry&body=${body}`
+    showToast('Opening your email client to send the enquiry…')
+    setValues(initialValues)
   }
 
   return (

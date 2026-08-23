@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
 import { formatCurrency } from '@/lib/utils/currency'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
 import type { Program } from '@/lib/data/programs'
@@ -8,9 +9,7 @@ export function MasterclassCard({ program }: { program: Program }) {
   return (
     <div className="flex flex-col rounded-2xl border border-navy-100 bg-white p-8">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="rounded-full bg-gold-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold-500">
-          {program.tag}
-        </span>
+        <Badge>{program.tag}</Badge>
         <span className="text-xs font-semibold uppercase tracking-wide text-navy-400">
           {program.duration}
         </span>

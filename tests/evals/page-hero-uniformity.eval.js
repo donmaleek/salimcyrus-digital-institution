@@ -39,6 +39,14 @@ const checks = [
     pageHero.includes('sizes="100vw"'),
   ],
   [
+    'topic images display without cropping',
+    pageHero.includes('object-contain object-center'),
+  ],
+  [
+    'hero reserves navigation height',
+    pageHero.includes('h-[calc(100svh-64px)]'),
+  ],
+  [
     'shared hero includes the continuation cue',
     pageHero.includes('<ScrollCue />'),
   ],

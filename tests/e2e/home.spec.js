@@ -40,7 +40,7 @@ test('keynote hero keeps Salim and primary actions visible on desktop', async ({
   ).toBeVisible()
 
   const heroBox = await hero.boundingBox()
-  expect(heroBox.width / heroBox.height).toBeCloseTo(1672 / 941, 1)
+  expect(heroBox.height).toBeLessThanOrEqual(720)
 })
 
 test('landscape image remains visible in a desktop page hero', async ({
@@ -57,7 +57,7 @@ test('landscape image remains visible in a desktop page hero', async ({
 
   const imageBox = await image.boundingBox()
   expect(imageBox.width).toBeGreaterThanOrEqual(1900)
-  expect(imageBox.height).toBeGreaterThanOrEqual(700)
+  expect(imageBox.height).toBeGreaterThanOrEqual(540)
   await expect
     .poll(() => image.evaluate((element) => element.naturalWidth))
     .toBeGreaterThan(0)
@@ -98,4 +98,23 @@ test('keynote hero remains usable at a narrow mobile viewport', async ({
 
   const heroBox = await hero.boundingBox()
   expect(heroBox.width).toBeLessThanOrEqual(375)
+  expect(heroBox.height).toBeLessThanOrEqual(812)
+})
+
+test('page hero fits below navigation and shows the entire image', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 768 })
+  await page.goto('/academy')
+
+  const headerBox = await page.locator('header').boundingBox()
+  const hero = page.getByTestId('page-hero')
+  const heroBox = await hero.boundingBox()
+  const image = hero.locator('img')
+
+  expect(heroBox.height).toBeLessThanOrEqual(768 - headerBox.height + 1)
+  await expect(hero.getByText('Scroll to explore')).toBeVisible()
+  expect(
+    await image.evaluate((element) => getComputedStyle(element).objectFit)
+  ).toBe('contain')
 })

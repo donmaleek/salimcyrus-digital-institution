@@ -30,8 +30,13 @@ const checks = [
     speakingPage.includes('/images/salim/speaking-keynote.webp'),
   ],
   [
-    'page heroes use a cinematic but restrained height',
-    pageHero.includes('min-h-[620px]'),
+    'page heroes fit beneath the navigation',
+    pageHero.includes('h-[calc(100svh-64px)]'),
+  ],
+  ['page hero height remains restrained', pageHero.includes('max-h-[680px]')],
+  [
+    'page hero images remain fully visible',
+    pageHero.includes('object-contain object-center'),
   ],
   ['page hero visual fills the section', /<Image[\s\S]*?fill/.test(pageHero)],
   [
@@ -59,8 +64,8 @@ const checks = [
   ['mobile contrast gradient is present', /bg-gradient-to-b/.test(source)],
   ['desktop contrast gradient is present', /lg:bg-gradient-to-r/.test(source)],
   [
-    'desktop hero preserves the source aspect ratio',
-    /lg:aspect-\[1672\/941\]/.test(source),
+    'homepage hero stays within the visible viewport',
+    /h-\[100svh\]/.test(source),
   ],
   [
     'hero has an accessible labelled region',

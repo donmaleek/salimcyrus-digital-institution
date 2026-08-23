@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Inter } from 'next/font/google'
+import { Playfair_Display, Inter, Alex_Brush } from 'next/font/google'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { ToastProvider } from '@/components/ui/Toast'
 import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
@@ -14,6 +14,13 @@ const playfair = Playfair_Display({
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-body',
+  display: 'swap',
+})
+
+const signature = Alex_Brush({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-signature',
   display: 'swap',
 })
 
@@ -68,7 +75,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${inter.variable} ${signature.variable}`}>
       <body className="bg-cream font-body text-ink antialiased">
         <a
           href="#main-content"

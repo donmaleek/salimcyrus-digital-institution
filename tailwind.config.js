@@ -9,6 +9,7 @@ module.exports = {
       fontFamily: {
         heading: ['var(--font-heading)'],
         body: ['var(--font-body)'],
+        signature: ['var(--font-signature)'],
       },
       colors: {
         navy: {

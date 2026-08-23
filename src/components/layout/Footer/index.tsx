@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { FooterLinks } from './FooterLinks'
 import { NewsletterSignup } from './NewsletterSignup'
 import { SocialIcon } from '@/components/ui/SocialIcon'
@@ -11,13 +10,7 @@ export function Footer() {
       <div className="mx-auto max-w-content px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
-            <Image
-              src="/images/salim/signature-logo.webp"
-              alt="Salim Cyrus"
-              width={160}
-              height={107}
-              className="h-14 w-auto"
-            />
+            <span className="font-signature text-5xl leading-none text-gold">Salim Cyrus</span>
             <p className="mt-3 max-w-sm text-sm text-cream/70">
               Relationship Coach | Speaker | Author | Kingdom Strategist. Empowering minds.
               Reforming hearts. Restoring purpose through truth and wisdom.

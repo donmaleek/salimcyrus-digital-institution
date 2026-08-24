@@ -63,7 +63,7 @@ export default function KnowledgeCentrePage() {
           className="bg-cream"
           aria-labelledby="knowledge-introduction-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -124,7 +124,7 @@ export default function KnowledgeCentrePage() {
           className="scroll-mt-24 bg-white"
           aria-labelledby="knowledge-map-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Knowledge Map
@@ -203,7 +203,7 @@ export default function KnowledgeCentrePage() {
           className="bg-navy text-cream"
           aria-labelledby="entry-points-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
@@ -243,7 +243,7 @@ export default function KnowledgeCentrePage() {
         </section>
 
         <section className="bg-cream" aria-labelledby="publishing-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -284,7 +284,7 @@ export default function KnowledgeCentrePage() {
         </section>
 
         <section className="bg-white" aria-labelledby="continue-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-10 lg:grid-cols-[0.62fr_1.38fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">

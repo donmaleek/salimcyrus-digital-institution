@@ -128,7 +128,7 @@ export default function BooksPage() {
           className="bg-cream"
           aria-labelledby="books-introduction-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -191,7 +191,7 @@ export default function BooksPage() {
           className="scroll-mt-24 bg-white"
           aria-labelledby="available-books-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Available Books
@@ -294,7 +294,7 @@ export default function BooksPage() {
           className="bg-navy text-cream"
           aria-labelledby="reading-practice-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
@@ -341,7 +341,7 @@ export default function BooksPage() {
               className="bg-cream"
               aria-labelledby="upcoming-book-heading"
             >
-              <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+              <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
                 <div className="grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:items-end lg:gap-20">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -393,7 +393,7 @@ export default function BooksPage() {
         })}
 
         <section className="bg-white" aria-labelledby="books-questions-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-10 lg:grid-cols-[0.62fr_1.38fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">

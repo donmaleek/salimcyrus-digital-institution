@@ -84,7 +84,7 @@ export default function AskSalimPage() {
 
       <main data-testid="ask-salim-content">
         <section className="bg-cream" aria-labelledby="invitation-heading">
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 The Invitation
@@ -118,7 +118,7 @@ export default function AskSalimPage() {
           className="scroll-mt-24 bg-white"
           aria-labelledby="process-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 How It Works
@@ -156,7 +156,7 @@ export default function AskSalimPage() {
           className="bg-navy text-cream"
           aria-labelledby="prompts-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.62fr_1.38fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
@@ -201,7 +201,7 @@ export default function AskSalimPage() {
           className="scroll-mt-24 bg-cream"
           aria-labelledby="form-heading"
         >
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.58fr_1.42fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.58fr_1.42fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Your Submission
@@ -232,7 +232,7 @@ export default function AskSalimPage() {
         </section>
 
         <section className="bg-white" aria-labelledby="selection-heading">
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Selection Standard
@@ -271,7 +271,7 @@ export default function AskSalimPage() {
           className="bg-navy text-cream"
           aria-labelledby="boundaries-heading"
         >
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
                 Important Boundaries

@@ -91,7 +91,7 @@ export default function ContactPage() {
 
       <main data-testid="contact-content">
         <section className="bg-cream" aria-labelledby="routing-heading">
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 The Contact Desk
@@ -124,7 +124,7 @@ export default function ContactPage() {
           className="scroll-mt-24 bg-white"
           aria-labelledby="pathways-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Choose the Right Path
@@ -173,7 +173,7 @@ export default function ContactPage() {
           className="bg-navy text-cream"
           aria-labelledby="direct-heading"
         >
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.68fr_1.32fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.68fr_1.32fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
                 Direct Contact
@@ -225,7 +225,7 @@ export default function ContactPage() {
           className="scroll-mt-24 bg-cream"
           aria-labelledby="enquiry-heading"
         >
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.58fr_1.42fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.58fr_1.42fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 General Enquiry
@@ -256,7 +256,7 @@ export default function ContactPage() {
         </section>
 
         <section className="bg-white" aria-labelledby="message-heading">
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 A Useful First Message
@@ -293,7 +293,7 @@ export default function ContactPage() {
           className="bg-navy text-cream"
           aria-labelledby="expectations-heading"
         >
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
                 Response Expectations

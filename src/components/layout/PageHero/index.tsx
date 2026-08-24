@@ -42,7 +42,7 @@ export function PageHero({
 
   return (
     <section
-      className="relative isolate flex w-full aspect-[941/1672] overflow-hidden bg-navy lg:h-[calc(56.2799vw-100px)] lg:aspect-auto"
+      className="relative isolate flex min-h-[780px] w-full overflow-hidden bg-navy lg:h-[calc(56.2799vw-100px)] lg:min-h-0"
       data-testid="page-hero"
     >
       <picture>
@@ -57,14 +57,14 @@ export function PageHero({
       <div className="absolute inset-0 bg-gradient-to-b from-navy/15 via-navy/10 to-navy/95 lg:bg-gradient-to-r lg:from-navy/95 lg:via-navy/55 lg:to-navy/10" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,27,45,0.35)_0%,transparent_25%)]" />
 
-      <div className="relative mx-auto flex w-full max-w-content items-end px-6 pb-24 pt-28 sm:pb-24 sm:pt-28 lg:items-center lg:px-8 lg:pt-24">
+      <div className="relative mx-auto flex w-full max-w-content items-end px-6 pb-28 pt-24 sm:pb-24 sm:pt-28 lg:items-center lg:px-8 lg:pt-24">
         <div
           className={isCenter ? 'mx-auto max-w-4xl text-center' : 'max-w-3xl'}
         >
           <p className="font-body text-sm font-semibold uppercase tracking-[0.24em] text-gold sm:text-base">
             {eyebrow}
           </p>
-          <h1 className="mt-4 font-heading text-5xl font-bold leading-[0.98] text-cream sm:text-6xl lg:text-7xl">
+          <h1 className="mt-4 font-heading text-[2.75rem] font-bold leading-[0.98] text-cream sm:text-6xl lg:text-7xl">
             {title}
           </h1>
           {description && (
@@ -78,7 +78,7 @@ export function PageHero({
           )}
           {actions && (
             <div
-              className={`mt-9 flex flex-wrap gap-4 ${isCenter ? 'justify-center' : ''}`}
+              className={`mt-9 flex w-full flex-wrap gap-4 [&>a]:w-full [&>button]:w-full sm:[&>a]:w-auto sm:[&>button]:w-auto ${isCenter ? 'justify-center' : ''}`}
             >
               {actions}
             </div>

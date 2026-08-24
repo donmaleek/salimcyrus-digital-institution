@@ -60,7 +60,7 @@ export default function JournalPage() {
           className="scroll-mt-24 bg-cream"
           aria-labelledby="latest-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.6fr_1.4fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -105,7 +105,7 @@ export default function JournalPage() {
           className="scroll-mt-24 bg-white"
           aria-labelledby="map-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Editorial Map
@@ -150,7 +150,7 @@ export default function JournalPage() {
           className="bg-navy text-cream"
           aria-labelledby="method-heading"
         >
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
                 A Better Reading Practice
@@ -189,7 +189,7 @@ export default function JournalPage() {
         </section>
 
         <section className="bg-cream" aria-labelledby="desk-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.62fr_1.38fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -237,7 +237,7 @@ export default function JournalPage() {
         </section>
 
         <section className="bg-white" aria-labelledby="standards-heading">
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Publishing Standard
@@ -277,7 +277,7 @@ export default function JournalPage() {
           className="bg-navy text-cream"
           aria-labelledby="continue-heading"
         >
-          <div className="mx-auto grid max-w-content gap-10 px-6 py-20 sm:py-24 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="mx-auto grid max-w-content gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1fr_auto] lg:items-end">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
                 Continue Thinking

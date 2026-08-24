@@ -124,7 +124,7 @@ export default function HalisiHubConnectPage() {
 
       <main data-testid="halisi-hub-content">
         <section className="bg-cream" aria-labelledby="institution-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -175,7 +175,7 @@ export default function HalisiHubConnectPage() {
         </section>
 
         <section className="bg-white" aria-labelledby="pillars-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Four Commitments
@@ -211,7 +211,7 @@ export default function HalisiHubConnectPage() {
         </section>
 
         <section className="bg-navy text-cream" aria-labelledby="model-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
@@ -256,7 +256,7 @@ export default function HalisiHubConnectPage() {
           className="scroll-mt-24 bg-cream"
           aria-labelledby="pathways-heading"
         >
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Choose Your Entry Point
@@ -294,7 +294,7 @@ export default function HalisiHubConnectPage() {
         </section>
 
         <section className="bg-white" aria-labelledby="people-heading">
-          <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.82fr_1.18fr] lg:gap-20">
+          <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.82fr_1.18fr] lg:gap-20">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
                 Who It Serves
@@ -329,7 +329,7 @@ export default function HalisiHubConnectPage() {
         </section>
 
         <section className="bg-cream" aria-labelledby="measurement-heading">
-          <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
             <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
@@ -373,7 +373,7 @@ export default function HalisiHubConnectPage() {
           className="bg-navy text-cream"
           aria-labelledby="participate-heading"
         >
-          <div className="mx-auto grid max-w-content gap-10 px-6 py-20 sm:py-24 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="mx-auto grid max-w-content gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1fr_auto] lg:items-end">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
                 Participate

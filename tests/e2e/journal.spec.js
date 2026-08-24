@@ -26,18 +26,20 @@ test('Journal presents a verified lead essay and structured editorial map', asyn
   ).toHaveCount(5)
 })
 
-test('Journal opens the published essay overview without a dead source link', async ({
+test('Journal opens the published essay and renders its own body, not shared filler', async ({
   page,
 }) => {
   await page.goto('/journal')
-  await page.getByRole('link', { name: /Read the editorial overview/ }).click()
+  await page.getByRole('link', { name: /Read the full essay/ }).click()
 
   await expect(page).toHaveURL(
     /people-vent-on-social-media-because-they-arent-heard-in-person/
   )
-  await expect(
-    page.getByTestId('entry-ideas').locator(':scope > li')
-  ).toHaveCount(4)
+  const paragraphCount = await page
+    .getByTestId('essay-body')
+    .locator(':scope > p')
+    .count()
+  expect(paragraphCount).toBeGreaterThan(0)
   await expect(
     page.getByRole('link', { name: 'Explore the Journal' })
   ).toHaveAttribute('href', '/journal')

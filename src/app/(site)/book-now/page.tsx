@@ -21,7 +21,7 @@ const bookingSteps = [
   ],
   [
     'Confirm',
-    'Come back and confirm your booking — pick an open time slot right on the site, no back-and-forth needed.',
+    'Come back and confirm your booking, and pick an open time slot right on the site. No back-and-forth needed.',
   ],
   [
     'Prepare',

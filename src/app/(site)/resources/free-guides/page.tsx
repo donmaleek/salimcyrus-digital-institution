@@ -1,21 +1,12 @@
 import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
+import { freeGuideTitles } from '@/lib/data/free-guides'
 
 export const metadata: Metadata = {
   title: 'Free Guides',
   description: 'Free downloadable guides from Salim Cyrus.',
 }
-
-const guides = [
-  '10 Questions Before You Get Married',
-  'Purpose Discovery Workbook',
-  'Defining Manhood Guide',
-  'Marriage Communication Checklist',
-  'Relationship Red Flags Guide',
-  'Business Startup Checklist',
-  'The Reset Checklist',
-]
 
 export default function FreeGuidesPage() {
   return (
@@ -28,7 +19,7 @@ export default function FreeGuidesPage() {
       <section className="bg-cream">
         <div className="mx-auto max-w-content px-6 py-20">
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {guides.map((guide) => (
+            {freeGuideTitles.map((guide) => (
               <div
                 key={guide}
                 className="flex flex-col rounded-2xl border border-navy-100 bg-white p-6"

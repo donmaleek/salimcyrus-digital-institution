@@ -32,7 +32,7 @@ async function main() {
         body:
           'What looks like online oversharing can begin with a quieter failure: people do not feel heard in their homes, friendships, workplaces, or faith communities. This essay asks what attentive listening could repair before pain moves into public view.\n\n' +
           'Digital expression is often a symptom of offline disconnection. Healthier communities are built when people learn to listen before they judge the way pain is expressed.\n\n' +
-          '[This entry was migrated from a placeholder summary — edit it in /dashboard/admin/journal to add the full essay.]',
+          '[This entry was migrated from a placeholder summary. Edit it in /dashboard/admin/journal to add the full essay.]',
         readingTime: '8 minute overview',
         status: 'published',
         publishedAt: new Date('2025-09-04'),

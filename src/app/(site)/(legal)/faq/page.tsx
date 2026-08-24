@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Accordion } from '@/components/ui/Accordion'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { PageHero } from '@/components/layout/PageHero'
@@ -23,7 +24,7 @@ const faqs = [
   {
     question: 'Is coaching online?',
     answer:
-      'Yes — sessions are conducted online, with in-person availability for select engagements.',
+      'Yes, sessions are conducted online, with in-person availability for select engagements.',
   },
   {
     question: 'Do you coach couples?',
@@ -31,7 +32,7 @@ const faqs = [
   },
   {
     question: 'Do you coach internationally?',
-    answer: 'Yes — international clients can pay by card at checkout.',
+    answer: 'Yes, international clients can pay by card at checkout.',
   },
   {
     question: 'How do payments work?',
@@ -54,7 +55,7 @@ const faqs = [
   {
     question: 'Do you provide therapy?',
     answer:
-      'Coaching is not a substitute for licensed therapy or medical care — see the Coaching Disclaimer.',
+      'Coaching is not a substitute for licensed therapy or medical care. See the Coaching Disclaimer.',
   },
   {
     question: 'Do you provide financial/investment advice?',
@@ -88,7 +89,26 @@ export default function FaqPage() {
             <Accordion
               items={faqs.map((f) => ({
                 question: f.question,
-                answer: f.answer,
+                answer:
+                  f.question === 'Can I cancel?' ? (
+                    <>
+                      See the{' '}
+                      <Link href="/refund-policy" className="font-semibold text-gold-500 hover:underline">
+                        Refund &amp; Cancellation Policy
+                      </Link>{' '}
+                      for full terms.
+                    </>
+                  ) : f.question === 'Do you provide therapy?' ? (
+                    <>
+                      Coaching is not a substitute for licensed therapy or medical care. See the{' '}
+                      <Link href="/disclaimers" className="font-semibold text-gold-500 hover:underline">
+                        Coaching Disclaimer
+                      </Link>
+                      .
+                    </>
+                  ) : (
+                    f.answer
+                  ),
               }))}
             />
           </div>

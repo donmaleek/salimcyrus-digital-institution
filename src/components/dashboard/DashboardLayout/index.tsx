@@ -20,6 +20,7 @@ export function DashboardLayout({ children, userName, isAdmin }: DashboardLayout
     ? [
         ...navItems,
         { label: 'Journal (Admin)', href: '/dashboard/admin/journal' },
+        { label: 'Ask Salim (Admin)', href: '/dashboard/admin/ask-salim' },
         { label: 'Availability (Admin)', href: '/dashboard/admin/availability' },
       ]
     : navItems

@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
-import { CONTACT_EMAIL } from '@/lib/utils/constants'
 
 const categories = [
   'Relationships',
@@ -17,10 +16,10 @@ const categories = [
   'Society',
 ]
 
-const publicationOptions = [
-  'You may publish my first name',
-  'Publish anonymously if selected',
-  'Keep this question private',
+const publicationOptions: { value: 'first_name' | 'anonymous' | 'private'; label: string }[] = [
+  { value: 'first_name', label: 'You may publish my first name' },
+  { value: 'anonymous', label: 'Publish anonymously if selected' },
+  { value: 'private', label: 'Keep this question private' },
 ]
 
 const questionLimit = 1000
@@ -31,24 +30,51 @@ export function AskSalimForm() {
   const [question, setQuestion] = useState('')
   const [context, setContext] = useState('')
   const [name, setName] = useState('')
-  const [publication, setPublication] = useState(publicationOptions[1])
+  const [email, setEmail] = useState('')
+  const [publication, setPublication] = useState(publicationOptions[1].value)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const { showToast } = useToast()
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const sender = name.trim() || 'Anonymous'
-    const body = encodeURIComponent(
-      [
-        `Category: ${category}`,
-        `Question: ${question.trim()}`,
-        `Helpful context: ${context.trim() || 'Not provided'}`,
-        `From: ${sender}`,
-        `Publication preference: ${publication}`,
-      ].join('\n\n')
-    )
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=Ask%20Salim%3A%20${encodeURIComponent(category)}&body=${body}`
-    showToast(
-      'Email draft prepared. Review it and press send in your email app.'
+    setSubmitting(true)
+
+    try {
+      const res = await fetch('/api/ask-salim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category,
+          question,
+          context: context.trim() || undefined,
+          askerName: name.trim() || undefined,
+          askerEmail: email.trim() || undefined,
+          publicationPreference: publication,
+        }),
+      })
+
+      if (!res.ok) {
+        showToast('Could not submit your question. Please try again.', 'error')
+        return
+      }
+
+      setSubmitted(true)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div className="text-center" data-testid="ask-salim-submitted">
+        <p className="font-heading text-xl font-semibold text-navy">Question received.</p>
+        <p className="mt-3 text-navy-600">
+          It has been added to the review queue. Selected questions are answered and
+          published right here on Ask Salim. Check back, or watch for a response in
+          the newsletter.
+        </p>
+      </div>
     )
   }
 
@@ -175,26 +201,38 @@ export function AskSalimForm() {
           <select
             id="publication-preference"
             value={publication}
-            onChange={(event) => setPublication(event.target.value)}
+            onChange={(event) => setPublication(event.target.value as typeof publication)}
             className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
           >
             {publicationOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      <div className="border-t border-navy-200 pt-6">
-        <Button type="submit" size="lg">
-          Prepare Email
-        </Button>
-        <p className="mt-4 max-w-xl text-sm leading-6 text-navy-500">
-          This opens your email application with the question prepared. Review
-          the draft and press send to complete your submission.
+      <div>
+        <label htmlFor="question-email" className="block font-semibold text-navy">
+          Your email <span className="font-normal text-navy-400">(optional)</span>
+        </label>
+        <p className="mt-2 text-sm leading-6 text-navy-500">
+          Only used if a private follow-up is needed. Never published.
         </p>
+        <input
+          id="question-email"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
+        />
+      </div>
+
+      <div className="border-t border-navy-200 pt-6">
+        <Button type="submit" size="lg" disabled={submitting}>
+          {submitting ? 'Submitting…' : 'Submit Your Question'}
+        </Button>
       </div>
     </form>
   )

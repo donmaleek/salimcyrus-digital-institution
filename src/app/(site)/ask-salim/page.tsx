@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { AskSalimForm } from '@/components/forms/AskSalimForm'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
+import { db } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Ask Salim | Submit a Thoughtful Question',
@@ -63,7 +67,13 @@ const selectionStandards = [
   'The question does not require urgent or licensed professional support',
 ]
 
-export default function AskSalimPage() {
+export default async function AskSalimPage() {
+  const answered = await db.askSalimQuestion.findMany({
+    where: { status: 'answered', publishedAt: { not: null } },
+    orderBy: { publishedAt: 'desc' },
+    take: 6,
+  })
+
   return (
     <>
       <PageHero
@@ -83,6 +93,42 @@ export default function AskSalimPage() {
       />
 
       <main data-testid="ask-salim-content">
+        {answered.length > 0 && (
+          <section className="bg-white" aria-labelledby="answered-heading" data-testid="recently-answered">
+            <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
+                Recently Answered
+              </p>
+              <h2
+                id="answered-heading"
+                className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl"
+              >
+                Real questions, answered publicly
+              </h2>
+              <ol className="mt-12 border-t border-navy-200">
+                {answered.map((entry, index) => (
+                  <li
+                    key={entry.slug}
+                    className="grid gap-3 border-b border-navy-200 py-7 sm:grid-cols-[56px_1fr]"
+                  >
+                    <span className="font-heading font-bold text-gold-500">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <Link href={`/ask-salim/${entry.slug}`} className="group block">
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-navy-400">
+                        {entry.category}
+                      </p>
+                      <h3 className="mt-2 font-heading text-xl font-semibold text-navy group-hover:text-gold-500">
+                        {entry.question}
+                      </h3>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+        )}
+
         <section className="bg-cream" aria-labelledby="invitation-heading">
           <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
             <div>

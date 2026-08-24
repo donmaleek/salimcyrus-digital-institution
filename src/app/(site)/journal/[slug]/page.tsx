@@ -83,7 +83,7 @@ export default async function JournalEntryPage({ params }: PageProps) {
             <h2 id="essay-heading" className="sr-only">
               Full essay
             </h2>
-            <div className="space-y-6 text-lg leading-9 text-navy-700">
+            <div className="space-y-6 text-lg leading-9 text-navy-700" data-testid="essay-body">
               {paragraphs.map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
               ))}

@@ -36,15 +36,19 @@ test('Ask Salim form provides guidance, privacy choice, and honest action langua
     '600'
   )
   await expect(form.getByLabel('Publication preference')).toHaveValue(
-    'Publish anonymously if selected'
+    'anonymous'
   )
   await expect(
-    form.getByRole('button', { name: 'Prepare Email' })
+    form.getByRole('button', { name: 'Submit Your Question' })
   ).toBeVisible()
-  await expect(form.getByText(/Review the draft and press send/)).toBeVisible()
+  await expect(
+    form.getByText(/Only used if a private follow-up is needed/)
+  ).toBeVisible()
 })
 
-test('Ask Salim keeps the draft when preparing the email', async ({ page }) => {
+test('Ask Salim question is actually submitted and confirmed, not just drafted', async ({
+  page,
+}) => {
   await page.goto('/ask-salim')
   const question = page.getByLabel('Your question', { exact: true })
   const context = page.getByLabel(/Helpful context/)
@@ -56,17 +60,16 @@ test('Ask Salim keeps the draft when preparing the email', async ({ page }) => {
     'Both choices fit my values, but they require different commitments.'
   )
 
-  await page.evaluate(() => {
-    window.addEventListener('beforeunload', (event) => event.preventDefault())
-  })
-  await page.getByRole('button', { name: 'Prepare Email' }).click()
+  const [response] = await Promise.all([
+    page.waitForResponse(
+      (res) => res.url().includes('/api/ask-salim') && res.request().method() === 'POST'
+    ),
+    page.getByRole('button', { name: 'Submit Your Question' }).click(),
+  ])
 
-  await expect(question).toHaveValue(
-    'How do I make a responsible choice when two meaningful paths compete?'
-  )
-  await expect(context).toHaveValue(
-    'Both choices fit my values, but they require different commitments.'
-  )
+  expect(response.status()).toBe(201)
+  await expect(page.getByTestId('ask-salim-submitted')).toBeVisible()
+  await expect(page.getByText('Question received.')).toBeVisible()
 })
 
 test('Ask Salim content contains no em dash characters', async ({ page }) => {

@@ -74,3 +74,22 @@ model NewsletterSubscriber {
   email        String   @unique
   subscribedAt DateTime @default(now())
 }
+
+model AskSalimQuestion {
+  id                     String    @id @default(cuid())
+  slug                   String?   @unique
+  category               String
+  question               String
+  context                String?
+  askerName              String?
+  askerEmail             String?
+  publicationPreference  String    @default("anonymous")
+  status                 String    @default("pending")
+  answer                 String?
+  answeredAt             DateTime?
+  publishedAt            DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@index([status, publishedAt])
+}

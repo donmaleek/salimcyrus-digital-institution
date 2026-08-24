@@ -1,20 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PageHero } from '@/components/layout/PageHero'
+import { freeGuideTitles } from '@/lib/data/free-guides'
 
 export const metadata: Metadata = {
   title: 'Resources',
   description: 'Free guides and the digital library from Salim Cyrus.',
 }
-
-const freeGuides = [
-  '10 Questions Before You Get Married',
-  'Purpose Discovery Workbook',
-  'Defining Manhood Guide',
-  'Marriage Communication Checklist',
-  'Relationship Red Flags Guide',
-  'Business Startup Checklist',
-]
 
 export default function ResourcesPage() {
   return (
@@ -26,17 +18,19 @@ export default function ResourcesPage() {
       />
       <section className="bg-cream">
         <div className="mx-auto max-w-content px-6 py-20">
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {freeGuides.map((guide) => (
-              <div
+          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="resource-guide-cards">
+            {freeGuideTitles.map((guide) => (
+              <Link
                 key={guide}
-                className="rounded-2xl border border-navy-100 bg-white p-6"
+                href="/resources/free-guides"
+                data-testid="resource-guide-card"
+                className="block rounded-2xl border border-navy-100 bg-white p-6 transition-shadow hover:shadow-lg"
               >
                 <p className="font-medium text-navy">{guide}</p>
                 <p className="mt-3 text-sm font-semibold text-gold-500">
-                  Download &rarr;
+                  Get this guide &rarr;
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
 

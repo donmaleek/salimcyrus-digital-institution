@@ -10,5 +10,11 @@ export default async function DashboardRouteLayout({ children }: { children: Rea
     redirect('/login')
   }
 
-  return <DashboardLayout userName={session.user?.name}>{children}</DashboardLayout>
+  const isAdmin = (session.user as { isAdmin?: boolean } | undefined)?.isAdmin === true
+
+  return (
+    <DashboardLayout userName={session.user?.name} isAdmin={isAdmin}>
+      {children}
+    </DashboardLayout>
+  )
 }

@@ -20,8 +20,8 @@ const bookingSteps = [
     'Open the secure checkout page, review the current price, and complete payment.',
   ],
   [
-    'Coordinate',
-    'Use the contact details supplied after purchase to confirm scheduling and practical details.',
+    'Confirm',
+    'Come back and confirm your booking — pick an open time slot right on the site, no back-and-forth needed.',
   ],
   [
     'Prepare',
@@ -240,25 +240,32 @@ export default function BookNowPage() {
                 From selection to a prepared conversation
               </h2>
             </div>
-            <ol
-              className="border-t border-navy-200"
-              data-testid="booking-process"
-            >
-              {bookingSteps.map(([title, description], index) => (
-                <li
-                  key={title}
-                  className="grid gap-3 border-b border-navy-200 py-6 sm:grid-cols-[48px_0.6fr_1.4fr] sm:gap-6"
-                >
-                  <span className="font-heading font-bold text-gold-500">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <h3 className="font-heading text-xl font-semibold text-navy">
-                    {title}
-                  </h3>
-                  <p className="leading-7 text-navy-600">{description}</p>
-                </li>
-              ))}
-            </ol>
+            <div>
+              <ol
+                className="border-t border-navy-200"
+                data-testid="booking-process"
+              >
+                {bookingSteps.map(([title, description], index) => (
+                  <li
+                    key={title}
+                    className="grid gap-3 border-b border-navy-200 py-6 sm:grid-cols-[48px_0.6fr_1.4fr] sm:gap-6"
+                  >
+                    <span className="font-heading font-bold text-gold-500">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <h3 className="font-heading text-xl font-semibold text-navy">
+                      {title}
+                    </h3>
+                    <p className="leading-7 text-navy-600">{description}</p>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-8">
+                <Button href="/book-now/confirm" size="lg">
+                  Already Paid? Confirm Your Booking
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
 

@@ -12,9 +12,14 @@ const navItems = [
 interface DashboardLayoutProps {
   children: React.ReactNode
   userName?: string | null
+  isAdmin?: boolean
 }
 
-export function DashboardLayout({ children, userName }: DashboardLayoutProps) {
+export function DashboardLayout({ children, userName, isAdmin }: DashboardLayoutProps) {
+  const items = isAdmin
+    ? [...navItems, { label: 'Availability (Admin)', href: '/dashboard/admin/availability' }]
+    : navItems
+
   return (
     <div className="flex min-h-screen bg-cream">
       <aside className="hidden w-64 shrink-0 border-r border-navy-100 bg-white p-6 lg:block">
@@ -22,7 +27,7 @@ export function DashboardLayout({ children, userName }: DashboardLayoutProps) {
           Salim Cyrus
         </Link>
         <nav className="mt-10 flex flex-col gap-1" aria-label="Dashboard">
-          {navItems.map((item) => (
+          {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}

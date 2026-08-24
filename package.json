@@ -31,7 +31,8 @@
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "admin:promote": "node scripts/make-admin.js"
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",

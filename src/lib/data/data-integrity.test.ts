@@ -1,7 +1,6 @@
 import { books } from './books'
 import { programs } from './programs'
 import { knowledgeCategories } from './knowledge-categories'
-import { publishedJournalEntries } from './journal'
 import { coachingOffers } from './coaching-offers'
 
 const KEBAB_CASE = /^[a-z0-9]+(-[a-z0-9]+)*$/
@@ -58,8 +57,4 @@ describe('coaching offers data', () => {
 
 describe('knowledge categories data', () => {
   expectUniqueSlugs(knowledgeCategories, 'knowledge categories')
-})
-
-describe('journal data', () => {
-  expectUniqueSlugs([...publishedJournalEntries], 'published journal entries')
 })

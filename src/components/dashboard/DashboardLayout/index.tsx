@@ -17,7 +17,11 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, userName, isAdmin }: DashboardLayoutProps) {
   const items = isAdmin
-    ? [...navItems, { label: 'Availability (Admin)', href: '/dashboard/admin/availability' }]
+    ? [
+        ...navItems,
+        { label: 'Journal (Admin)', href: '/dashboard/admin/journal' },
+        { label: 'Availability (Admin)', href: '/dashboard/admin/availability' },
+      ]
     : navItems
 
   return (

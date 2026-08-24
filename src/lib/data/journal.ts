@@ -1,18 +1,7 @@
-export const publishedJournalEntries = [
-  {
-    slug: 'people-vent-on-social-media-because-they-arent-heard-in-person',
-    title: "People Vent on Social Media Because They Aren't Heard in Person",
-    subtitle:
-      'A reflection on silence, attention, and the digital cry for help',
-    category: 'Relationships and Society',
-    publishedAt: 'September 4, 2025',
-    readingTime: '8 minute overview',
-    summary:
-      'What looks like online oversharing can begin with a quieter failure: people do not feel heard in their homes, friendships, workplaces, or faith communities. This essay asks what attentive listening could repair before pain moves into public view.',
-    thesis:
-      'Digital expression is often a symptom of offline disconnection. Healthier communities are built when people learn to listen before they judge the way pain is expressed.',
-  },
-] as const
+// Published journal entries live in the database (JournalEntry model) so
+// Salim can write and publish new ones from /dashboard/admin/journal without
+// a code change or deploy. See src/app/(site)/journal for the reading pages
+// and src/app/api/admin/journal for the authoring API.
 
 export const journalThemes = [
   {
@@ -85,7 +74,3 @@ export const editorialDesk = [
       'Why mercy and accountability belong together in mature spiritual formation.',
   },
 ] as const
-
-export function findJournalEntry(slug: string) {
-  return publishedJournalEntries.find((entry) => entry.slug === slug)
-}

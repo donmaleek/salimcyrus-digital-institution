@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { programs } from '@/lib/data/programs'
 import { books } from '@/lib/data/books'
 import { knowledgeCategories } from '@/lib/data/knowledge-categories'
-import { publishedJournalEntries } from '@/lib/data/journal'
+import { db } from '@/lib/db'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://salimcyrus.com'
 
@@ -42,7 +42,7 @@ const staticRoutes = [
   '/disclaimers',
 ]
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
 
   const entries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
@@ -79,10 +79,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })
   }
 
-  for (const entry of publishedJournalEntries) {
+  const journalEntries = await db.journalEntry.findMany({
+    where: { status: 'published' },
+    select: { slug: true, publishedAt: true, updatedAt: true },
+  })
+
+  for (const entry of journalEntries) {
     entries.push({
       url: `${BASE_URL}/journal/${entry.slug}`,
-      lastModified: new Date(entry.publishedAt),
+      lastModified: entry.publishedAt ?? entry.updatedAt,
       changeFrequency: 'monthly',
       priority: 0.7,
     })

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
@@ -31,7 +32,11 @@ export default async function MyBookingsPage() {
       ) : (
         <div className="mt-8 space-y-3">
           {bookings.map((booking) => (
-            <div key={booking.id} className="rounded-2xl border border-navy-100 bg-white p-6">
+            <Link
+              key={booking.id}
+              href={`/dashboard/my-bookings/${booking.id}`}
+              className="block rounded-2xl border border-navy-100 bg-white p-6 transition-shadow hover:shadow-lg"
+            >
               <div className="flex items-center justify-between">
                 <p className="font-heading font-semibold text-navy">{booking.offerName}</p>
                 <span className="rounded-full bg-navy-50 px-3 py-1 text-xs font-medium uppercase tracking-wide text-navy-500">
@@ -39,7 +44,7 @@ export default async function MyBookingsPage() {
                 </span>
               </div>
               <p className="mt-1 text-sm text-navy-400">{formatDate(booking.createdAt)}</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}

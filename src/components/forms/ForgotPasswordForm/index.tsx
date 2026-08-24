@@ -6,17 +6,30 @@ import { Button } from '@/components/ui/Button'
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'sent'>('idle')
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setSent(true)
+    setStatus('loading')
+
+    try {
+      await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+    } finally {
+      // Always show the same confirmation, whether or not the account
+      // exists, so this form can't be used to check registered emails.
+      setStatus('sent')
+    }
   }
 
-  if (sent) {
+  if (status === 'sent') {
     return (
       <p className="text-navy-600">
-        If an account exists for that email, a reset link has been sent.
+        If an account exists for that email, a reset link has been generated. Contact the team on
+        WhatsApp if you don&apos;t hear back shortly.
       </p>
     )
   }
@@ -30,8 +43,8 @@ export function ForgotPasswordForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <Button type="submit" className="justify-self-start">
-        Send Reset Link
+      <Button type="submit" loading={status === 'loading'} className="justify-self-start">
+        {status === 'loading' ? 'Sending…' : 'Send Reset Link'}
       </Button>
     </form>
   )

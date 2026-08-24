@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -20,15 +20,18 @@ model User {
 }
 
 model Booking {
-  id         String   @id @default(cuid())
-  userId     String?
-  user       User?    @relation(fields: [userId], references: [id])
-  name       String
-  email      String
-  offerName  String
-  notes      String?
-  status     String   @default("pending")
-  createdAt  DateTime @default(now())
+  id                String   @id @default(cuid())
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+  name              String
+  email             String
+  offerName         String
+  notes             String?
+  status            String   @default("pending")
+  source            String   @default("manual")
+  amountKobo        Int?
+  paystackReference String?  @unique
+  createdAt         DateTime @default(now())
 }
 
 model NewsletterSubscriber {

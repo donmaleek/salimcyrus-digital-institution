@@ -58,7 +58,7 @@ export function Footer() {
 
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-cream/15 pt-8 text-xs leading-5 text-cream/55 sm:flex-row sm:items-center lg:mt-20">
           <p>&copy; {new Date().getFullYear()} Salim Cyrus. All rights reserved.</p>
-          <p>Halisi Hub Connect — Awakening wisdom. Restoring identity. Cultivating purposeful living.</p>
+          <p>Halisi Hub Connect: Awakening wisdom. Restoring identity. Cultivating purposeful living.</p>
         </div>
       </div>
     </footer>

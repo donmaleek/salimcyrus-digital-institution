@@ -50,7 +50,7 @@ export function NewsletterSignup() {
         </Button>
       </form>
       {status === 'success' && (
-        <p className="mt-2 text-sm text-gold">You&apos;re on the list — welcome.</p>
+        <p className="mt-2 text-sm text-gold">You&apos;re on the list. Welcome.</p>
       )}
       {status === 'error' && (
         <p className="mt-2 text-sm text-red-400">Something went wrong. Please try again.</p>

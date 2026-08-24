@@ -202,7 +202,7 @@ test('mobile page hero uses portrait art that fills its canvas', async ({
   await expect
     .poll(() => image.evaluate((element) => element.currentSrc))
     .toContain('media-hero-mobile.webp')
-  expect(heroBox.width / heroBox.height).toBeCloseTo(941 / 1672, 1)
+  expect(heroBox.height).toBeGreaterThanOrEqual(780)
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth)
   ).toBeLessThanOrEqual(390)

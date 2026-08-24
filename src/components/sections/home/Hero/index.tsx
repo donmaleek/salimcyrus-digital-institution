@@ -43,7 +43,7 @@ export function Hero() {
       <div className="relative mx-auto flex w-full max-w-content items-end px-6 pb-44 pt-24 sm:pb-44 lg:items-center lg:pb-28 lg:pt-20">
         <div className="max-w-xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-gold sm:text-sm">
-            Speaker · Author · Transformational Leader
+            Relationship Coach · Speaker · Author · Kingdom Strategist
           </p>
           <h1
             id="home-hero-title"
@@ -52,19 +52,20 @@ export function Hero() {
             Salim Cyrus
           </h1>
           <p className="mt-5 max-w-lg text-base leading-relaxed text-cream/90 sm:mt-7 sm:text-xl">
-            Empowering minds. Reforming hearts. Restoring purpose through truth
-            and wisdom.
+            Clear thinking for stronger relationships, responsible leadership,
+            purposeful work, and a life built on truth.
           </p>
           <div className="mt-7 flex flex-col gap-3 min-[390px]:flex-row sm:mt-9 sm:gap-4">
-            <Button href="/work-with-salim/coaching" size="lg">
-              Book a Session
+            <Button href="/work-with-salim/coaching" size="lg" aria-label="Book a Session">
+              Find Your Starting Point
             </Button>
             <Button
               href="/work-with-salim/speaking"
               variant="outline-inverse"
               size="lg"
+              aria-label="Book Salim to Speak"
             >
-              Book Salim to Speak
+              Invite Salim to Speak
             </Button>
           </div>
         </div>

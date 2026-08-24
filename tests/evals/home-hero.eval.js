@@ -35,8 +35,8 @@ const checks = [
       pageHero.includes('lg:object-top'),
   ],
   [
-    'mobile heroes match the portrait art ratio',
-    pageHero.includes('aspect-[941/1672]'),
+    'mobile heroes reserve enough space for long editorial content',
+    pageHero.includes('min-h-[780px]') && pageHero.includes('lg:min-h-0'),
   ],
   [
     'page hero images fill their matching canvas',

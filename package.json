@@ -22,6 +22,7 @@
     "eval:knowledge-centre": "node tests/evals/knowledge-centre-content.eval.js",
     "eval:halisi-hub-connect": "node tests/evals/halisi-hub-connect-content.eval.js",
     "eval:journal": "node tests/evals/journal-content.eval.js",
+    "eval:ask-salim": "node tests/evals/ask-salim-content.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

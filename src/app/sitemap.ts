@@ -8,6 +8,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://salimcyrus.com'
 const staticRoutes = [
   '',
   '/about',
+  '/book-now',
   '/work-with-salim',
   '/work-with-salim/coaching',
   '/work-with-salim/speaking',

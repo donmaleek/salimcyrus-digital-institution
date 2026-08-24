@@ -18,11 +18,25 @@ export function MobileNav() {
       >
         <span className="sr-only">Toggle navigation</span>
         {open ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" />
           </svg>
         ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
           </svg>
         )}
@@ -60,6 +74,15 @@ export function MobileNav() {
                 )}
               </li>
             ))}
+            <li className="px-6 py-4">
+              <Link
+                href="/book-now"
+                onClick={() => setOpen(false)}
+                className="flex min-h-12 items-center justify-center rounded-full bg-gold px-6 font-semibold text-navy-900"
+              >
+                Book Now
+              </Link>
+            </li>
           </ul>
         </nav>
       )}

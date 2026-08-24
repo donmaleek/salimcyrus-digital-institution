@@ -7,6 +7,7 @@ const HERO_VISUALS: Record<string, string> = {
   Program: '/images/salim/academy-hero.webp',
   Consulting: '/images/salim/academy-hero.webp',
   'Work With Salim': '/images/salim/academy-hero.webp',
+  'Book Now': '/images/salim/coaching-hero.webp',
   Books: '/images/salim/knowledge-hero.webp',
   Journal: '/images/salim/knowledge-hero.webp',
   Entry: '/images/salim/knowledge-hero.webp',

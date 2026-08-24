@@ -1,5 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source:
+          '/people-vent-on-social-media-because-they-arent-heard-in-person',
+        destination:
+          '/journal/people-vent-on-social-media-because-they-arent-heard-in-person',
+        permanent: true,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },

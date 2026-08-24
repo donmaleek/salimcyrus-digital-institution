@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { programs } from '@/lib/data/programs'
 import { books } from '@/lib/data/books'
 import { knowledgeCategories } from '@/lib/data/knowledge-categories'
+import { publishedJournalEntries } from '@/lib/data/journal'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://salimcyrus.com'
 
@@ -75,6 +76,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.6,
+    })
+  }
+
+  for (const entry of publishedJournalEntries) {
+    entries.push({
+      url: `${BASE_URL}/journal/${entry.slug}`,
+      lastModified: new Date(entry.publishedAt),
+      changeFrequency: 'monthly',
+      priority: 0.7,
     })
   }
 

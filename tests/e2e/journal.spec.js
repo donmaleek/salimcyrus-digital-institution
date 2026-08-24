@@ -26,7 +26,7 @@ test('Journal presents a verified lead essay and structured editorial map', asyn
   ).toHaveCount(5)
 })
 
-test('Journal opens the published essay overview and original source', async ({
+test('Journal opens the published essay overview without a dead source link', async ({
   page,
 }) => {
   await page.goto('/journal')
@@ -39,11 +39,8 @@ test('Journal opens the published essay overview and original source', async ({
     page.getByTestId('entry-ideas').locator(':scope > li')
   ).toHaveCount(4)
   await expect(
-    page.getByRole('link', { name: 'Read the Original Essay' })
-  ).toHaveAttribute(
-    'href',
-    'https://salimcyrus.com/people-vent-on-social-media-because-they-arent-heard-in-person/'
-  )
+    page.getByRole('link', { name: 'Explore the Journal' })
+  ).toHaveAttribute('href', '/journal')
 })
 
 test('Journal route family contains no em dash characters', async ({

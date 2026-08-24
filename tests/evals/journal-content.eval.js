@@ -16,7 +16,7 @@ const checks = [
   [
     'one verified published essay is identified',
     data.includes("publishedAt: 'September 4, 2025'") &&
-      data.includes('https://salimcyrus.com/people-vent-on-social-media'),
+      data.includes("slug: 'people-vent-on-social-media"),
   ],
   [
     'six distinct editorial themes are defined',
@@ -46,9 +46,9 @@ const checks = [
     ].every((idea) => entryPage.includes(`title: '${idea}'`)),
   ],
   [
-    'published entry links to the original complete essay',
-    entryPage.includes('Read the Original Essay') &&
-      entryPage.includes('entry.originalUrl'),
+    'published entry continues into the Journal without a dead external link',
+    entryPage.includes('Explore the Journal') &&
+      !entryPage.includes('entry.originalUrl'),
   ],
   [
     'generic dashed placeholder cards are gone',

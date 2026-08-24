@@ -11,8 +11,6 @@ export const publishedJournalEntries = [
       'What looks like online oversharing can begin with a quieter failure: people do not feel heard in their homes, friendships, workplaces, or faith communities. This essay asks what attentive listening could repair before pain moves into public view.',
     thesis:
       'Digital expression is often a symptom of offline disconnection. Healthier communities are built when people learn to listen before they judge the way pain is expressed.',
-    originalUrl:
-      'https://salimcyrus.com/people-vent-on-social-media-because-they-arent-heard-in-person/',
   },
 ] as const
 

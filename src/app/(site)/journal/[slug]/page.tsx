@@ -15,7 +15,11 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: PageProps): Metadata {
   const entry = findJournalEntry(params.slug)
   if (!entry) return { title: 'Journal Entry Not Found' }
-  return { title: `${entry.title} | Journal`, description: entry.summary }
+  return {
+    title: `${entry.title} | Journal`,
+    description: entry.summary,
+    alternates: { canonical: `/journal/${entry.slug}` },
+  }
 }
 
 const ideas = [
@@ -169,31 +173,22 @@ export default function JournalEntryPage({ params }: PageProps) {
           <div className="mx-auto grid max-w-content gap-10 px-6 py-20 sm:py-24 lg:grid-cols-[1fr_auto] lg:items-end">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-                Read the Complete Work
+                Continue Reading
               </p>
               <h2
                 id="original-heading"
                 className="mt-3 font-heading text-4xl font-bold text-navy sm:text-5xl"
               >
-                Continue with the original essay.
+                Continue through the Journal.
               </h2>
               <p className="mt-5 text-lg leading-8 text-navy-600">
-                This page provides an editorial overview. The complete essay,
-                including its full argument and conclusion, remains available on
-                Salim Cyrus&apos;s original publication site.
+                Explore more essays on identity, relationships, responsibility,
+                faith, purpose, and society from the Journal editorial desk.
               </p>
             </div>
             <div className="flex flex-wrap gap-4 lg:justify-end">
-              <Button
-                href={entry.originalUrl}
-                size="lg"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Read the Original Essay
-              </Button>
-              <Button href="/journal" variant="outline" size="lg">
-                Back to Journal
+              <Button href="/journal" size="lg">
+                Explore the Journal
               </Button>
             </div>
           </div>

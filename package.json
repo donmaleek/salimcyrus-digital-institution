@@ -22,6 +22,7 @@
     "eval:knowledge-centre": "node tests/evals/knowledge-centre-content.eval.js",
     "eval:halisi-hub-connect": "node tests/evals/halisi-hub-connect-content.eval.js",
     "eval:journal": "node tests/evals/journal-content.eval.js",
+    "eval:journal-routing": "node tests/evals/journal-routing.eval.js",
     "eval:ask-salim": "node tests/evals/ask-salim-content.eval.js",
     "eval:contact": "node tests/evals/contact-content.eval.js",
     "eval:book-now": "node tests/evals/book-now-content.eval.js",

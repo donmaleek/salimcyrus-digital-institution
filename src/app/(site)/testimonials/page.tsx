@@ -16,7 +16,7 @@ export default function TestimonialsPage() {
       <PageHero
         eyebrow="Testimonials"
         title="What Clients Say"
-        description="Real accounts of the clarity, structure, and transformation created through the work."
+        description="Reflections on the clarity, structure, and transformation people have found through the work."
       />
       <section className="bg-cream">
         <div className="mx-auto max-w-content px-6 py-20">

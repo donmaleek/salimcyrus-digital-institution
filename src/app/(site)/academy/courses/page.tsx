@@ -4,7 +4,7 @@ import { PageHero } from '@/components/layout/PageHero'
 
 export const metadata: Metadata = {
   title: 'Courses',
-  description: 'Self-paced recorded courses — in development.',
+  description: 'Self-paced recorded courses are in development.',
 }
 
 const planned = [
@@ -32,7 +32,7 @@ export default function CoursesPage() {
                 key={title}
                 className="rounded-full border border-dashed border-navy-200 bg-white px-4 py-2 text-sm text-navy-500"
               >
-                {title} — Planned
+                {title}: Planned
               </span>
             ))}
           </div>

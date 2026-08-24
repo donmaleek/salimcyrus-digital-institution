@@ -17,6 +17,7 @@
     "eval:footer-design": "node tests/evals/footer-design.eval.js",
     "eval:about": "node tests/evals/about-page-content.eval.js",
     "eval:work-with-salim": "node tests/evals/work-with-salim-content.eval.js",
+    "eval:academy": "node tests/evals/academy-content.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

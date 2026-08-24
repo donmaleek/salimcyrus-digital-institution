@@ -1,3 +1,3 @@
 export function formatCurrency(amount: number, currency = 'KES'): string {
-  return new Intl.NumberFormat('en-KE', { style: 'currency', currency }).format(amount)
+  return `${currency} ${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)}`
 }

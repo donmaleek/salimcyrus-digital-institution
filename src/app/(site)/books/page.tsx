@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { books } from '@/lib/data/books'
+import { formatCurrency } from '@/lib/utils/currency'
 
 export const metadata: Metadata = {
   title: 'Books',
@@ -79,9 +80,6 @@ const readingPractice = [
       'Measure what changed, what resisted change, and what needs a stronger structure.',
   },
 ]
-
-const formatPrice = (amount: number) =>
-  `KES ${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)}`
 
 const questions = [
   {
@@ -176,7 +174,7 @@ export default function BooksPage() {
               </div>
               <div className="border-t border-navy-200 py-7 sm:border-l sm:border-t-0 sm:pl-8">
                 <dt className="font-heading text-4xl font-bold text-navy">
-                  KES 1,499
+                  {formatCurrency(availableBooks[0]?.priceKes ?? 0)}
                 </dt>
                 <dd className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-navy-500">
                   Current price per available book
@@ -275,7 +273,7 @@ export default function BooksPage() {
 
                       <div className="mt-8 flex flex-wrap items-center gap-4">
                         <span className="font-heading text-2xl font-bold text-navy">
-                          {formatPrice(book.priceKes!)}
+                          {formatCurrency(book.priceKes!)}
                         </span>
                         <Button href={book.paystackUrl!}>Buy Now</Button>
                         <Button href={`/books/${book.slug}`} variant="outline">

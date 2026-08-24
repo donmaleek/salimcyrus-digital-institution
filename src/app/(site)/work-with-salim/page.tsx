@@ -5,6 +5,7 @@ import { PageHero } from '@/components/layout/PageHero'
 import { coachingOffers, coachingProcess } from '@/lib/data/coaching-offers'
 import { programs } from '@/lib/data/programs'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
+import { formatCurrency } from '@/lib/utils/currency'
 
 export const metadata: Metadata = {
   title: 'Work With Salim',
@@ -99,9 +100,6 @@ const questions = [
       'Yes. Current published prices are shown below in Kenyan shillings and US dollars. Final payment and availability are confirmed on the linked program page.',
   },
 ]
-
-const formatPrice = (amount: number, currency: 'KES' | 'USD') =>
-  `${currency} ${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)}`
 
 export default function WorkWithSalimPage() {
   return (
@@ -357,8 +355,8 @@ export default function WorkWithSalimPage() {
                     </p>
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
                       <p className="text-sm font-bold text-navy">
-                        {formatPrice(program.priceKes, 'KES')} /{' '}
-                        {formatPrice(program.priceUsd, 'USD')}
+                        {formatCurrency(program.priceKes, 'KES')} /{' '}
+                        {formatCurrency(program.priceUsd, 'USD')}
                         {program.recurring ? ' per month' : ''}
                       </p>
                       <Link

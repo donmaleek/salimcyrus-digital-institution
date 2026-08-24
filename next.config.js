@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   async redirects() {
     return [
       {
@@ -12,9 +13,11 @@ const nextConfig = {
     ]
   },
   images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: '**' },
-    ],
+    // No remote image hosts are in use yet — every image is served from /public.
+    // Add a specific hostname here (never a wildcard) once the Strapi CMS or
+    // another external image source goes live; a wildcard turns the image
+    // optimizer into an open SSRF/DoS proxy for the whole internet.
+    remotePatterns: [],
   },
   async headers() {
     return [

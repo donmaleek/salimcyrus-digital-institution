@@ -7,6 +7,7 @@ interface PageProps {
 
 export const metadata: Metadata = {
   title: 'Course',
+  robots: { index: false, follow: false },
 }
 
 export default function CourseDetailPage({ params }: PageProps) {

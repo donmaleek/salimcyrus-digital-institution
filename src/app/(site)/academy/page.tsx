@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { programs } from '@/lib/data/programs'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
+import { formatCurrency } from '@/lib/utils/currency'
 
 export const metadata: Metadata = {
   title: 'Academy',
@@ -70,9 +71,6 @@ const subjectAreas = [
       'Forgiveness, betrayal, emotional wounds, self-worth, and rebuilding trust.',
   },
 ]
-
-const formatPrice = (amount: number, currency: 'KES' | 'USD') =>
-  `${currency} ${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)}`
 
 const academyQuestions = [
   {
@@ -333,8 +331,8 @@ export default function AcademyPage() {
                         </ul>
                         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-navy-100 pt-5">
                           <p className="font-bold text-navy">
-                            {formatPrice(program.priceKes, 'KES')} /{' '}
-                            {formatPrice(program.priceUsd, 'USD')}
+                            {formatCurrency(program.priceKes, 'KES')} /{' '}
+                            {formatCurrency(program.priceUsd, 'USD')}
                             {program.recurring ? ' per month' : ''}
                           </p>
                           <Link

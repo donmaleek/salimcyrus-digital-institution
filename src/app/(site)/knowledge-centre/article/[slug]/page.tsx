@@ -7,6 +7,7 @@ interface PageProps {
 
 export const metadata: Metadata = {
   title: 'Article',
+  robots: { index: false, follow: false },
 }
 
 export default function ArticlePage({ params }: PageProps) {

@@ -8,7 +8,8 @@ import { Credentials } from '@/components/sections/about/Credentials'
 
 export const metadata: Metadata = {
   title: 'About Salim Cyrus',
-  description: 'The story, philosophy, and frameworks behind Salim Cyrus and Halisi Hub Connect.',
+  description:
+    'Meet Salim Cyrus, relationship coach, speaker, author, and Kingdom strategist. Explore his story, philosophy, frameworks, books, and certifications.',
 }
 
 export default function AboutPage() {
@@ -17,7 +18,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About"
         title="Salim Cyrus"
-        description="Relationship Coach | Speaker | Author | Kingdom Strategist. Empowering minds. Reforming hearts. Restoring purpose through truth and wisdom."
+        description="Relationship Coach | Speaker | Author | Kingdom Strategist. Helping people renew their thinking, strengthen relationships, and live with purpose through truth, wisdom, and practical structure."
       />
       <Story />
       <OriginTimeline />

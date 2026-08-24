@@ -1,54 +1,74 @@
-import Image from 'next/image'
-
-const paragraphs = [
-  'The first time I guided someone through a tough pivot, I felt the same calm curiosity that I now bring to every session. Coaching has never been about quick fixes for me — it has always been about creating rituals that honor our full humanity, noticing the stories we repeat, and designing practical systems that keep people anchored through change.',
-  'I studied psychology and later immersed myself in embodiment practices because I wanted a framework that honored both heart and strategy. Along the way I led workshops for restless executives and weary parents, and it became clear: the work that lights me up is helping good people rebuild trust with themselves — not because they are broken, but because they are stretched thin.',
-  'Today I blend deep listening, structured accountability, and creative experiments so my clients can feel both seen and empowered. Whether the goal is a career shift, a reset after burnout, or crafting a life that feels meaningful again, I help people step into decisions with grounded confidence and long-term momentum.',
-]
-
-const pillars = [
-  { title: 'Rooted in real life', description: 'Every dialogue I craft is grounded in the messy weekdays my clients actually live in, so the actions we design move with calendars, families, and boardrooms — not around them.' },
-  { title: 'Built for clarity', description: 'Sessions blend spacious reflection with practical experiments, creating a steady rhythm that keeps you honest about the next right action even when the world shifts.' },
-  { title: 'Guided by wisdom + data', description: 'I pair embodied listening with simple frameworks so you trust your intuition while still proving progress with tangible, measurable results.' },
+const focusAreas = [
+  'Relationships and marriage',
+  'Identity and purpose',
+  'Manhood and responsibility',
+  'Leadership and execution',
+  'Kingdom principles',
 ]
 
 export function Story() {
   return (
-    <section className="border-t border-navy-100 bg-cream">
-      <div className="mx-auto max-w-content px-6 py-20">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,340px)_1fr] lg:items-start">
-          <div className="relative mx-auto w-full max-w-xs overflow-hidden rounded-3xl bg-navy-50 lg:mx-0 lg:max-w-none">
-            <Image
-              src="/images/salim/story.webp"
-              alt="Salim Cyrus"
-              width={784}
-              height={1360}
-              className="h-full w-full object-cover"
-            />
-          </div>
-
+    <section
+      className="border-t border-navy-100 bg-cream"
+      data-testid="about-story"
+    >
+      <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:gap-20">
           <div>
             <p className="font-body text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-              Story
+              My Story
             </p>
-            <h2 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl">
-              My Story.
+            <h2 className="mt-3 max-w-lg font-heading text-4xl font-bold leading-tight text-navy sm:text-5xl">
+              Truth should change how you live.
             </h2>
-            <div className="mt-8 max-w-2xl space-y-6 text-navy-600">
-              {paragraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-navy-600">
+              Salim Cyrus is a relationship coach, speaker, author, and Kingdom
+              strategist who helps people replace confusion with clarity,
+              responsibility, and disciplined action.
+            </p>
+          </div>
+
+          <div className="space-y-6 text-base leading-8 text-navy-600 sm:text-lg">
+            <p>
+              His work began with a simple conviction: lasting change requires
+              more than inspiration. It requires the courage to confront
+              repeating patterns, renew the mind, and make decisions that can
+              survive everyday pressure.
+            </p>
+            <p>
+              Salim studied psychology and later explored embodiment practices
+              to connect inner awareness with practical structure. Through
+              coaching, workshops, writing, and teaching, he developed an
+              approach that combines deep listening, direct truth, and
+              accountable next steps.
+            </p>
+            <p>
+              Today, his work serves people navigating relationship decisions,
+              identity shifts, burnout, leadership pressure, and questions of
+              purpose. The aim is not dependency on a coach. It is the ability
+              to think clearly, act responsibly, and build a life rooted in
+              wisdom.
+            </p>
           </div>
         </div>
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-3">
-          {pillars.map((pillar) => (
-            <div key={pillar.title} className="rounded-2xl border border-navy-100 bg-white p-6">
-              <h3 className="font-heading text-lg font-semibold text-navy">{pillar.title}</h3>
-              <p className="mt-2 text-sm text-navy-500">{pillar.description}</p>
-            </div>
-          ))}
+        <div className="mt-14 border-y border-navy-200 py-8">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-navy-400">
+            Core areas of work
+          </p>
+          <ul className="mt-5 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-5">
+            {focusAreas.map((area, index) => (
+              <li
+                key={area}
+                className="flex items-start gap-3 text-sm font-semibold text-navy-700"
+              >
+                <span className="font-heading text-gold-500" aria-hidden>
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                {area}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

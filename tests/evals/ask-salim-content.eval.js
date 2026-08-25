@@ -42,12 +42,12 @@ const checks = [
       /local\s+emergency services/.test(page),
   ],
   [
-    'form uses honest prepare-email language',
-    form.includes('Prepare Email') && !form.includes('Submit Question'),
+    'form records questions in the review queue',
+    form.includes("fetch('/api/ask-salim'") && form.includes('Submit Your Question'),
   ],
   [
-    'form preserves content after preparing the email',
-    !form.includes("setQuestion('')") && !form.includes("setName('')"),
+    'form confirms successful queue submission',
+    form.includes('Question received.') && form.includes('setSubmitted(true)'),
   ],
   [
     'form supports context and publication preferences',

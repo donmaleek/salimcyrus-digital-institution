@@ -1,16 +1,9 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions)
-  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin
-  return isAdmin === true
-}
+import { requireCrmApi } from '@/services/crm/access'
 
 export async function GET() {
-  if (!(await requireAdmin())) {
+  if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

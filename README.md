@@ -95,8 +95,26 @@ Mission support at `/support-the-mission` offers three routes:
 - PayPal displays the confirmed recipient email. Replace this instruction with a tested
   PayPal Business payment link when one has been created in the account dashboard.
 
-Pesapal and Resend remain unimplemented. Contact forms open the visitor's own email
-client instead of calling an email API.
+The public contact, booking, newsletter, Ask Salim, and Paystack webhook routes now
+feed the native Business CRM. Resend and WhatsApp sending remain disabled until the
+official credentials, consent rules, and approved templates are configured.
+
+### Business CRM
+
+Administrators land at `/dashboard/admin/crm`, Salim's executive command center.
+It unifies relationships, pipeline, tasks, service, payments, delivery, books,
+marketing, community support, reports, and audit history while retaining the site's
+existing bookings and content tools.
+
+After applying migrations, initialize the Salim-specific pipelines, seven programs,
+fourteen books, integrations, and existing-site relationship history:
+
+```
+npm run crm:seed
+```
+
+See `docs/crm-operations.md` for permissions, reconciliation, imports, recovery, and
+provider activation.
 
 ### CMS
 

@@ -33,6 +33,9 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
+    "crm:seed": "node scripts/seed-crm.js",
+    "eval:crm": "node tests/evals/crm-operating-system.eval.js",
+    "eval:build-boundaries": "node tests/evals/build-database-boundaries.eval.js",
     "admin:promote": "node scripts/make-admin.js"
   },
   "dependencies": {

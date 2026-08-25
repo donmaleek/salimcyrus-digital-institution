@@ -45,12 +45,12 @@ const checks = [
       /Formal work begins only after/.test(page),
   ],
   [
-    'form uses honest prepare-email language',
-    form.includes('Prepare Email') && !form.includes('Send Message'),
+    'form submits into the owned follow-up workflow',
+    form.includes("fetch('/api/contact'") && form.includes('Send Enquiry'),
   ],
   [
-    'form preserves the user draft after preparing email',
-    !form.includes("setValues({ name: ''"),
+    'form clears the draft only after the server accepts it',
+    form.includes('if(!response.ok)') && form.includes('setValues({ enquiryType:'),
   ],
   [
     'form collects enquiry type and organization context',

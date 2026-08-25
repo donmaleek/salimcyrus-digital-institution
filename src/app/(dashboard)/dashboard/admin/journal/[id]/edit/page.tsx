@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-import { getServerSession } from 'next-auth'
-import { redirect, notFound } from 'next/navigation'
-import { authOptions } from '@/lib/auth'
+import { notFound } from 'next/navigation'
 import { db } from '@/lib/db'
 import { JournalEntryForm } from '@/components/dashboard/JournalEntryForm'
+import { requireCrmPage } from '@/services/crm/access'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,12 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default async function EditJournalEntryPage({ params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
-  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin === true
-
-  if (!isAdmin) {
-    redirect('/dashboard')
-  }
+  await requireCrmPage('content:write')
 
   const entry = await db.journalEntry.findUnique({ where: { id: params.id } })
   if (!entry) {

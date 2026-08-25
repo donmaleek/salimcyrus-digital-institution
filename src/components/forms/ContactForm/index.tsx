@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
-import { CONTACT_EMAIL } from '@/lib/utils/constants'
 
 const enquiryTypes = [
   'General enquiry',
@@ -26,6 +25,7 @@ export function ContactForm() {
     message: '',
   })
   const { showToast } = useToast()
+  const [submitting, setSubmitting] = useState(false)
 
   function update(
     field: keyof typeof values
@@ -36,23 +36,14 @@ export function ContactForm() {
       setValues((previous) => ({ ...previous, [field]: event.target.value }))
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const body = encodeURIComponent(
-      [
-        `Enquiry type: ${values.enquiryType}`,
-        `Message: ${values.message.trim()}`,
-        `From: ${values.name.trim()}`,
-        `Email: ${values.email.trim()}`,
-        `Organization: ${values.organization.trim() || 'Not provided'}`,
-        `WhatsApp: ${values.whatsapp.trim() || 'Not provided'}`,
-      ].join('\n\n')
-    )
-    const subject = encodeURIComponent(`Website enquiry: ${values.enquiryType}`)
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`
-    showToast(
-      'Email draft prepared. Review it and press send in your email app.'
-    )
+    setSubmitting(true)
+    const response = await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(values)})
+    setSubmitting(false)
+    if(!response.ok){showToast('We could not record your enquiry. Please try again.');return}
+    showToast('Thank you. Your enquiry is now with Salim’s team.')
+    setValues({ enquiryType: enquiryTypes[0], name: '', email: '', organization: '', whatsapp: '', message: '' })
   }
 
   return (
@@ -193,12 +184,11 @@ export function ContactForm() {
       </div>
 
       <div className="border-t border-navy-200 pt-6">
-        <Button type="submit" size="lg">
-          Prepare Email
+        <Button type="submit" size="lg" disabled={submitting}>
+          {submitting?'Sending…':'Send Enquiry'}
         </Button>
         <p className="mt-4 max-w-xl text-sm leading-6 text-navy-500">
-          This opens your email application with the enquiry prepared. Review
-          the draft and press send to complete your message.
+          Your enquiry is securely recorded and assigned for follow-up.
         </p>
       </div>
     </form>

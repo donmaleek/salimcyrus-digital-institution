@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
+import { normalizeEmail } from '@/services/crm/normalization'
 
 const bookingSchema = z.object({
   name: z.string().min(1),
@@ -34,7 +35,17 @@ export async function POST(request: NextRequest) {
         await tx.availabilitySlot.update({ where: { id: slotId }, data: { isBooked: true } })
       }
 
-      return tx.booking.create({ data: { ...data, userId, slotId } })
+      const booking = await tx.booking.create({ data: { ...data, userId, slotId } })
+      const email = normalizeEmail(data.email)!
+      let contact = await tx.crmContact.findFirst({ where: { normalizedEmail: email, deletedAt: null } })
+      if (!contact) {
+        const parts = data.name.trim().split(/\s+/)
+        contact = await tx.crmContact.create({ data: { firstName: parts[0], lastName: parts.slice(1).join(' ') || null, displayName: data.name, primaryEmail: data.email, normalizedEmail: email, lifecycleStage: 'lead', relationshipTypes: ['lead'], source: 'booking', nextActionAt: new Date(Date.now() + 24 * 60 * 60 * 1000) } })
+      }
+      await tx.crmActivity.create({ data: { contactId: contact.id, type: 'booking', direction: 'inbound', subject: `Requested ${data.offerName}`, body: data.notes, metadata: { bookingId: booking.id, slotId } } })
+      await tx.crmTask.create({ data: { title: `Confirm booking: ${data.name}`, description: `${data.offerName}${data.notes ? ` · ${data.notes}` : ''}`, dueAt: new Date(Date.now() + 4 * 60 * 60 * 1000), priority: 'high', contactId: contact.id } })
+      await tx.crmContact.update({ where: { id: contact.id }, data: { lastActivityAt: new Date(), nextActionAt: new Date(Date.now() + 4 * 60 * 60 * 1000) } })
+      return booking
     })
 
     return NextResponse.json({ booking }, { status: 201 })

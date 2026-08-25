@@ -11,15 +11,22 @@ datasource db {
 }
 
 model User {
-  id                  String              @id @default(cuid())
+  id                  String               @id @default(cuid())
   name                String
-  email               String              @unique
+  email               String               @unique
   passwordHash        String
-  isAdmin             Boolean             @default(false)
-  createdAt           DateTime            @default(now())
+  isAdmin             Boolean              @default(false)
+  crmRole             String               @default("customer")
+  createdAt           DateTime             @default(now())
   bookings            Booking[]
   journalEntries      JournalEntry[]
   passwordResetTokens PasswordResetToken[]
+  ownedContacts       CrmContact[]         @relation("ContactOwner")
+  ownedOpportunities  CrmOpportunity[]     @relation("OpportunityOwner")
+  assignedTasks       CrmTask[]            @relation("TaskAssignee")
+  assignedCases       CrmCase[]            @relation("CaseAssignee")
+  auditEvents         CrmAuditEvent[]      @relation("AuditActor")
+  notifications       CrmNotification[]
 }
 
 model PasswordResetToken {
@@ -89,20 +96,447 @@ model NewsletterSubscriber {
 }
 
 model AskSalimQuestion {
-  id                     String    @id @default(cuid())
-  slug                   String?   @unique
-  category               String
-  question               String
-  context                String?
-  askerName              String?
-  askerEmail             String?
-  publicationPreference  String    @default("anonymous")
-  status                 String    @default("pending")
-  answer                 String?
-  answeredAt             DateTime?
-  publishedAt            DateTime?
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
+  id                    String    @id @default(cuid())
+  slug                  String?   @unique
+  category              String
+  question              String
+  context               String?
+  askerName             String?
+  askerEmail            String?
+  publicationPreference String    @default("anonymous")
+  status                String    @default("pending")
+  answer                String?
+  answeredAt            DateTime?
+  publishedAt           DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@index([status, publishedAt])
+}
+
+model CrmOrganization {
+  id            String           @id @default(cuid())
+  name          String
+  domain        String?
+  phone         String?
+  email         String?
+  type          String           @default("business")
+  status        String           @default("active")
+  tags          String[]         @default([])
+  notes         String?
+  metadata      Json?
+  contacts      CrmContact[]
+  opportunities CrmOpportunity[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  deletedAt     DateTime?
+
+  @@index([name])
+  @@index([status])
+}
+
+model CrmContact {
+  id                String              @id @default(cuid())
+  firstName         String
+  lastName          String?
+  displayName       String
+  primaryEmail      String?
+  normalizedEmail   String?
+  primaryPhone      String?
+  normalizedPhone   String?
+  lifecycleStage    String              @default("lead")
+  relationshipTypes String[]            @default([])
+  source            String              @default("manual")
+  sourceDetail      String?
+  status            String              @default("active")
+  score             Int                 @default(0)
+  tags              String[]            @default([])
+  preferredChannel  String?
+  emailConsent      Boolean             @default(false)
+  whatsappConsent   Boolean             @default(false)
+  consentCapturedAt DateTime?
+  ownerId           String?
+  owner             User?               @relation("ContactOwner", fields: [ownerId], references: [id])
+  organizationId    String?
+  organization      CrmOrganization?    @relation(fields: [organizationId], references: [id])
+  lastActivityAt    DateTime?
+  nextActionAt      DateTime?
+  notes             String?
+  metadata          Json?
+  activities        CrmActivity[]
+  tasks             CrmTask[]
+  opportunities     CrmOpportunity[]
+  cases             CrmCase[]
+  transactions      CrmTransaction[]
+  orders            CrmOrder[]
+  enrollments       CrmEnrollment[]
+  donations         CrmDonation[]
+  campaignMembers   CrmCampaignMember[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+
+  @@index([displayName])
+  @@index([normalizedEmail])
+  @@index([normalizedPhone])
+  @@index([lifecycleStage, status])
+  @@index([ownerId, nextActionAt])
+}
+
+model CrmActivity {
+  id            String          @id @default(cuid())
+  contactId     String?
+  contact       CrmContact?     @relation(fields: [contactId], references: [id])
+  opportunityId String?
+  opportunity   CrmOpportunity? @relation(fields: [opportunityId], references: [id])
+  type          String
+  direction     String?
+  subject       String
+  body          String?
+  occurredAt    DateTime        @default(now())
+  actorId       String?
+  channel       String?
+  externalId    String?
+  metadata      Json?
+  createdAt     DateTime        @default(now())
+
+  @@index([contactId, occurredAt])
+  @@index([opportunityId, occurredAt])
+}
+
+model CrmTask {
+  id             String          @id @default(cuid())
+  title          String
+  description    String?
+  status         String          @default("open")
+  priority       String          @default("normal")
+  dueAt          DateTime
+  completedAt    DateTime?
+  completionNote String?
+  assigneeId     String?
+  assignee       User?           @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  contactId      String?
+  contact        CrmContact?     @relation(fields: [contactId], references: [id])
+  opportunityId  String?
+  opportunity    CrmOpportunity? @relation(fields: [opportunityId], references: [id])
+  recurringRule  String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([assigneeId, status, dueAt])
+  @@index([contactId])
+}
+
+model CrmPipeline {
+  id            String             @id @default(cuid())
+  name          String
+  businessLine  String
+  isActive      Boolean            @default(true)
+  stages        CrmPipelineStage[]
+  opportunities CrmOpportunity[]
+  createdAt     DateTime           @default(now())
+}
+
+model CrmPipelineStage {
+  id            String           @id @default(cuid())
+  pipelineId    String
+  pipeline      CrmPipeline      @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  name          String
+  position      Int
+  probability   Int              @default(0)
+  isWon         Boolean          @default(false)
+  isLost        Boolean          @default(false)
+  opportunities CrmOpportunity[]
+
+  @@unique([pipelineId, position])
+}
+
+model CrmOpportunity {
+  id              String           @id @default(cuid())
+  title           String
+  contactId       String?
+  contact         CrmContact?      @relation(fields: [contactId], references: [id])
+  organizationId  String?
+  organization    CrmOrganization? @relation(fields: [organizationId], references: [id])
+  ownerId         String?
+  owner           User?            @relation("OpportunityOwner", fields: [ownerId], references: [id])
+  pipelineId      String
+  pipeline        CrmPipeline      @relation(fields: [pipelineId], references: [id])
+  stageId         String
+  stage           CrmPipelineStage @relation(fields: [stageId], references: [id])
+  status          String           @default("open")
+  businessLine    String
+  amountMinor     Int              @default(0)
+  currency        String           @default("KES")
+  probability     Int              @default(0)
+  expectedCloseAt DateTime?
+  lastActivityAt  DateTime?
+  nextActionAt    DateTime?
+  source          String?
+  lossReason      String?
+  notes           String?
+  tasks           CrmTask[]
+  activities      CrmActivity[]
+  transactions    CrmTransaction[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([pipelineId, stageId])
+  @@index([ownerId, status, nextActionAt])
+}
+
+model CrmCase {
+  id          String      @id @default(cuid())
+  caseNumber  String      @unique
+  contactId   String?
+  contact     CrmContact? @relation(fields: [contactId], references: [id])
+  assigneeId  String?
+  assignee    User?       @relation("CaseAssignee", fields: [assigneeId], references: [id])
+  category    String
+  subject     String
+  description String?
+  priority    String      @default("normal")
+  status      String      @default("open")
+  dueAt       DateTime?
+  resolvedAt  DateTime?
+  resolution  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([status, priority, dueAt])
+}
+
+model CrmProduct {
+  id             String                 @id @default(cuid())
+  sku            String                 @unique
+  name           String
+  type           String
+  businessLine   String
+  description    String?
+  priceMinor     Int
+  currency       String                 @default("KES")
+  stockOnHand    Int?
+  reorderLevel   Int?
+  isActive       Boolean                @default(true)
+  orderItems     CrmOrderItem[]
+  inventoryMoves CrmInventoryMovement[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+}
+
+model CrmOrder {
+  id                String           @id @default(cuid())
+  orderNumber       String           @unique
+  contactId         String?
+  contact           CrmContact?      @relation(fields: [contactId], references: [id])
+  status            String           @default("pending")
+  fulfillmentStatus String           @default("unfulfilled")
+  subtotalMinor     Int
+  discountMinor     Int              @default(0)
+  totalMinor        Int
+  currency          String           @default("KES")
+  deliveryMethod    String?
+  shippingAddress   Json?
+  items             CrmOrderItem[]
+  transactions      CrmTransaction[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model CrmOrderItem {
+  id         String     @id @default(cuid())
+  orderId    String
+  order      CrmOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    CrmProduct @relation(fields: [productId], references: [id])
+  quantity   Int
+  unitMinor  Int
+  totalMinor Int
+}
+
+model CrmInventoryMovement {
+  id        String     @id @default(cuid())
+  productId String
+  product   CrmProduct @relation(fields: [productId], references: [id])
+  type      String
+  quantity  Int
+  reason    String
+  reference String?
+  actorId   String?
+  createdAt DateTime   @default(now())
+
+  @@index([productId, createdAt])
+}
+
+model CrmTransaction {
+  id                   String          @id @default(cuid())
+  externalReference    String?         @unique
+  contactId            String?
+  contact              CrmContact?     @relation(fields: [contactId], references: [id])
+  opportunityId        String?
+  opportunity          CrmOpportunity? @relation(fields: [opportunityId], references: [id])
+  orderId              String?
+  order                CrmOrder?       @relation(fields: [orderId], references: [id])
+  provider             String
+  method               String
+  status               String          @default("pending")
+  reconciliationStatus String          @default("unmatched")
+  businessLine         String
+  grossMinor           Int
+  feeMinor             Int             @default(0)
+  netMinor             Int
+  currency             String          @default("KES")
+  paidAt               DateTime?
+  metadata             Json?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  @@index([status, paidAt])
+  @@index([reconciliationStatus])
+}
+
+model CrmProgram {
+  id          String          @id @default(cuid())
+  name        String
+  type        String
+  status      String          @default("draft")
+  startAt     DateTime?
+  endAt       DateTime?
+  capacity    Int?
+  priceMinor  Int?
+  currency    String          @default("KES")
+  enrollments CrmEnrollment[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model CrmEnrollment {
+  id          String     @id @default(cuid())
+  programId   String
+  program     CrmProgram @relation(fields: [programId], references: [id])
+  contactId   String
+  contact     CrmContact @relation(fields: [contactId], references: [id])
+  status      String     @default("enrolled")
+  progress    Int        @default(0)
+  attendance  Int        @default(0)
+  outcome     String?
+  enrolledAt  DateTime   @default(now())
+  completedAt DateTime?
+
+  @@unique([programId, contactId])
+}
+
+model CrmCampaign {
+  id           String              @id @default(cuid())
+  name         String
+  channel      String
+  status       String              @default("draft")
+  businessLine String?
+  budgetMinor  Int                 @default(0)
+  currency     String              @default("KES")
+  startsAt     DateTime?
+  endsAt       DateTime?
+  members      CrmCampaignMember[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+}
+
+model CrmCampaignMember {
+  id          String      @id @default(cuid())
+  campaignId  String
+  campaign    CrmCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactId   String
+  contact     CrmContact  @relation(fields: [contactId], references: [id])
+  status      String      @default("queued")
+  respondedAt DateTime?
+  convertedAt DateTime?
+
+  @@unique([campaignId, contactId])
+}
+
+model CrmDonation {
+  id             String      @id @default(cuid())
+  contactId      String?
+  contact        CrmContact? @relation(fields: [contactId], references: [id])
+  campaign       String?
+  amountMinor    Int
+  currency       String      @default("KES")
+  status         String      @default("received")
+  restriction    String?
+  acknowledgedAt DateTime?
+  receivedAt     DateTime    @default(now())
+}
+
+model CrmGoal {
+  id           String   @id @default(cuid())
+  name         String
+  metric       String
+  targetValue  Decimal  @db.Decimal(18, 2)
+  currentValue Decimal  @default(0) @db.Decimal(18, 2)
+  periodStart  DateTime
+  periodEnd    DateTime
+  businessLine String?
+  ownerId      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CrmAuditEvent {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id])
+  action     String
+  entityType String
+  entityId   String?
+  summary    String
+  before     Json?
+  after      Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+model CrmImportJob {
+  id            String    @id @default(cuid())
+  source        String
+  status        String    @default("preview")
+  fileName      String?
+  totalRows     Int       @default(0)
+  validRows     Int       @default(0)
+  invalidRows   Int       @default(0)
+  duplicateRows Int       @default(0)
+  mapping       Json?
+  errors        Json?
+  createdById   String?
+  createdAt     DateTime  @default(now())
+  completedAt   DateTime?
+}
+
+model CrmIntegration {
+  id         String    @id @default(cuid())
+  provider   String    @unique
+  status     String    @default("disconnected")
+  config     Json?
+  lastSyncAt DateTime?
+  lastError  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model CrmNotification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String?
+  href      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, readAt, createdAt])
 }

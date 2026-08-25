@@ -1,19 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { slugify } from '@/lib/utils/slugify'
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions)
-  const user = session?.user as { id?: string; isAdmin?: boolean } | undefined
-  return user?.isAdmin === true ? user.id : null
-}
+import { requireCrmApi } from '@/services/crm/access'
 
 export async function GET() {
-  const adminId = await requireAdmin()
-  if (!adminId) {
+  const principal = await requireCrmApi('content:write')
+  if (!principal) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
@@ -36,8 +29,8 @@ const createEntrySchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
-  const adminId = await requireAdmin()
-  if (!adminId) {
+  const principal = await requireCrmApi('content:write')
+  if (!principal) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
@@ -63,7 +56,7 @@ export async function POST(request: NextRequest) {
     data: {
       ...parsed.data,
       slug,
-      authorId: adminId,
+      authorId: principal.id,
       publishedAt: parsed.data.status === 'published' ? new Date() : null,
     },
   })

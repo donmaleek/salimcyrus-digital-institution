@@ -32,7 +32,7 @@ const checks = [
   ],
   [
     'page explains the four-stage booking process',
-    ['Choose', 'Reserve', 'Coordinate', 'Prepare'].every((step) =>
+    ['Choose', 'Reserve', 'Confirm', 'Prepare'].every((step) =>
       page.includes(`'${step}',`)
     ),
   ],

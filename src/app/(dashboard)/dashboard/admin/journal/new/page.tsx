@@ -1,20 +1,13 @@
 import type { Metadata } from 'next'
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-import { authOptions } from '@/lib/auth'
 import { JournalEntryForm } from '@/components/dashboard/JournalEntryForm'
+import { requireCrmPage } from '@/services/crm/access'
 
 export const metadata: Metadata = {
   title: 'Write a New Entry',
 }
 
 export default async function NewJournalEntryPage() {
-  const session = await getServerSession(authOptions)
-  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin === true
-
-  if (!isAdmin) {
-    redirect('/dashboard')
-  }
+  await requireCrmPage('content:write')
 
   return (
     <div>

@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import { getServerSession } from 'next-auth'
-import { redirect } from 'next/navigation'
-import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { JournalManager } from '@/components/dashboard/JournalManager'
+import { requireCrmPage } from '@/services/crm/access'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,12 +10,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AdminJournalPage() {
-  const session = await getServerSession(authOptions)
-  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin === true
-
-  if (!isAdmin) {
-    redirect('/dashboard')
-  }
+  await requireCrmPage('content:write')
 
   const entries = await db.journalEntry.findMany({
     orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],

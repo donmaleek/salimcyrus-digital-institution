@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { programs } from '@/lib/data/programs'
+import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default async function DashboardOverviewPage() {
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
+  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin === true
+  if (isAdmin) redirect('/dashboard/admin/crm')
 
   const bookings = userId
     ? await db.booking.findMany({ where: { userId } })

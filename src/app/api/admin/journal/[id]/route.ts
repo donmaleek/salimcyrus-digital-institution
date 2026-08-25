@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
-
-async function requireAdmin() {
-  const session = await getServerSession(authOptions)
-  const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin
-  return isAdmin === true
-}
+import { requireCrmApi } from '@/services/crm/access'
 
 const updateEntrySchema = z.object({
   title: z.string().min(3).optional(),
@@ -22,7 +15,7 @@ const updateEntrySchema = z.object({
 })
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  if (!(await requireAdmin())) {
+  if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
@@ -51,7 +44,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
-  if (!(await requireAdmin())) {
+  if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

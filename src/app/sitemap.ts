@@ -79,10 +79,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  const journalEntries = await db.journalEntry.findMany({
-    where: { status: 'published' },
-    select: { slug: true, publishedAt: true, updatedAt: true },
-  })
+  const journalEntries = await db.journalEntry
+    .findMany({
+      where: { status: 'published' },
+      select: { slug: true, publishedAt: true, updatedAt: true },
+    })
+    .catch((error: unknown) => {
+      console.warn('Sitemap generated without database journal entries', {
+        reason: error instanceof Error ? error.name : 'database unavailable',
+      })
+      return []
+    })
 
   for (const entry of journalEntries) {
     entries.push({

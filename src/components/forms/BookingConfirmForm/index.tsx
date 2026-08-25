@@ -31,7 +31,7 @@ export function BookingConfirmForm() {
   const [slotId, setSlotId] = useState('')
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [confirmed, setConfirmed] = useState(false)
+  const [confirmation, setConfirmation] = useState<{ id: string; accountLinked: boolean } | null>(null)
   const [slotsError, setSlotsError] = useState(false)
   const { showToast } = useToast()
 
@@ -72,7 +72,8 @@ export function BookingConfirmForm() {
         return
       }
 
-      setConfirmed(true)
+      const body = await res.json()
+      setConfirmation({ id: body.booking.id, accountLinked: body.booking.accountLinked })
       if (slotId) {
         setSlots((prev) => (prev ? prev.filter((slot) => slot.id !== slotId) : prev))
       }
@@ -81,14 +82,25 @@ export function BookingConfirmForm() {
     }
   }
 
-  if (confirmed) {
+  if (confirmation) {
     return (
       <div className="rounded-2xl border border-navy-100 bg-white p-8 text-center" data-testid="booking-confirmed">
-        <p className="font-heading text-xl font-semibold text-navy">Booking recorded.</p>
+        <p className="font-heading text-xl font-semibold text-navy">Payment verified. Booking confirmed.</p>
         <p className="mt-3 text-navy-600">
-          Your session is saved{slotId ? ' for the time you selected' : ''} and will show up in your
-          dashboard under My Bookings once it&apos;s reviewed.
+          {slotId
+            ? 'Your selected time is reserved.'
+            : 'Your session is saved. Our team will contact you to agree on a time.'}
         </p>
+        <p className="mt-3 text-sm text-navy-400">Confirmation: {confirmation.id}</p>
+        {confirmation.accountLinked ? (
+          <Button href={`/dashboard/my-bookings/${confirmation.id}`} variant="outline" className="mt-6">
+            View My Booking
+          </Button>
+        ) : (
+          <p className="mt-4 text-sm leading-6 text-navy-500">
+            We will send updates to {email}. Dashboard access is available when the payment email belongs to your signed-in account.
+          </p>
+        )}
       </div>
     )
   }

@@ -106,7 +106,17 @@ export async function POST(request: NextRequest) {
       return confirmedBooking
     }, { isolationLevel: 'Serializable' })
 
-    return NextResponse.json({ booking }, { status: 201 })
+    return NextResponse.json(
+      {
+        booking: {
+          id: booking.id,
+          status: booking.status,
+          slotId: booking.slotId,
+          accountLinked: Boolean(booking.userId),
+        },
+      },
+      { status: 201 }
+    )
   } catch (error) {
     if (error instanceof BookingConfirmationError && error.code === 'SLOT_UNAVAILABLE') {
       return NextResponse.json({ error: 'That time slot is no longer available.' }, { status: 409 })

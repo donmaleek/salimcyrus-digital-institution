@@ -44,6 +44,11 @@ export default async function MyBookingsPage() {
                 </span>
               </div>
               <p className="mt-1 text-sm text-navy-400">{formatDate(booking.createdAt)}</p>
+              {booking.status === 'paid' && (
+                <p className="mt-3 text-sm font-semibold text-gold-600">
+                  Payment received. Open this booking to choose a time.
+                </p>
+              )}
             </Link>
           ))}
         </div>

@@ -77,6 +77,17 @@ export default async function BookingConfirmationPage({
           )}
         </dl>
 
+        {booking.status === 'paid' && (
+          <div className="mt-6 border-t border-navy-100 pt-6">
+            <p className="text-sm text-navy-500">
+              Your payment is verified. Confirm your details and choose a time to complete scheduling.
+            </p>
+            <Button href="/book-now/confirm" size="sm" className="mt-4">
+              Choose a Time
+            </Button>
+          </div>
+        )}
+
         {booking.status === 'pending' && (
           <p className="mt-6 border-t border-navy-100 pt-6 text-sm text-navy-500">
             This booking is awaiting confirmation. If you have already paid and this still shows

@@ -77,6 +77,7 @@ model Booking {
   source            String            @default("manual")
   amountKobo        Int?
   paystackReference String?           @unique
+  confirmedAt       DateTime?
   slotId            String?           @unique
   slot              AvailabilitySlot? @relation(fields: [slotId], references: [id])
   createdAt         DateTime          @default(now())

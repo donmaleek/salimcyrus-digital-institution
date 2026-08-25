@@ -14,7 +14,7 @@ export default function ConfirmBookingPage() {
       <PageHero
         eyebrow="Confirm Your Booking"
         title="Already Paid? Let's Get You Scheduled"
-        description="Tell us which session you booked and, if a time works for you, pick one below. This is what gets your session onto Salim's calendar and into your dashboard."
+        description="Use the email and payment reference on your Paystack receipt, then choose an available time. We verify every payment before adding a session to Salim's calendar."
       />
       <section className="bg-cream">
         <div className="mx-auto max-w-content px-6 py-20">

@@ -27,6 +27,7 @@ export function BookingConfirmForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [offerName, setOfferName] = useState(coachingOffers[0].name)
+  const [paymentReference, setPaymentReference] = useState('')
   const [slotId, setSlotId] = useState('')
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -52,6 +53,7 @@ export function BookingConfirmForm() {
           name,
           email,
           offerName,
+          paymentReference,
           notes: notes.trim() || undefined,
           slotId: slotId || undefined,
         }),
@@ -115,6 +117,25 @@ export function BookingConfirmForm() {
       </div>
 
       <div>
+        <label htmlFor="booking-payment-reference" className="block font-semibold text-navy">
+          Paystack payment reference
+        </label>
+        <input
+          id="booking-payment-reference"
+          required
+          autoComplete="off"
+          value={paymentReference}
+          onChange={(e) => setPaymentReference(e.target.value)}
+          placeholder="Found on your Paystack receipt"
+          aria-describedby="booking-payment-reference-help"
+          className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy placeholder:text-navy-300 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
+        />
+        <p id="booking-payment-reference-help" className="mt-2 text-sm leading-6 text-navy-500">
+          We match this reference and email to a successful payment before scheduling your session.
+        </p>
+      </div>
+
+      <div>
         <label htmlFor="booking-offer" className="block font-semibold text-navy">
           Which session did you pay for?
         </label>
@@ -163,7 +184,7 @@ export function BookingConfirmForm() {
           rows={4}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Payment reference, timezone, or anything else useful."
+          placeholder="Your timezone or anything else Salim should know."
           className="mt-3 w-full resize-y rounded-none border border-navy-200 bg-white px-4 py-3 text-base leading-7 text-navy placeholder:text-navy-300 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
         />
       </div>

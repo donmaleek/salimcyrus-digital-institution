@@ -26,6 +26,7 @@
     "eval:ask-salim": "node tests/evals/ask-salim-content.eval.js",
     "eval:contact": "node tests/evals/contact-content.eval.js",
     "eval:book-now": "node tests/evals/book-now-content.eval.js",
+    "eval:booking-integrity": "node tests/evals/booking-integrity.eval.js",
     "eval:payments": "node tests/evals/payment-options.eval.js",
     "eval:mobile-editorial-pages": "node tests/evals/mobile-editorial-pages.eval.js",
     "eval:home-premium": "node tests/evals/home-premium.eval.js",

@@ -19,9 +19,10 @@ export default async function EditJournalEntryPage({ params }: { params: { id: s
   }
 
   return (
-    <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">Edit Entry</h1>
-      <div className="mt-8 max-w-3xl">
+    <div className="mx-auto max-w-5xl">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-500">The Journal</p>
+      <h1 className="mt-2 font-heading text-3xl font-bold text-navy">Edit essay</h1>
+      <div className="mt-8">
         <JournalEntryForm
           initial={{
             id: entry.id,
@@ -33,6 +34,9 @@ export default async function EditJournalEntryPage({ params }: { params: { id: s
             body: entry.body,
             readingTime: entry.readingTime ?? '',
             status: entry.status === 'published' ? 'published' : 'draft',
+            coverImageUrl: entry.coverImageData ? `/api/journal/${entry.id}/cover` : undefined,
+            coverImageAlt: entry.coverImageAlt ?? '',
+            coverImageCaption: entry.coverImageCaption ?? '',
           }}
         />
       </div>

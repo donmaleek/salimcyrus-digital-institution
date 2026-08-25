@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 
@@ -13,6 +14,7 @@ interface EntrySummary {
   status: string
   publishedAt: string | null
   updatedAt: string
+  hasCoverImage: boolean
 }
 
 export function JournalManager({ initialEntries }: { initialEntries: EntrySummary[] }) {
@@ -53,7 +55,19 @@ export function JournalManager({ initialEntries }: { initialEntries: EntrySummar
 
   return (
     <div className="space-y-6">
-      <Button href="/dashboard/admin/journal/new">Write a New Entry</Button>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {[
+          ['Total essays', entries.length],
+          ['Published', entries.filter((entry) => entry.status === 'published').length],
+          ['Drafts', entries.filter((entry) => entry.status !== 'published').length],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-navy-100 bg-white p-5 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-navy-400">{label}</p>
+            <p className="mt-2 font-heading text-3xl font-bold text-navy">{value}</p>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-end"><Button href="/dashboard/admin/journal/new">Write a New Entry</Button></div>
 
       <div className="space-y-3">
         {entries.length === 0 ? (
@@ -62,8 +76,11 @@ export function JournalManager({ initialEntries }: { initialEntries: EntrySummar
           entries.map((entry) => (
             <div
               key={entry.id}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-navy-100 bg-white p-4"
+              className="grid gap-4 rounded-2xl border border-navy-100 bg-white p-4 shadow-sm transition hover:border-gold-300 sm:grid-cols-[88px_1fr_auto] sm:items-center"
             >
+              <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-navy-50">
+                {entry.hasCoverImage ? <Image src={`/api/journal/${entry.id}/cover`} alt="" fill unoptimized className="object-cover" /> : <span className="font-heading text-2xl font-bold text-gold-500">SC</span>}
+              </div>
               <div>
                 <div className="flex items-center gap-3">
                   <p className="font-semibold text-navy">{entry.title}</p>

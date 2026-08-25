@@ -18,10 +18,11 @@ export default async function AdminJournalPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">Manage Journal</h1>
-      <p className="mt-2 max-w-2xl text-sm text-navy-500">
-        Write, edit, and publish essays. Drafts stay off the public site until you publish them.
-      </p>
+      <div className="rounded-3xl bg-navy px-6 py-8 text-white sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Content studio</p>
+        <h1 className="mt-3 font-heading text-3xl font-bold">The Journal</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">Shape Salim&apos;s ideas, add editorial imagery, preview every essay, and control what readers see.</p>
+      </div>
       <div className="mt-8">
         <JournalManager
           initialEntries={entries.map((entry) => ({
@@ -32,6 +33,7 @@ export default async function AdminJournalPage() {
             status: entry.status,
             publishedAt: entry.publishedAt?.toISOString() ?? null,
             updatedAt: entry.updatedAt.toISOString(),
+            hasCoverImage: Boolean(entry.coverImageData),
           }))}
         />
       </div>

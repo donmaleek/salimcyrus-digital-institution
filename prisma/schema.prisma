@@ -42,21 +42,25 @@ model PasswordResetToken {
 }
 
 model JournalEntry {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  title       String
-  subtitle    String?
-  category    String
-  summary     String
-  thesis      String?
-  body        String
-  readingTime String?
-  status      String    @default("draft")
-  publishedAt DateTime?
-  authorId    String?
-  author      User?     @relation(fields: [authorId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  slug              String    @unique
+  title             String
+  subtitle          String?
+  category          String
+  summary           String
+  thesis            String?
+  body              String
+  readingTime       String?
+  coverImageData    Bytes?
+  coverImageMime    String?
+  coverImageAlt     String?
+  coverImageCaption String?
+  status            String    @default("draft")
+  publishedAt       DateTime?
+  authorId          String?
+  author            User?     @relation(fields: [authorId], references: [id])
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   @@index([status, publishedAt])
 }

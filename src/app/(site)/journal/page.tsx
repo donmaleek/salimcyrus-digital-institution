@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { editorialDesk, journalThemes } from '@/lib/data/journal'
@@ -77,6 +78,7 @@ export default async function JournalPage() {
                   </p>
                 </div>
                 <article>
+                  {featured.coverImageData && <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-lg"><Image src={`/api/journal/${featured.id}/cover`} alt={featured.coverImageAlt ?? ''} fill unoptimized priority className="object-cover" /></div>}
                   <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs font-bold uppercase tracking-[0.14em] text-navy-500">
                     <span>{featured.category}</span>
                     {featured.publishedAt && <span>{formatDate(featured.publishedAt)}</span>}

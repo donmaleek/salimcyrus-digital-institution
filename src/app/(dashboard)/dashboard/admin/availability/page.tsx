@@ -19,12 +19,11 @@ export default async function AdminAvailabilityPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">Manage Availability</h1>
-      <p className="mt-2 max-w-2xl text-sm text-navy-500">
-        Open coaching time slots for customers to book. Slots someone has already booked can&apos;t
-        be removed here — cancel the booking with them first, then delete it from the database if
-        needed.
-      </p>
+      <div className="rounded-3xl bg-navy px-6 py-8 text-white sm:px-10">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Schedule control</p>
+        <h1 className="mt-3 font-heading text-3xl font-bold">Availability</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">Open coaching sessions, see confirmed clients, and keep Salim&apos;s calendar ready for the work that matters.</p>
+      </div>
       <div className="mt-8">
         <AvailabilityManager
           initialSlots={slots.map((slot) => ({

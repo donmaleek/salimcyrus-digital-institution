@@ -29,7 +29,16 @@ export function AvailabilityManager({ initialSlots }: { initialSlots: Slot[] }) 
   const [time, setTime] = useState('')
   const [duration, setDuration] = useState(60)
   const [submitting, setSubmitting] = useState(false)
+  const [filter, setFilter] = useState<'upcoming' | 'booked' | 'past'>('upcoming')
   const { showToast } = useToast()
+  const now = Date.now()
+  const upcoming = slots.filter((slot) => new Date(slot.startTime).getTime() >= now)
+  const visibleSlots = slots.filter((slot) => {
+    const isPast = new Date(slot.startTime).getTime() < now
+    if (filter === 'past') return isPast
+    if (filter === 'booked') return !isPast && slot.isBooked
+    return !isPast
+  })
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -76,11 +85,27 @@ export function AvailabilityManager({ initialSlots }: { initialSlots: Slot[] }) 
   }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
+      <div className="grid gap-4 sm:grid-cols-3">
+        {[
+          ['Upcoming slots', upcoming.length],
+          ['Open for booking', upcoming.filter((slot) => !slot.isBooked).length],
+          ['Confirmed bookings', upcoming.filter((slot) => slot.isBooked).length],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-navy-100 bg-white p-5 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-navy-400">{label}</p>
+            <p className="mt-2 font-heading text-3xl font-bold text-navy">{value}</p>
+          </div>
+        ))}
+      </div>
       <form
         onSubmit={handleSubmit}
-        className="grid gap-4 rounded-2xl border border-navy-100 bg-white p-6 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end"
+        className="grid gap-4 rounded-2xl border border-navy-100 bg-white p-6 shadow-sm sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end"
       >
+        <div className="sm:col-span-4">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-gold-500">Open a session</p>
+          <h2 className="mt-2 font-heading text-xl font-bold text-navy">Add bookable time</h2>
+        </div>
         <label className="block text-sm font-medium text-navy-700">
           Date
           <input
@@ -119,25 +144,31 @@ export function AvailabilityManager({ initialSlots }: { initialSlots: Slot[] }) 
         </Button>
       </form>
 
+      <div className="flex flex-wrap gap-2 border-b border-navy-100 pb-4">
+        {(['upcoming', 'booked', 'past'] as const).map((option) => (
+          <button key={option} type="button" onClick={() => setFilter(option)} className={`min-h-10 rounded-full px-4 text-sm font-semibold capitalize transition ${filter === option ? 'bg-navy text-white' : 'bg-white text-navy hover:bg-navy-50'}`}>{option}</button>
+        ))}
+      </div>
+
       <div className="space-y-3">
-        {slots.length === 0 ? (
+        {visibleSlots.length === 0 ? (
           <p className="text-sm text-navy-400">No availability slots yet — add one above.</p>
         ) : (
-          slots.map((slot) => (
+          visibleSlots.map((slot) => (
             <div
               key={slot.id}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-navy-100 bg-white p-4"
+              className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-navy-100 bg-white p-5 shadow-sm"
             >
               <div>
                 <p className="font-semibold text-navy">
                   {formatSlotTime(slot.startTime)} · {slot.durationMinutes} min
                 </p>
                 {slot.booking ? (
-                  <p className="mt-1 text-sm text-navy-500">
+                  <p className="mt-2 inline-flex rounded-full bg-navy-50 px-3 py-1 text-sm text-navy-600">
                     Booked by {slot.booking.name} ({slot.booking.email}) — {slot.booking.offerName}
                   </p>
                 ) : (
-                  <p className="mt-1 text-sm text-gold-500">Open</p>
+                  <p className="mt-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">Open for booking</p>
                 )}
               </div>
               {!slot.isBooked && (

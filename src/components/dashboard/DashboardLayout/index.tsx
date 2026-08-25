@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { SignOutButton } from '@/components/dashboard/SignOutButton'
 import { CrmGlobalSearch } from '@/components/dashboard/crm/GlobalSearch'
 
@@ -31,13 +34,14 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, userName, isAdmin, crmRole }: DashboardLayoutProps) {
+  const pathname = usePathname()
   const items = isAdmin
     ? [
         { label: 'My Dashboard', href: '/dashboard' },
         ...crmNav,
-        { label: 'Journal (Admin)', href: '/dashboard/admin/journal' },
-        { label: 'Ask Salim (Admin)', href: '/dashboard/admin/ask-salim' },
-        { label: 'Availability (Admin)', href: '/dashboard/admin/availability' },
+        { label: 'Journal', href: '/dashboard/admin/journal' },
+        { label: 'Ask Salim', href: '/dashboard/admin/ask-salim' },
+        { label: 'Availability', href: '/dashboard/admin/availability' },
       ]
     : navItems
 
@@ -53,7 +57,8 @@ export function DashboardLayout({ children, userName, isAdmin, crmRole }: Dashbo
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-navy-100 transition hover:bg-white/10 hover:text-white"
+              aria-current={pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(`${item.href}/`)) ? 'page' : undefined}
+              className={`rounded-xl px-3 py-2.5 text-sm font-medium transition ${pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(`${item.href}/`)) ? 'bg-gold text-navy shadow-sm' : 'text-navy-100 hover:bg-white/10 hover:text-white'}`}
             >
               {item.label}
             </Link>
@@ -70,7 +75,7 @@ export function DashboardLayout({ children, userName, isAdmin, crmRole }: Dashbo
         </header>
         {isAdmin && (
           <nav className="flex gap-2 overflow-x-auto border-b border-navy-100 bg-white px-5 py-3 lg:hidden" aria-label="CRM navigation">
-            {crmNav.map((item) => <Link key={item.href} href={item.href} className="whitespace-nowrap rounded-full bg-navy-50 px-3 py-1.5 text-xs font-semibold text-navy">{item.label}</Link>)}
+            {items.filter((item) => item.href !== '/dashboard').map((item) => <Link key={item.href} href={item.href} aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined} className={`whitespace-nowrap rounded-full px-3 py-2 text-xs font-semibold ${pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'bg-navy text-white' : 'bg-navy-50 text-navy'}`}>{item.label}</Link>)}
           </nav>
         )}
         <main className="px-5 py-8 sm:px-8 xl:px-10">{children}</main>

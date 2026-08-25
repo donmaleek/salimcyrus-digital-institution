@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { db } from '@/lib/db'
@@ -22,6 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${entry.title} | Journal`,
     description: entry.summary,
     alternates: { canonical: `/journal/${entry.slug}` },
+    openGraph: entry.coverImageData ? { images: [`/api/journal/${entry.id}/cover`] } : undefined,
   }
 }
 
@@ -42,6 +44,12 @@ export default async function JournalEntryPage({ params }: PageProps) {
         description={entry.subtitle ?? undefined}
       />
       <main data-testid="journal-entry-content">
+        {entry.coverImageData && (
+          <figure className="bg-cream px-6 pt-12">
+            <div className="relative mx-auto aspect-[16/9] w-full max-w-content overflow-hidden rounded-2xl shadow-xl"><Image src={`/api/journal/${entry.id}/cover`} alt={entry.coverImageAlt ?? ''} fill unoptimized priority className="object-cover" /></div>
+            {entry.coverImageCaption && <figcaption className="mx-auto mt-3 max-w-content text-sm italic text-navy-500">{entry.coverImageCaption}</figcaption>}
+          </figure>
+        )}
         <section className="bg-cream" aria-labelledby="overview-heading">
           <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.62fr_1.38fr] lg:gap-20">
             <div>

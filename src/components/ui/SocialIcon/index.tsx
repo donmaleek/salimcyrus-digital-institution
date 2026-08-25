@@ -32,13 +32,25 @@ export function SocialIcon({
   href,
   label,
   className = '',
+  linked = true,
 }: {
   name: IconName
   href: string
   label: string
   className?: string
+  linked?: boolean
 }) {
   const isExternal = href.startsWith('http')
+  const icon = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      {icons[name]}
+    </svg>
+  )
+  const classes = `inline-flex h-9 w-9 items-center justify-center rounded-full border border-cream/20 text-cream/80 transition-colors hover:border-gold hover:text-gold ${className}`
+
+  if (!linked) {
+    return <span aria-hidden className={classes}>{icon}</span>
+  }
 
   return (
     <Link
@@ -46,17 +58,9 @@ export function SocialIcon({
       aria-label={label}
       target={isExternal ? '_blank' : undefined}
       rel={isExternal ? 'noopener noreferrer' : undefined}
-      className={`inline-flex h-9 w-9 items-center justify-center rounded-full border border-cream/20 text-cream/80 transition-colors hover:border-gold hover:text-gold ${className}`}
+      className={classes}
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden
-      >
-        {icons[name]}
-      </svg>
+      {icon}
     </Link>
   )
 }

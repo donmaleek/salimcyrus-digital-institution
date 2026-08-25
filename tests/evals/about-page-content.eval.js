@@ -9,6 +9,7 @@ const aboutFiles = [
   'src/components/sections/about/Philosophy/index.tsx',
   'src/components/sections/about/FrameworksDisplay/index.tsx',
   'src/components/sections/about/Credentials/index.tsx',
+  'src/components/sections/about/SocialProfiles/index.tsx',
 ]
 const content = aboutFiles
   .map((relative) => fs.readFileSync(path.join(root, relative), 'utf8'))
@@ -43,6 +44,16 @@ const checks = [
     'page explains philosophy and method',
     content.includes('Formation, not performance') &&
       content.includes('Frameworks that move ideas into action'),
+  ],
+  [
+    'About page presents every official social channel',
+    ['LinkedIn', 'TikTok', "name: 'X'", 'Instagram', 'Facebook'].every((network) =>
+      content.includes(network)
+    ) && content.includes('SOCIAL_LINKS'),
+  ],
+  [
+    'social profiles open safely in a new tab',
+    content.includes('target="_blank"') && content.includes('rel="noopener noreferrer"'),
   ],
 ]
 

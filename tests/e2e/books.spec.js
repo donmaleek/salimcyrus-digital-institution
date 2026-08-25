@@ -1,20 +1,22 @@
 const { test, expect } = require('@playwright/test')
 
-test('Books page presents two available books with purchase and detail routes', async ({
+test('Books page presents all available books with order and detail routes', async ({
   page,
 }) => {
   await page.goto('/books')
 
   const list = page.getByTestId('available-book-list')
-  await expect(list.getByRole('article')).toHaveCount(2)
-  for (const title of ['Concealed Redemption', 'The Great Deception']) {
+  await expect(list.getByRole('article')).toHaveCount(14)
+  for (const title of [
+    'Understanding the Marketplace',
+    'The Unhealed Traumas of Our Parents',
+    'Concealed Redemption',
+  ]) {
     await expect(list.getByRole('heading', { name: title })).toBeVisible()
   }
-  await expect(list.getByText('KES 1,499')).toHaveCount(2)
-  await expect(list.getByRole('link', { name: 'Buy Now' })).toHaveCount(2)
-  await expect(
-    list.getByRole('link', { name: 'Read About the Book' })
-  ).toHaveCount(2)
+  await expect(list.getByText('KES 1,499')).toHaveCount(14)
+  await expect(list.getByRole('link', { name: 'Order' })).toHaveCount(14)
+  await expect(list.getByRole('link', { name: 'Details' })).toHaveCount(14)
 })
 
 test('Books page explains its reading practice', async ({ page }) => {
@@ -35,19 +37,13 @@ test('Books page explains its reading practice', async ({ page }) => {
   }
 })
 
-test('Books page distinguishes the upcoming purpose title', async ({
-  page,
-}) => {
+test('Books page lists the purpose title as available', async ({ page }) => {
   await page.goto('/books')
 
-  await expect(page.getByText('Upcoming Title', { exact: true })).toBeVisible()
   await expect(
-    page.getByRole('heading', { name: 'The Greatest Tragedy Is Not Death...' })
+    page.getByRole('heading', { name: 'The Greatest Tragedy Is Not Death' })
   ).toBeVisible()
   await expect(page.getByText('It Is a Life Without Purpose')).toBeVisible()
-  await expect(
-    page.getByRole('link', { name: 'Get Release Updates' })
-  ).toHaveAttribute('href', '/contact')
 })
 
 test('Books page contains no em dash characters', async ({ page }) => {

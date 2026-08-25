@@ -3,6 +3,8 @@ import { programs } from './programs'
 import { knowledgeCategories } from './knowledge-categories'
 import { coachingOffers } from './coaching-offers'
 import { SOCIAL_LINKS } from '@/lib/utils/constants'
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 
 const KEBAB_CASE = /^[a-z0-9]+(-[a-z0-9]+)*$/
 
@@ -26,12 +28,28 @@ function expectUniqueSlugs(entries: { slug: string }[], label: string) {
 describe('books data', () => {
   expectUniqueSlugs(books, 'books')
 
-  it('every available book has a price and a checkout link', () => {
+  it('every available book has a price and an order link', () => {
     const broken = books
       .filter((book) => book.status === 'available')
-      .filter((book) => !book.priceKes || !book.paystackUrl)
+      .filter((book) => !book.priceKes || !book.purchaseUrl)
       .map((book) => book.slug)
     expect(broken).toEqual([])
+  })
+
+  it('publishes all 14 distinct supplied titles at KES 1,499', () => {
+    expect(books).toHaveLength(14)
+    expect(new Set(books.map((book) => book.title)).size).toBe(14)
+    expect(books.every((book) => book.priceKes === 1499)).toBe(true)
+  })
+
+  it('every book has an optimized local cover and a title-specific order message', () => {
+    for (const book of books) {
+      expect(
+        existsSync(join(process.cwd(), 'public', book.cover.replace(/^\//, '')))
+      ).toBe(true)
+      expect(book.purchaseUrl).toContain('https://wa.me/')
+      expect(decodeURIComponent(book.purchaseUrl)).toContain(book.title)
+    }
   })
 })
 

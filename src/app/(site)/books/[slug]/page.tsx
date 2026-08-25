@@ -48,7 +48,7 @@ export default function BookDetailPage({ params }: PageProps) {
             price: book.priceKes,
             priceCurrency: 'KES',
             availability: 'https://schema.org/InStock',
-            url: book.paystackUrl,
+            url: book.purchaseUrl,
           },
         }
       : {
@@ -69,7 +69,7 @@ export default function BookDetailPage({ params }: PageProps) {
       />
       <section className="bg-cream">
         <div className="mx-auto grid max-w-content gap-10 px-6 py-20 lg:grid-cols-[280px_1fr] lg:items-start">
-          <div className="relative mx-auto aspect-square w-full max-w-[280px] overflow-hidden rounded-2xl bg-navy-50 shadow-lg">
+          <div className="relative mx-auto aspect-[4/5] w-full max-w-[280px] overflow-hidden bg-navy-50 shadow-lg">
             {book.cover ? (
               <Image
                 src={book.cover}
@@ -97,8 +97,8 @@ export default function BookDetailPage({ params }: PageProps) {
                   <span className="text-2xl font-bold text-navy">
                     {formatCurrency(book.priceKes)}
                   </span>
-                  <Button href={book.paystackUrl!} size="lg">
-                    Buy Now
+                  <Button href={book.purchaseUrl} size="lg">
+                    Order on WhatsApp
                   </Button>
                 </>
               ) : (

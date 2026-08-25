@@ -4,11 +4,12 @@ const path = require('node:path')
 const root = path.resolve(__dirname, '../..')
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 const page = read('src/app/(site)/books/page.tsx')
-const booksExperience = [
-  page,
-  read('src/app/(site)/books/[slug]/page.tsx'),
-  read('src/lib/data/books.ts'),
-].join('\n')
+const detail = read('src/app/(site)/books/[slug]/page.tsx')
+const catalog = read('src/lib/data/books.ts')
+const booksExperience = [page, detail, catalog].join('\n')
+const covers = fs
+  .readdirSync(path.join(root, 'public/images/books'))
+  .filter((file) => file.endsWith('.webp'))
 
 const checks = [
   [
@@ -16,25 +17,30 @@ const checks = [
     !booksExperience.includes('—'),
   ],
   [
-    'available and upcoming books come from catalog data',
-    page.includes("books.filter((book) => book.status === 'available')") &&
-      page.includes("books.filter((book) => book.status === 'upcoming')"),
+    'catalog contains 14 distinct supplied titles',
+    (catalog.match(/\n  book\(/g) || []).length === 14,
   ],
   [
-    'all three catalog titles have editorial guides',
-    [
-      'concealed-redemption',
-      'the-great-deception',
-      'the-greatest-tragedy',
-    ].every((slug) => page.includes(`'${slug}'`)),
+    'every title uses the shared KES 1,499 price',
+    catalog.includes('BOOK_PRICE_KES = 1499'),
+  ],
+  ['every catalog title has an optimized cover', covers.length === 14],
+  [
+    'catalog provides title-specific WhatsApp ordering',
+    catalog.includes('encodeURIComponent(message)') &&
+      catalog.includes('WHATSAPP_NUMBER'),
   ],
   [
-    'available books retain verified KES pricing',
-    page.includes('formatPrice(book.priceKes!)') && page.includes('KES 1,499'),
+    'catalog uses a responsive three-column layout',
+    page.includes('sm:grid-cols-2 lg:grid-cols-3'),
   ],
   [
-    'books have both purchase and detail routes',
-    page.includes('book.paystackUrl!') && page.includes('Read About the Book'),
+    'books have both order and detail routes',
+    page.includes('book.purchaseUrl') && page.includes('Details'),
+  ],
+  [
+    'detail pages preserve 4:5 cover artwork',
+    detail.includes('aspect-[4/5]') && detail.includes('object-cover'),
   ],
   [
     'reading practice contains four clear actions',
@@ -44,14 +50,6 @@ const checks = [
       'Choose one response',
       'Review after seven days',
     ].every((item) => page.includes(item)),
-  ],
-  [
-    'upcoming title has a notification route',
-    page.includes('Get Release Updates') && page.includes('/contact'),
-  ],
-  [
-    'generic book card grid is gone',
-    !page.includes('mt-14 grid gap-8 sm:grid-cols-2'),
   ],
 ]
 

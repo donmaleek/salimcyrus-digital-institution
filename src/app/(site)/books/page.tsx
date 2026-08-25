@@ -12,48 +12,6 @@ export const metadata: Metadata = {
     'Explore books by Salim Cyrus on personal narratives, accountability, identity, calling, and purposeful living.',
 }
 
-const bookGuides: Record<
-  string,
-  {
-    eyebrow: string
-    proposition: string
-    themes: string[]
-    startHere: string
-  }
-> = {
-  'concealed-redemption': {
-    eyebrow: 'Patterns and Renewal',
-    proposition: 'Catch the story before it becomes the same life again.',
-    themes: [
-      'Repeated narratives',
-      'Stress patterns',
-      'Daily rituals',
-      'Personal renewal',
-    ],
-    startHere:
-      'Choose this when you can see the pattern repeating but need a practical way to interrupt it.',
-  },
-  'the-great-deception': {
-    eyebrow: 'Truth and Accountability',
-    proposition: 'Confront the story that keeps stealing your focus.',
-    themes: [
-      'Self-deception',
-      'Attention',
-      'Accountability',
-      'Clear decisions',
-    ],
-    startHere:
-      'Choose this when avoidance, distraction, or a familiar excuse is keeping you from an honest decision.',
-  },
-  'the-greatest-tragedy': {
-    eyebrow: 'Identity and Purpose',
-    proposition: 'Build a life around purpose rather than performance.',
-    themes: ['Identity', 'Calling', 'Purpose', 'Meaningful action'],
-    startHere:
-      'Follow this title if your central question is not what to do next, but who you are becoming.',
-  },
-}
-
 const readingPractice = [
   {
     number: '01',
@@ -85,17 +43,17 @@ const questions = [
   {
     question: 'Which book should I read first?',
     answer:
-      'Begin with Concealed Redemption when the problem is a repeating emotional or behavioral pattern. Choose The Great Deception when the central issue is avoidance, distraction, or an untrue personal narrative.',
+      'Start with the title that names the issue you are ready to confront. Each book page includes a summary to help you choose.',
   },
   {
     question: 'Which books are available now?',
     answer:
-      'Concealed Redemption and The Great Deception are currently available at KES 1,499 each. The Greatest Tragedy Is Not Death... is listed as an upcoming title.',
+      'All 14 books in the catalog are currently listed at KES 1,499 each.',
   },
   {
     question: 'Where do purchases happen?',
     answer:
-      'Available books link to their secure Paystack checkout pages. Upcoming titles link to the contact page for release notifications.',
+      'Select Order to send a prefilled WhatsApp message with the book title and price so the team can confirm payment and delivery.',
   },
   {
     question: 'Are there free resources too?',
@@ -106,7 +64,6 @@ const questions = [
 
 export default function BooksPage() {
   const availableBooks = books.filter((book) => book.status === 'available')
-  const upcomingBooks = books.filter((book) => book.status === 'upcoming')
 
   return (
     <>
@@ -166,10 +123,10 @@ export default function BooksPage() {
               </div>
               <div className="border-t border-navy-200 py-7 sm:border-l sm:border-t-0 sm:px-8">
                 <dt className="font-heading text-4xl font-bold text-navy">
-                  {upcomingBooks.length}
+                  {books.length}
                 </dt>
                 <dd className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-navy-500">
-                  Upcoming title
+                  Distinct titles
                 </dd>
               </div>
               <div className="border-t border-navy-200 py-7 sm:border-l sm:border-t-0 sm:pl-8">
@@ -202,88 +159,48 @@ export default function BooksPage() {
               </h2>
             </div>
 
-            <div className="mt-14 space-y-20" data-testid="available-book-list">
-              {availableBooks.map((book, index) => {
-                const guide = bookGuides[book.slug]
-                return (
-                  <article
-                    key={book.slug}
-                    className="grid gap-10 border-t border-navy-200 pt-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20"
+            <div
+              className="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3"
+              data-testid="available-book-list"
+            >
+              {availableBooks.map((book) => (
+                <article key={book.slug} className="flex flex-col">
+                  <Link
+                    href={`/books/${book.slug}`}
+                    className="group relative block aspect-[4/5] overflow-hidden bg-navy-50 shadow-[0_24px_55px_rgba(15,27,45,0.16)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                   >
-                    <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
-                      <Link
-                        href={`/books/${book.slug}`}
-                        className="group relative mx-auto block aspect-[4/5] w-full max-w-sm overflow-hidden bg-navy-50 shadow-[0_30px_70px_rgba(15,27,45,0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-                      >
-                        {book.cover && (
-                          <Image
-                            src={book.cover}
-                            alt={`${book.title} book cover`}
-                            fill
-                            sizes="(max-width: 1024px) 384px, 420px"
-                            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
-                          />
-                        )}
-                      </Link>
+                    <Image
+                      src={book.cover}
+                      alt={`${book.title} book cover`}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
+                    />
+                  </Link>
+                  <div className="flex flex-1 flex-col pt-6">
+                    <h3 className="font-heading text-2xl font-bold leading-tight text-navy">
+                      {book.title}
+                    </h3>
+                    {book.subtitle && (
+                      <p className="mt-2 text-sm italic leading-6 text-navy-500">
+                        {book.subtitle}
+                      </p>
+                    )}
+                    <p className="mt-4 line-clamp-4 leading-7 text-navy-600">
+                      {book.description}
+                    </p>
+                    <div className="mt-auto flex flex-wrap items-center gap-3 pt-6">
+                      <span className="mr-auto font-heading text-xl font-bold text-navy">
+                        {formatCurrency(book.priceKes)}
+                      </span>
+                      <Button href={book.purchaseUrl}>Order</Button>
+                      <Button href={`/books/${book.slug}`} variant="outline">
+                        Details
+                      </Button>
                     </div>
-
-                    <div
-                      className={`flex flex-col justify-center ${index % 2 === 1 ? 'lg:order-1' : ''}`}
-                    >
-                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-                        {guide.eyebrow}
-                      </p>
-                      <h3 className="mt-3 font-heading text-4xl font-bold text-navy sm:text-5xl">
-                        {book.title}
-                      </h3>
-                      <p className="mt-5 font-heading text-2xl italic leading-snug text-navy-500">
-                        {guide.proposition}
-                      </p>
-                      <p className="mt-6 max-w-2xl text-lg leading-8 text-navy-600">
-                        {book.description}
-                      </p>
-
-                      <div className="mt-8 border-y border-navy-200 py-6">
-                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-navy-400">
-                          Themes inside
-                        </p>
-                        <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-3">
-                          {guide.themes.map((theme) => (
-                            <li
-                              key={theme}
-                              className="flex items-center gap-2 text-sm font-semibold text-navy-700"
-                            >
-                              <span className="text-gold-500" aria-hidden>
-                                +
-                              </span>
-                              {theme}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="mt-6">
-                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-navy-400">
-                          Start here if
-                        </p>
-                        <p className="mt-2 max-w-xl leading-7 text-navy-600">
-                          {guide.startHere}
-                        </p>
-                      </div>
-
-                      <div className="mt-8 flex flex-wrap items-center gap-4">
-                        <span className="font-heading text-2xl font-bold text-navy">
-                          {formatCurrency(book.priceKes!)}
-                        </span>
-                        <Button href={book.paystackUrl!}>Buy Now</Button>
-                        <Button href={`/books/${book.slug}`} variant="outline">
-                          Read About the Book
-                        </Button>
-                      </div>
-                    </div>
-                  </article>
-                )
-              })}
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -330,65 +247,6 @@ export default function BooksPage() {
             </div>
           </div>
         </section>
-
-        {upcomingBooks.map((book) => {
-          const guide = bookGuides[book.slug]
-          return (
-            <section
-              key={book.slug}
-              className="bg-cream"
-              aria-labelledby="upcoming-book-heading"
-            >
-              <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
-                <div className="grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:items-end lg:gap-20">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-                      Upcoming Title
-                    </p>
-                    <p className="mt-8 font-heading text-7xl font-bold leading-none text-navy-100 sm:text-8xl">
-                      03
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-                      {guide.eyebrow}
-                    </p>
-                    <h2
-                      id="upcoming-book-heading"
-                      className="mt-3 font-heading text-4xl font-bold leading-tight text-navy sm:text-5xl"
-                    >
-                      {book.title}
-                    </h2>
-                    {book.subtitle && (
-                      <p className="mt-3 font-heading text-2xl italic text-navy-500">
-                        {book.subtitle}
-                      </p>
-                    )}
-                    <p className="mt-6 max-w-2xl text-lg leading-8 text-navy-600">
-                      {book.description}
-                    </p>
-                    <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
-                      {guide.themes.map((theme) => (
-                        <li
-                          key={theme}
-                          className="flex items-center gap-2 text-sm font-semibold text-navy-700"
-                        >
-                          <span className="text-gold-500" aria-hidden>
-                            +
-                          </span>
-                          {theme}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button href="/contact" variant="outline" className="mt-8">
-                      Get Release Updates
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </section>
-          )
-        })}
 
         <section className="bg-white" aria-labelledby="books-questions-heading">
           <div className="mx-auto max-w-content px-6 py-16 sm:py-24">

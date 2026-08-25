@@ -68,20 +68,26 @@ export function AvailabilityManager({ initialSlots }: { initialSlots: Slot[] }) 
       setDate('')
       setTime('')
       showToast('Slot added.')
+    } catch {
+      showToast('Could not add that slot. Check your connection and try again.', 'error')
     } finally {
       setSubmitting(false)
     }
   }
 
   async function handleDelete(id: string) {
-    const res = await fetch(`/api/admin/availability?id=${id}`, { method: 'DELETE' })
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}))
-      showToast(body.error ?? 'Could not remove that slot.', 'error')
-      return
+    try {
+      const res = await fetch(`/api/admin/availability?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        showToast(body.error ?? 'Could not remove that slot.', 'error')
+        return
+      }
+      setSlots((prev) => prev.filter((slot) => slot.id !== id))
+      showToast('Slot removed.')
+    } catch {
+      showToast('Could not remove that slot. Check your connection and try again.', 'error')
     }
-    setSlots((prev) => prev.filter((slot) => slot.id !== id))
-    showToast('Slot removed.')
   }
 
   return (
@@ -110,6 +116,7 @@ export function AvailabilityManager({ initialSlots }: { initialSlots: Slot[] }) 
           Date
           <input
             type="date"
+            min={new Date().toLocaleDateString('en-CA')}
             required
             value={date}
             onChange={(e) => setDate(e.target.value)}
@@ -152,7 +159,9 @@ export function AvailabilityManager({ initialSlots }: { initialSlots: Slot[] }) 
 
       <div className="space-y-3">
         {visibleSlots.length === 0 ? (
-          <p className="text-sm text-navy-400">No availability slots yet — add one above.</p>
+          <p className="text-sm text-navy-400">
+            {filter === 'booked' ? 'No upcoming booked sessions.' : filter === 'past' ? 'No past availability slots.' : 'No upcoming availability slots. Add one above.'}
+          </p>
         ) : (
           visibleSlots.map((slot) => (
             <div

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { requireCrmApi } from '@/services/crm/access'
+import { isBookableStart, slotEnd, slotsOverlap } from '@/services/bookings/availability'
 
 export async function GET() {
   if (!(await requireCrmApi('bookings:write'))) {
@@ -26,18 +27,48 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const body = await request.json()
+  const body = await request.json().catch(() => null)
   const parsed = createSlotSchema.safeParse(body)
 
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
   }
 
-  const slot = await db.availabilitySlot.create({
-    data: { startTime: new Date(parsed.data.startTime), durationMinutes: parsed.data.durationMinutes },
-  })
+  const startTime = new Date(parsed.data.startTime)
+  if (!isBookableStart(startTime)) {
+    return NextResponse.json({ error: 'Choose a time at least five minutes in the future.' }, { status: 400 })
+  }
 
-  return NextResponse.json({ slot }, { status: 201 })
+  try {
+    const slot = await db.$transaction(async (tx) => {
+      const candidate = { startTime, durationMinutes: parsed.data.durationMinutes }
+      const possibleConflicts = await tx.availabilitySlot.findMany({
+        where: { startTime: { lt: slotEnd(candidate) } },
+        select: { startTime: true, durationMinutes: true },
+      })
+      if (possibleConflicts.some((existing) => slotsOverlap(candidate, existing))) {
+        throw new Error('SLOT_OVERLAP')
+      }
+      const created = await tx.availabilitySlot.create({ data: candidate })
+      await tx.crmAuditEvent.create({
+        data: {
+          action: 'create',
+          entityType: 'AvailabilitySlot',
+          entityId: created.id,
+          summary: `Opened ${startTime.toISOString()} for booking`,
+          after: { startTime: startTime.toISOString(), durationMinutes: parsed.data.durationMinutes },
+        },
+      })
+      return created
+    }, { isolationLevel: 'Serializable' })
+
+    return NextResponse.json({ slot }, { status: 201 })
+  } catch (error) {
+    if (error instanceof Error && error.message === 'SLOT_OVERLAP') {
+      return NextResponse.json({ error: 'That time overlaps an existing availability slot.' }, { status: 409 })
+    }
+    throw error
+  }
 }
 
 export async function DELETE(request: NextRequest) {
@@ -58,6 +89,22 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Cannot remove a booked slot' }, { status: 409 })
   }
 
-  await db.availabilitySlot.delete({ where: { id: slotId } })
+  const deleted = await db.$transaction(async (tx) => {
+    const result = await tx.availabilitySlot.deleteMany({ where: { id: slotId, isBooked: false } })
+    if (result.count !== 1) return false
+    await tx.crmAuditEvent.create({
+      data: {
+        action: 'delete',
+        entityType: 'AvailabilitySlot',
+        entityId: slotId,
+        summary: `Removed availability at ${slot.startTime.toISOString()}`,
+        before: { startTime: slot.startTime.toISOString(), durationMinutes: slot.durationMinutes },
+      },
+    })
+    return true
+  })
+  if (!deleted) {
+    return NextResponse.json({ error: 'Cannot remove a booked slot' }, { status: 409 })
+  }
   return NextResponse.json({ status: 'ok' })
 }

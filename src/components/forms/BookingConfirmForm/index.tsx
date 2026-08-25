@@ -32,13 +32,20 @@ export function BookingConfirmForm() {
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
+  const [slotsError, setSlotsError] = useState(false)
   const { showToast } = useToast()
 
   useEffect(() => {
     fetch('/api/booking/available-slots')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Availability request failed')
+        return res.json()
+      })
       .then((data) => setSlots(data.slots ?? []))
-      .catch(() => setSlots([]))
+      .catch(() => {
+        setSlotsError(true)
+        setSlots([])
+      })
   }, [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -151,6 +158,11 @@ export function BookingConfirmForm() {
             </option>
           ))}
         </select>
+        {slotsError && (
+          <p className="mt-2 text-sm leading-6 text-red-700" role="alert">
+            Available times could not be loaded. You can still submit without a time and we will contact you to schedule.
+          </p>
+        )}
       </div>
 
       <div>

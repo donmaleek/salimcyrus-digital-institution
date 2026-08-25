@@ -3,7 +3,11 @@ import Link from 'next/link'
 import { FooterLinks } from './FooterLinks'
 import { NewsletterSignup } from './NewsletterSignup'
 import { SocialIcon } from '@/components/ui/SocialIcon'
-import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
+import {
+  CONTACT_EMAIL,
+  SOCIAL_LINKS,
+  WHATSAPP_URL,
+} from '@/lib/utils/constants'
 
 export function Footer() {
   return (
@@ -31,11 +35,15 @@ export function Footer() {
               Salim Cyrus
             </span>
             <p className="mt-5 max-w-md text-sm leading-7 text-cream/75 sm:text-base">
-              Relationship Coach | Speaker | Author | Kingdom Strategist. Empowering minds.
-              Reforming hearts. Restoring purpose through truth and wisdom.
+              Relationship Coach | Speaker | Author | Kingdom Strategist.
+              Empowering minds. Reforming hearts. Restoring purpose through
+              truth and wisdom.
             </p>
             <div className="mt-6 flex flex-col gap-2 text-sm text-cream/80">
-              <Link href={WHATSAPP_URL} className="w-fit transition-colors hover:text-gold">
+              <Link
+                href={WHATSAPP_URL}
+                className="w-fit transition-colors hover:text-gold"
+              >
                 WhatsApp
               </Link>
               <a
@@ -45,9 +53,42 @@ export function Footer() {
                 {CONTACT_EMAIL}
               </a>
             </div>
-            <div className="mt-5 flex gap-3">
-              <SocialIcon name="whatsapp" href={WHATSAPP_URL} label="Chat on WhatsApp" />
-              <SocialIcon name="email" href={`mailto:${CONTACT_EMAIL}`} label="Send an email" />
+            <div className="mt-5 flex flex-wrap gap-3">
+              <SocialIcon
+                name="whatsapp"
+                href={WHATSAPP_URL}
+                label="Chat on WhatsApp"
+              />
+              <SocialIcon
+                name="email"
+                href={`mailto:${CONTACT_EMAIL}`}
+                label="Send an email"
+              />
+              <SocialIcon
+                name="linkedin"
+                href={SOCIAL_LINKS.linkedin}
+                label="Follow Salim Cyrus on LinkedIn"
+              />
+              <SocialIcon
+                name="tiktok"
+                href={SOCIAL_LINKS.tiktok}
+                label="Follow Salim Cyrus on TikTok"
+              />
+              <SocialIcon
+                name="x"
+                href={SOCIAL_LINKS.x}
+                label="Follow Salim Cyrus on X"
+              />
+              <SocialIcon
+                name="instagram"
+                href={SOCIAL_LINKS.instagram}
+                label="Follow Salim Cyrus on Instagram"
+              />
+              <SocialIcon
+                name="facebook"
+                href={SOCIAL_LINKS.facebook}
+                label="Follow Salim Cyrus on Facebook"
+              />
             </div>
             <div className="mt-9 border-t border-cream/10 pt-8">
               <NewsletterSignup />
@@ -57,8 +98,13 @@ export function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-cream/15 pt-8 text-xs leading-5 text-cream/55 sm:flex-row sm:items-center lg:mt-20">
-          <p>&copy; {new Date().getFullYear()} Salim Cyrus. All rights reserved.</p>
-          <p>Halisi Hub Connect: Awakening wisdom. Restoring identity. Cultivating purposeful living.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Salim Cyrus. All rights reserved.
+          </p>
+          <p>
+            Halisi Hub Connect: Awakening wisdom. Restoring identity.
+            Cultivating purposeful living.
+          </p>
         </div>
       </div>
     </footer>

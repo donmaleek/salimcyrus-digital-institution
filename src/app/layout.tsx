@@ -3,7 +3,11 @@ import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Inter, Alex_Brush } from 'next/font/google'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { ToastProvider } from '@/components/ui/Toast'
-import { CONTACT_EMAIL, WHATSAPP_URL } from '@/lib/utils/constants'
+import {
+  CONTACT_EMAIL,
+  SOCIAL_LINKS,
+  WHATSAPP_URL,
+} from '@/lib/utils/constants'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -25,7 +29,8 @@ const signature = Alex_Brush({
 })
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://salimcyrus.com'
-const TITLE = 'Salim Cyrus | Relationship Coach, Speaker, Author, Kingdom Strategist'
+const TITLE =
+  'Salim Cyrus | Relationship Coach, Speaker, Author, Kingdom Strategist'
 const DESCRIPTION =
   'Empowering minds. Reforming hearts. Restoring purpose through truth and wisdom. The digital headquarters for Salim Cyrus and Halisi Hub Connect.'
 
@@ -68,14 +73,21 @@ const jsonLd = {
       url: SITE_URL,
       jobTitle: 'Relationship Coach, Speaker, Author, Kingdom Strategist',
       email: CONTACT_EMAIL,
-      sameAs: [WHATSAPP_URL],
+      sameAs: [WHATSAPP_URL, ...Object.values(SOCIAL_LINKS)],
     },
   ],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} ${signature.variable}`}>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${inter.variable} ${signature.variable}`}
+    >
       <body className="bg-cream font-body text-ink antialiased">
         <a
           href="#main-content"

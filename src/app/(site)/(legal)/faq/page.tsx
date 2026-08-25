@@ -37,7 +37,7 @@ const faqs = [
   {
     question: 'How do payments work?',
     answer:
-      'M-PESA and card payments are supported for Kenyan clients; international clients pay by card.',
+      'Paystack supports secure card and available mobile-money checkout. Direct M-Pesa Paybill and PayPal recipient details are also available on the Support the Mission page.',
   },
   {
     question: 'What happens after booking?',
@@ -93,15 +93,22 @@ export default function FaqPage() {
                   f.question === 'Can I cancel?' ? (
                     <>
                       See the{' '}
-                      <Link href="/refund-policy" className="font-semibold text-gold-500 hover:underline">
+                      <Link
+                        href="/refund-policy"
+                        className="font-semibold text-gold-500 hover:underline"
+                      >
                         Refund &amp; Cancellation Policy
                       </Link>{' '}
                       for full terms.
                     </>
                   ) : f.question === 'Do you provide therapy?' ? (
                     <>
-                      Coaching is not a substitute for licensed therapy or medical care. See the{' '}
-                      <Link href="/disclaimers" className="font-semibold text-gold-500 hover:underline">
+                      Coaching is not a substitute for licensed therapy or
+                      medical care. See the{' '}
+                      <Link
+                        href="/disclaimers"
+                        className="font-semibold text-gold-500 hover:underline"
+                      >
                         Coaching Disclaimer
                       </Link>
                       .

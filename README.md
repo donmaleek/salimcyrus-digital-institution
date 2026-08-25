@@ -79,7 +79,7 @@ Availability is managed entirely in-app — no external calendar tool:
 
 The public Paystack checkout links used across the site already work today with zero
 setup. Paystack is the one external service this project intentionally keeps — running
-your own payment processor isn't realistic — but confirming *that a payment happened*
+your own payment processor isn't realistic — but confirming _that a payment happened_
 is fully self-hosted: `/api/payments/webhook` verifies Paystack's signature
 (HMAC-SHA512) itself and turns a successful charge into a `Booking` row, linked to the
 buyer's account if their email matches a registered user. To activate it, set
@@ -87,10 +87,16 @@ buyer's account if their email matches a registered user. To activate it, set
 `https://<your-domain>/api/payments/webhook` — see `.env.example`. Until that's
 configured, customers can still self-report a completed payment at `/book-now/confirm`.
 
-Pesapal (an alternate payment processor) and Resend (transactional email) are
-intentionally left unimplemented — see `src/lib/api/*.ts`. Nothing on the site depends
-on them: contact forms open the visitor's own email client instead of calling an email
-API, and Paystack alone covers KES and USD checkout.
+Mission support at `/support-the-mission` offers three routes:
+
+- Paystack creates a server-side KES checkout through `/api/payments/initiate`; card and
+  mobile-money details remain on Paystack's hosted checkout.
+- M-Pesa Paybill displays the verified Paybill and account values with copy controls.
+- PayPal displays the confirmed recipient email. Replace this instruction with a tested
+  PayPal Business payment link when one has been created in the account dashboard.
+
+Pesapal and Resend remain unimplemented. Contact forms open the visitor's own email
+client instead of calling an email API.
 
 ### CMS
 

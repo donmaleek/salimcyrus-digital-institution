@@ -31,7 +31,8 @@ export default function PrivacyPage() {
             <p>
               Contact details submitted through forms (name, email, message);
               newsletter subscription email addresses; payment information
-              processed by our payment providers (Paystack, Pesapal) — we do not
+              processed by third-party providers such as Paystack and PayPal;
+              M-Pesa transaction references shared for reconciliation; we do not
               store full card details; and standard website analytics data.
             </p>
             <h2 className="font-heading text-xl font-semibold text-navy">

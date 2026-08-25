@@ -1,0 +1,20 @@
+{
+  "url": "http://localhost:3999/book-now",
+  "date": "2026-08-25",
+  "tier": "exhaustive",
+  "baselineHealthScore": 64,
+  "finalHealthScore": 96,
+  "issues": {
+    "high": 4,
+    "medium": 3,
+    "low": 0,
+    "fixed": 7
+  },
+  "verification": {
+    "unitAndRegressionTests": 64,
+    "browserTests": 7,
+    "integrityEvalChecks": 7,
+    "typescript": "passed",
+    "productionBuild": "passed"
+  }
+}

@@ -106,7 +106,7 @@ export default async function JournalPage() {
               </div>
             ) : (
               <p className="text-lg text-navy-500">
-                The first essay is on the way — check back soon.
+                The first essay is on the way. Check back soon.
               </p>
             )}
 

@@ -20,8 +20,8 @@ const checks = [
   ],
   [
     'program pricing clearly labels KES and USD',
-    page.includes("formatPrice(program.priceKes, 'KES')") &&
-      page.includes("formatPrice(program.priceUsd, 'USD')"),
+    page.includes("formatCurrency(program.priceKes, 'KES')") &&
+      page.includes("formatCurrency(program.priceUsd, 'USD')"),
   ],
   [
     'learning method has four explicit stages',

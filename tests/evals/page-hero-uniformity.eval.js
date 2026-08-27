@@ -26,6 +26,11 @@ const pagesWithoutSharedHero = collectPages(pageRoot)
   .filter((file) => file !== path.join(pageRoot, 'page.tsx'))
   .filter((file) => {
     const source = fs.readFileSync(file, 'utf8')
+    // Pure server-redirect pages (permanentRedirect/redirect with no JSX
+    // return) never render anything, so they can't have a hero.
+    if (source.includes('permanentRedirect(') || /\bredirect\(/.test(source)) {
+      return false
+    }
     return !source.includes('<PageHero') && !source.includes('<NotPublished')
   })
 
@@ -43,8 +48,8 @@ const checks = [
     pageHero.includes('object-cover object-center'),
   ],
   [
-    'hero uses portrait mobile art and the additional desktop trim',
-    pageHero.includes('aspect-[941/1672]') &&
+    'hero guarantees a tall mobile canvas and a distinct desktop height',
+    pageHero.includes('min-h-[780px]') &&
       pageHero.includes('lg:h-[calc(56.2799vw-100px)]'),
   ],
   [

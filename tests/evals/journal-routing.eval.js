@@ -17,7 +17,7 @@ const checks = [
   ['legacy route uses a permanent redirect', legacyRoute.includes('permanentRedirect(journalPath)')],
   ['Next routing returns a permanent HTTP redirect', nextConfig.includes('async redirects()') && nextConfig.includes('permanent: true')],
   ['legacy route targets the canonical journal path', legacyRoute.includes('/journal/people-vent-on-social-media-because-they-arent-heard-in-person')],
-  ['journal entries are included in the sitemap', sitemap.includes('publishedJournalEntries') && sitemap.includes('/journal/${entry.slug}')],
+  ['journal entries are included in the sitemap', sitemap.includes('db.journalEntry') && sitemap.includes('/journal/${entry.slug}')],
   ['journal metadata declares its canonical URL', journalPage.includes("alternates: { canonical: `/journal/${entry.slug}` }")],
   ['journal page no longer links to the removed source URL', !journalPage.includes('entry.originalUrl')],
 ]

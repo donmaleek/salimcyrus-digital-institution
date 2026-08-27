@@ -6,6 +6,7 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 const page = read('src/app/(site)/journal/page.tsx')
 const entryPage = read('src/app/(site)/journal/[slug]/page.tsx')
 const data = read('src/lib/data/journal.ts')
+const seedScript = read('scripts/seed-journal.js')
 const experience = [page, entryPage, data].join('\n')
 
 const checks = [
@@ -14,9 +15,18 @@ const checks = [
     !experience.includes('—'),
   ],
   [
-    'one verified published essay is identified',
-    data.includes("publishedAt: 'September 4, 2025'") &&
-      data.includes("slug: 'people-vent-on-social-media"),
+    'journal reads from the database, not a static entries array (entries are authored at /dashboard/admin/journal)',
+    page.includes('db.journalEntry.findMany') &&
+      entryPage.includes('db.journalEntry.findFirst') &&
+      !data.includes('publishedJournalEntries'),
+  ],
+  [
+    'the one entry migrated from the old static file is seeded correctly',
+    seedScript.includes(
+      "const slug = 'people-vent-on-social-media-because-they-arent-heard-in-person'"
+    ) &&
+      seedScript.includes("publishedAt: new Date('2025-09-04')") &&
+      seedScript.includes("status: 'published'"),
   ],
   [
     'six distinct editorial themes are defined',
@@ -37,13 +47,12 @@ const checks = [
     ].every((step) => page.includes(step)),
   ],
   [
-    'published entry has a four-part argument map',
-    [
-      'Public expression can begin with private silence',
-      'Visibility is not the same as understanding',
-      'Listening is a relational responsibility',
-      'The repair begins offline',
-    ].every((idea) => entryPage.includes(`title: '${idea}'`)),
+    'entry page renders each essay\'s own body, not a hardcoded argument map shared by every slug',
+    entryPage.includes('entry.body') &&
+      entryPage.includes('data-testid="essay-body"') &&
+      // Regression guard: this exact hardcoded list used to render under
+      // every slug regardless of which essay was actually being viewed.
+      !entryPage.includes('Public expression can begin with private silence'),
   ],
   [
     'published entry continues into the Journal without a dead external link',

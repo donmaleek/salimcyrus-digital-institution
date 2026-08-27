@@ -16,7 +16,7 @@ export default async function MyCommunityPage() {
 
   const membership = userId
     ? await db.booking.findFirst({
-        where: { userId, offerName: 'Hekima Inner Circle', status: { not: 'cancelled' } },
+        where: { userId, offerName: 'Halisi Inner Circle', status: { not: 'cancelled' } },
       })
     : null
 
@@ -26,7 +26,7 @@ export default async function MyCommunityPage() {
       {membership ? (
         <div className="mt-8 rounded-2xl border border-navy-100 bg-white p-10 text-center">
           <p className="font-heading text-lg font-semibold text-navy">
-            You&apos;re a Hekima Inner Circle member.
+            You&apos;re a Halisi Inner Circle member.
           </p>
           <p className="mt-3 text-navy-500">
             The community feed and discussion space are still in development. In the meantime,
@@ -38,8 +38,8 @@ export default async function MyCommunityPage() {
         </div>
       ) : (
         <div className="mt-8 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
-          <p className="text-navy-400">Join the Hekima Inner Circle to unlock community access.</p>
-          <Button href="/academy/masterclasses/hekima-inner-circle" className="mt-6">
+          <p className="text-navy-400">Join the Halisi Inner Circle to unlock community access.</p>
+          <Button href="/academy/masterclasses/halisi-inner-circle" className="mt-6">
             View Membership
           </Button>
         </div>

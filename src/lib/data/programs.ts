@@ -110,8 +110,8 @@ export const programs: Program[] = [
     paystackUrl: 'https://paystack.shop/pay/e2i5qf7s4v',
   },
   {
-    slug: 'hekima-inner-circle',
-    name: 'Hekima Inner Circle',
+    slug: 'halisi-inner-circle',
+    name: 'Halisi Inner Circle',
     tag: 'Inner Circle',
     duration: 'Premium Membership',
     focus: 'Proximity, mentorship, exclusivity',

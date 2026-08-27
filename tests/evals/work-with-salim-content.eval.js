@@ -16,7 +16,7 @@ const expectedPrograms = [
   'Defining Manhood Bootcamp',
   'Relationship Intelligence Program',
   'The Discipline and Execution System',
-  'Hekima Inner Circle',
+  'Halisi Inner Circle',
   'Healing and Restoration Intensive',
 ]
 
@@ -35,8 +35,8 @@ const checks = [
   ],
   [
     'program pricing shows KES and USD',
-    page.includes("formatPrice(program.priceKes, 'KES')") &&
-      page.includes("formatPrice(program.priceUsd, 'USD')"),
+    page.includes("formatCurrency(program.priceKes, 'KES')") &&
+      page.includes("formatCurrency(program.priceUsd, 'USD')"),
   ],
   ['all coaching formats are rendered', page.includes('coachingOffers.map')],
   ['five-step method is rendered', page.includes('coachingProcess.map')],

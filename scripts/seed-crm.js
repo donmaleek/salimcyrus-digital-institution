@@ -33,7 +33,7 @@ const programTitles = [
   ['Defining Manhood Bootcamp', 25000],
   ['Relationship Intelligence Program', 20000],
   ['The Discipline and Execution System', 20000],
-  ['Hekima Inner Circle', 20000],
+  ['Halisi Inner Circle', 20000],
   ['Healing and Restoration Intensive', 15000],
 ]
 

@@ -10,6 +10,11 @@ const nextConfig = {
           '/journal/people-vent-on-social-media-because-they-arent-heard-in-person',
         permanent: true,
       },
+      {
+        source: '/academy/masterclasses/hekima-inner-circle',
+        destination: '/academy/masterclasses/halisi-inner-circle',
+        permanent: true,
+      },
     ]
   },
   images: {

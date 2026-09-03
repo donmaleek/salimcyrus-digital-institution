@@ -30,3 +30,4 @@ prisma/dev.db-journal
 .gstack/
 test-results/
 playwright-report/
+.gbrain-source

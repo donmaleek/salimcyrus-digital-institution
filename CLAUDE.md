@@ -212,3 +212,33 @@ add --path <dir>` (no `--url`): URL-managed sources can auto-reclone, and the
 sync code walk for them requires an explicit `--allow-reclone` opt-in.
 
 <!-- gstack-gbrain-search-guidance:end -->
+
+## Deploy Configuration (configured by /setup-deploy)
+- Platform: Custom — self-hosted on a shared Contabo VPS (root@13.140.137.243), alongside other unrelated sites (kujuana.com, kujuatime.com, betyoyote.com, etc.). No dedicated CI/CD yet — deploys are manual over SSH.
+- Production URL: https://salimcyrus.com (DNS repointed 2026-09-02 from GitHub Pages to 13.140.137.243; www redirects to apex)
+- App location on server: `/opt/salimcyrus` (git clone of this repo's `main` branch)
+- Process manager: PM2, process name `salimcyrus`, `npm start` (Next.js), local port 3014, `NODE_ENV=production`
+- Reverse proxy: nginx vhost at `/etc/nginx/sites-available/salimcyrus` (symlinked in sites-enabled), proxies `salimcyrus.com`/`www.salimcyrus.com` → `127.0.0.1:3014`, HTTP→HTTPS redirect, www→apex redirect
+- TLS: Let's Encrypt via certbot, cert at `/etc/letsencrypt/live/salimcyrus.com/`
+- Database: dedicated PostgreSQL 16 database `salimcyrus` (role `salimcyrus`) on the server's native Postgres at `127.0.0.1:5432` — separate from every other site's database on that box. `DATABASE_URL` lives in `/opt/salimcyrus/.env` (Prisma convention, not committed). Migrations applied via `npx prisma migrate deploy`.
+- Runtime secrets: `/opt/salimcyrus/.env.local` (not committed) — `NEXTAUTH_SECRET` generated and set; `PAYSTACK_SECRET_KEY`, `RESEND_API_KEY`, `PESAPAL_CONSUMER_KEY`, `WHATSAPP_BUSINESS_*`, `PAYPAL_WEBHOOK_ID` are still blank pending real production credentials from Eng. Mathias Mramba — payments/email are degraded until those are filled in (see README's Payments section for what still works without them).
+- Deploy workflow: none automated. `.github/workflows/deploy-production.yml` / `deploy-staging.yml` exist locally but are placeholders (`# TODO: wire up actual deploy target`) and can't be pushed yet — the GitHub CLI auth token lacks the `workflow` scope (`gh auth refresh -s workflow` needed, must be run by Eng. Mathias Mramba).
+- Merge method: direct push to `main` (no branch protection configured)
+- Project type: web app (Next.js 14, Prisma/PostgreSQL)
+- Post-deploy health check: `curl -sI https://salimcyrus.com` (expect `HTTP/2 200`)
+
+### Manual deploy steps (until CI/CD is wired up)
+```bash
+ssh root@13.140.137.243
+cd /opt/salimcyrus
+git pull origin main
+npm ci
+npx prisma migrate deploy
+npm run build
+pm2 restart salimcyrus
+```
+
+### Known environment quirks on this server
+- `git clone`/`pull` over HTTPS to github.com fails with `fatal: could not read Username ... expected flush after ref listing` unless HTTP/1.1 is forced — this server's network path mangles git's HTTP/2 framing. Fixed globally via `git config --global http.version HTTP/1.1` (already set on this server for the root user).
+- This Postgres 16 cluster has no `template1` (pre-existing condition, not caused by this deploy) — `CREATE DATABASE` must specify `TEMPLATE template0` explicitly.
+- Port 3014 was chosen because 3000-3002, 3004, 3009, 3013, 4000 are already in use by other sites on this box — check `ss -tlnp` before reusing a port.

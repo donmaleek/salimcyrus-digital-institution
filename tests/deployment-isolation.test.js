@@ -24,6 +24,11 @@ describe('shared-server deployment isolation', () => {
     expect(compose).not.toMatch(/0\.0\.0\.0:\$?\{?SALIMCYRUS_PORT/)
   })
 
+  test('reaches the host database without publishing it', () => {
+    expect(compose).toContain('host.docker.internal:host-gateway')
+    expect(compose).not.toMatch(/^\s+- ['"]?5432:/m)
+  })
+
   test('deploys only the application service', () => {
     expect(compose).toMatch(/^\s{2}web:$/m)
     expect(compose).not.toMatch(/^\s{2}(cms|nginx|proxy|database|db):$/m)

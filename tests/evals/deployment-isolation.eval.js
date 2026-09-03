@@ -15,6 +15,7 @@ const checks = [
   ],
   ['no shared infrastructure services', !/^\s{2}(cms|nginx|proxy|database|db):$/m.test(compose)],
   ['service health check', /^\s{4}healthcheck:$/m.test(compose)],
+  ['private host database gateway', compose.includes('host.docker.internal:host-gateway')],
   ['scoped deployment command', compose.includes('docker compose --project-name salimcyrus')],
   ['proxy validation guidance', compose.includes('nginx -t')],
 ]

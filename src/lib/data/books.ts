@@ -131,4 +131,18 @@ export const books: BookEntry[] = [
     'How God Works Behind the Broken Places to Reveal His Greatest Purpose',
     'CONCEALED REDEMPTION - By SALIM CYRUS.pdf'
   ),
+  book(
+    'the-deception',
+    'The Deception',
+    'A brutal accounting of the lies you live by across ten territories of self-deception, from personal narrative to spiritual performance, and the truth that sets you free.',
+    undefined,
+    'THE DECEPTION - By SALIM CYRUS.pdf'
+  ),
+  book(
+    'marriage-and-knowing-the-right-partner',
+    'Marriage and Knowing the Right Partner',
+    'A framework for discerning character and compatibility before marriage, covering self-knowledge, observation, hard conversations, evaluation, and decision, so commitment follows real covenant readiness rather than chemistry alone.',
+    'Discerning Love, Character, Compatibility, Covenant and Purpose',
+    'MARRIAGE & KNOWING THE RIGHT PARTNER- By SALIM CYRUS.pdf'
+  ),
 ]

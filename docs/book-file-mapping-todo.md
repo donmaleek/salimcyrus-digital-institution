@@ -27,21 +27,13 @@ actually reading the PDF content (not just comparing filenames):
   discipline) with no chapter on pornography at all. Not a match. Remains
   removed until a real file is provided.
 
-## Two complete, unlisted books discovered while checking the above
+## Two complete, previously-unlisted books added
 
 Reading through `Books/` turned up two finished PDFs that were never in the
-catalog at all:
-
-- `THE DECEPTION - By SALIM CYRUS.pdf` — "A Brutal Accounting of the Lies
-  You Live By, and the Truth That Will Set You Free." 10 chapters, distinct
-  from "The Great Deception."
-- `MARRIAGE & KNOWING THE RIGHT PARTNER- By SALIM CYRUS.pdf` — "Discerning
-  Love, Character, Compatibility, Covenant and Purpose." A partner-discernment
-  framework book.
-
-Not added to the catalog yet — that's a new-product decision (title,
-description, cover art, pricing), not a mapping fix, so it wasn't done
-without asking. Add them the same way as any other title once confirmed.
+catalog at all. Added as `the-deception` and
+`marriage-and-knowing-the-right-partner`. Cover art was extracted from each
+PDF's own designed first page (`pdftocairo` + ImageMagick crop/pad to the
+site's standard 1200x1500), not newly generated.
 
 ## To re-add a confirmed title
 

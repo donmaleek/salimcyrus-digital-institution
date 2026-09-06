@@ -48,7 +48,7 @@ const questions = [
   {
     question: 'Which books are available now?',
     answer:
-      'All 12 books in the catalog are currently listed at KES 1,499 each.',
+      'All 14 books in the catalog are currently listed at KES 1,499 each.',
   },
   {
     question: 'Where do purchases happen?',

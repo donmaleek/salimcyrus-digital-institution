@@ -237,6 +237,13 @@ npx prisma migrate deploy
 npm run build
 pm2 restart salimcyrus
 ```
+If skipping `npm ci` as a shortcut on a code-only redeploy (no new npm
+dependencies): the schema still needs `npx prisma generate` explicitly
+whenever `prisma/schema.prisma` changed, even without a migration —
+`npm ci`'s postinstall hook is what normally does this, so skipping `npm ci`
+skips it too. The build fails loudly with a "Property 'X' does not exist on
+type 'PrismaClient'" type error if this is missed; harmless but wastes a
+build cycle.
 
 ### Known environment quirks on this server
 - `git clone`/`pull` over HTTPS to github.com fails with `fatal: could not read Username ... expected flush after ref listing` unless HTTP/1.1 is forced — this server's network path mangles git's HTTP/2 framing. Fixed globally via `git config --global http.version HTTP/1.1` (already set on this server for the root user).

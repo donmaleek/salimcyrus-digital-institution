@@ -31,6 +31,7 @@
     "eval:mobile-editorial-pages": "node tests/evals/mobile-editorial-pages.eval.js",
     "eval:home-premium": "node tests/evals/home-premium.eval.js",
     "eval:book-purchase-download": "node tests/evals/book-purchase-download.eval.js",
+    "eval:notfound-status-code": "node tests/evals/notfound-status-code.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

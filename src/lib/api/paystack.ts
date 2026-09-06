@@ -29,6 +29,36 @@ export function verifyPaystackSignature(rawBody: string, signature: string | nul
  * (by design, see /book-now), so they can't be matched this way; those
  * bookings are recorded with a generic label instead of a guessed one.
  */
+export interface PaystackVerifyResult {
+  status: boolean
+  data?: {
+    status: 'success' | 'failed' | 'abandoned' | string
+    reference: string
+    amount: number
+    customer: { email: string }
+    metadata?: { offer_name?: string } | null
+  }
+}
+
+/**
+ * Independently confirms a transaction's outcome with Paystack, keyed only by
+ * reference. Used on the buyer's return trip (the callback_url redirect) so
+ * we never trust query params alone to decide whether a payment succeeded —
+ * an attacker can craft any query string, but can't forge Paystack's own
+ * server-to-server answer. https://paystack.com/docs/api/transaction/#verify
+ */
+export async function verifyPaystackTransaction(
+  reference: string,
+  secretKey: string,
+  fetcher: typeof fetch = fetch
+): Promise<PaystackVerifyResult> {
+  const response = await fetcher(
+    `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
+    { headers: { Authorization: `Bearer ${secretKey}` } }
+  )
+  return (await response.json()) as PaystackVerifyResult
+}
+
 export function matchOfferByAmount(amountSmallestUnit: number): string | null {
   const amountWhole = amountSmallestUnit / 100
 

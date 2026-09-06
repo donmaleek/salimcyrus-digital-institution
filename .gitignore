@@ -31,3 +31,7 @@ prisma/dev.db-journal
 test-results/
 playwright-report/
 .gbrain-source
+
+# book PDFs — private, paid-download content; never belongs in git (binaries,
+# 150MB+). Lives in BOOKS_STORAGE_DIR outside the repo in production. See README.
+/Books/

@@ -11,6 +11,14 @@ export interface BookEntry {
   status: 'available' | 'upcoming'
   purchaseUrl: string
   cover: string
+  /**
+   * Filename of the source PDF under BOOKS_STORAGE_DIR (see README). Only set
+   * for titles where the file has been confirmed to match the listing;
+   * instant download is deliberately unavailable for any slug without one
+   * (falls back to the WhatsApp order flow) rather than risk shipping the
+   * wrong book to a paying customer. See docs/book-file-mapping-todo.md.
+   */
+  fileName?: string
 }
 
 function whatsappOrderUrl(title: string) {
@@ -22,7 +30,8 @@ function book(
   slug: string,
   title: string,
   description: string,
-  subtitle?: string
+  subtitle?: string,
+  fileName?: string
 ): BookEntry {
   return {
     slug,
@@ -33,6 +42,7 @@ function book(
     status: 'available',
     purchaseUrl: whatsappOrderUrl(title),
     cover: `/images/books/${slug}.webp`,
+    fileName,
   }
 }
 
@@ -41,80 +51,99 @@ export const books: BookEntry[] = [
     'understanding-the-marketplace',
     'Understanding the Marketplace',
     'A Kingdom-minded guide for entrepreneurs, leaders, and professionals navigating business, stewardship, innovation, and economic change.',
-    'Navigating the Storms of Business'
+    'Navigating the Storms of Business',
+    'The Market Place - By Salim Cyrus.pdf'
   ),
   book(
     'the-unhealed-traumas-of-our-parents',
     'The Unhealed Traumas of Our Parents',
     'A journey of healing that confronts generational patterns, emotional wounds, and inherited beliefs so families can build a healthier legacy.',
     'Escaping the Chains of Generational Brokenness'
+    // No matching file in Books/ yet. See docs/book-file-mapping-todo.md.
+    // Falls back to WhatsApp ordering until confirmed.
   ),
   book(
     'the-greatest-tragedy',
     'The Greatest Tragedy Is Not Death',
     'An exploration of identity, calling, and Kingdom purpose for anyone determined to build a meaningful life in a world full of distraction.',
-    'It Is a Life Without Purpose'
+    'It Is a Life Without Purpose',
+    'The_Greatest_Tragedy_Is_Not_Death_But_A_Life_Without_Purpose- By SALIM CYRUS.pdf'
   ),
   book(
     'the-great-deception-of-pornography',
     'The Great Deception of Pornography',
     'A direct account of how pornography manipulates the mind, steals purpose, and damages spiritual life, with a path toward truth and freedom.',
     'How It Manipulates Your Mind, Steals Your Purpose, and Kills Your Spiritual Life'
+    // Ambiguous vs. "the-great-deception" below. Two candidate files
+    // ("THE GREAT DECEPTION" and "THE DECEPTION"). See docs/book-file-mapping-todo.md.
   ),
   book(
     'emotional-blackmail',
     'Emotional Blackmail',
     'A practical guide to recognizing manipulation, confronting guilt and fear, setting boundaries, and breaking patterns of toxic control.',
-    'Breaking Free from Manipulation, Guilt or Fear, and Toxic Control'
+    'Breaking Free from Manipulation, Guilt or Fear, and Toxic Control',
+    'The Emotional Blackmail - By SALIM CYRUS.pdf'
   ),
   book(
     'time-money-pornography-and-the-glory-of-god',
     'Time, Money, Pornography and the Glory of God',
-    'A faith-centered examination of how time, money, and digital desire compete for attention, discipline, and devotion.'
+    'A faith-centered examination of how time, money, and digital desire compete for attention, discipline, and devotion.',
+    undefined,
+    'TIME, MONEY, PORNOGRAPHY & THE GLORY OF GOD- By SALIM CYRUS.pdf'
   ),
   book(
     'the-great-deception',
     'The Great Deception',
     'A brutal accounting of how the stories you tell yourself keep stealing your focus, and how to reclaim the narrative with accountability and clarity.'
+    // Ambiguous. See docs/book-file-mapping-todo.md.
   ),
   book(
     'the-cost-of-infidelity',
     'The Cost of Infidelity',
-    'An honest examination of betrayal, broken trust, and the emotional and relational cost of infidelity.'
+    'An honest examination of betrayal, broken trust, and the emotional and relational cost of infidelity.',
+    undefined,
+    'THE COST OF INFIDELITY.pdf'
   ),
   book(
     'ritual-scorecard',
     'Ritual Scorecard',
     'A structured practice for measuring daily alignment and weekly truth across discipline, identity, purpose, and accountability.',
-    'The Discipline of Daily Alignment and Weekly Truth'
+    'The Discipline of Daily Alignment and Weekly Truth',
+    'RITUAL SCORECARD- By SALIM CYRUS.pdf'
   ),
   book(
     'pornography-and-the-death-of-purpose',
     'Pornography and the Death of Purpose',
     'A focused examination of identity theft in the digital age and the way destructive media habits erode direction, discipline, and purpose.',
-    'Identity Theft in the Digital Age'
+    'Identity Theft in the Digital Age',
+    'PORNOGRAPHY AND THE DEATH OF PURPOSE IDENTITY THEFT IN THE DIGITAL AGE.pdf'
   ),
   book(
     'god-do-you-need-my-money',
     'God, Do You Need My Money?',
     'A challenge to religious manipulation that reclaims biblical truth, generosity, stewardship, and integrity.',
-    'Exposing the Manipulation, Reclaiming the Truth, and Returning to Biblical Generosity'
+    'Exposing the Manipulation, Reclaiming the Truth, and Returning to Biblical Generosity',
+    'God_Do_You_Need_My_Money_Salim_Cyrus.pdf'
   ),
   book(
     'digital-economic-systems-decoded',
     'Digital Economic Systems Decoded',
-    'An accessible look at how platforms, governments, and algorithms influence identity, data, opportunity, and economic power.'
+    'An accessible look at how platforms, governments, and algorithms influence identity, data, opportunity, and economic power.',
+    undefined,
+    'Digital_Economic_Systems_Decoded_Masterclass (1).pdf'
   ),
   book(
     'unless-they-kill-god',
     'Unless They Kill God',
     'A forceful reflection on why no system, religion, or power can stop the purposes of God in a person’s life.',
-    'Why No System, Religion, or Power Can Stop the Purposes of God in a Man’s Life'
+    'Why No System, Religion, or Power Can Stop the Purposes of God in a Man’s Life',
+    'UNLESS THEY KILL GOD - By SALIM CYRUS.pdf'
   ),
   book(
     'concealed-redemption',
     'Concealed Redemption',
     'A hopeful exploration of how God works behind broken places to reveal purpose, renewal, and restoration.',
-    'How God Works Behind the Broken Places to Reveal His Greatest Purpose'
+    'How God Works Behind the Broken Places to Reveal His Greatest Purpose',
+    'CONCEALED REDEMPTION - By SALIM CYRUS.pdf'
   ),
 ]

@@ -1,11 +1,14 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { books } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
 import { PageHero } from '@/components/layout/PageHero'
+import { BookCheckoutForm } from '@/components/payments/BookCheckoutForm'
+import { BookPurchaseReturn } from '@/components/payments/BookPurchaseReturn'
 
 interface PageProps {
   params: { slug: string }
@@ -93,25 +96,41 @@ export default function BookDetailPage({ params }: PageProps) {
             )}
             <div className="mt-10 flex flex-wrap items-center gap-4">
               {book.status === 'available' && book.priceKes ? (
-                <>
-                  <span className="text-2xl font-bold text-navy">
-                    {formatCurrency(book.priceKes)}
-                  </span>
+                <span className="text-2xl font-bold text-navy">
+                  {formatCurrency(book.priceKes)}
+                </span>
+              ) : (
+                <span className="text-sm font-semibold uppercase tracking-wide text-navy-400">
+                  Coming Soon
+                </span>
+              )}
+            </div>
+            {book.status === 'available' && book.priceKes ? (
+              book.fileName ? (
+                <div className="mt-6 max-w-lg">
+                  <BookCheckoutForm
+                    slug={book.slug}
+                    title={book.title}
+                    whatsappOrderUrl={book.purchaseUrl}
+                  />
+                  <Suspense>
+                    <BookPurchaseReturn slug={book.slug} />
+                  </Suspense>
+                </div>
+              ) : (
+                <div className="mt-6">
                   <Button href={book.purchaseUrl} size="lg">
                     Order on WhatsApp
                   </Button>
-                </>
-              ) : (
-                <>
-                  <span className="text-sm font-semibold uppercase tracking-wide text-navy-400">
-                    Coming Soon
-                  </span>
-                  <Button href="/contact" variant="outline" size="lg">
-                    Get Notified
-                  </Button>
-                </>
-              )}
-            </div>
+                </div>
+              )
+            ) : (
+              <div className="mt-6">
+                <Button href="/contact" variant="outline" size="lg">
+                  Get Notified
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </section>

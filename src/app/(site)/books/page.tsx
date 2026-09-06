@@ -53,7 +53,7 @@ const questions = [
   {
     question: 'Where do purchases happen?',
     answer:
-      'Select Order to send a prefilled WhatsApp message with the book title and price so the team can confirm payment and delivery.',
+      'Most titles offer Buy & Download: pay by card or mobile money and the PDF unlocks immediately. The rest use WhatsApp ordering, sending a prefilled message with the book title and price so the team can confirm payment and delivery.',
   },
   {
     question: 'Are there free resources too?',
@@ -193,10 +193,16 @@ export default function BooksPage() {
                       <span className="mr-auto font-heading text-xl font-bold text-navy">
                         {formatCurrency(book.priceKes)}
                       </span>
-                      <Button href={book.purchaseUrl}>Order</Button>
-                      <Button href={`/books/${book.slug}`} variant="outline">
-                        Details
-                      </Button>
+                      {book.fileName ? (
+                        <Button href={`/books/${book.slug}`}>Buy &amp; Download</Button>
+                      ) : (
+                        <>
+                          <Button href={book.purchaseUrl}>Order</Button>
+                          <Button href={`/books/${book.slug}`} variant="outline">
+                            Details
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </article>

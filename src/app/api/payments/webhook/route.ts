@@ -3,6 +3,61 @@ import { verifyPaystackSignature, matchOfferByAmount } from '@/lib/api/paystack'
 import { db } from '@/lib/db'
 import { normalizeEmail } from '@/services/crm/normalization'
 import { z } from 'zod'
+import {
+  slugFromBookOfferName,
+  recordBookPurchase,
+  createDownloadGrant,
+  downloadUrlFor,
+} from '@/services/payments/book-purchases'
+import { sendEmail, bookDownloadEmailHtml } from '@/lib/api/email'
+
+async function handleBookPurchase({
+  slug,
+  reference,
+  amount,
+  customer,
+  name,
+}: {
+  slug: string
+  reference: string
+  amount: number
+  customer: { email: string }
+  name: string
+}) {
+  const result = await recordBookPurchase({
+    slug,
+    reference,
+    amountKobo: amount,
+    email: customer.email,
+    name,
+  })
+  if (!result) {
+    console.error('Paystack webhook: book purchase for unknown slug', { slug, reference })
+    return
+  }
+  if (!result.isNew) return
+
+  const { rawToken, expiresAt } = await createDownloadGrant(result.purchaseId)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  const downloadUrl = downloadUrlFor(rawToken, siteUrl)
+
+  const emailResult = await sendEmail({
+    to: customer.email,
+    subject: `Your download: ${result.book.title}`,
+    html: bookDownloadEmailHtml({ bookTitle: result.book.title, downloadUrl, expiresAt }),
+  })
+  if (emailResult.sent) {
+    await db.bookPurchase.update({
+      where: { id: result.purchaseId },
+      data: { emailSentAt: new Date() },
+    })
+  } else {
+    console.warn('Book purchase email not sent (buyer can still use the return-page download link)', {
+      reference,
+      reason: emailResult.reason,
+    })
+  }
+}
 
 const paystackEventSchema = z.object({
   event: z.string(),
@@ -44,7 +99,15 @@ export async function POST(request: NextRequest) {
 
   const { reference, amount, customer, metadata } = payload.data
   const name = [customer.first_name, customer.last_name].filter(Boolean).join(' ') || customer.email
-  const offerName = metadata?.offer_name ?? matchOfferByAmount(amount) ?? 'Payment received (unmatched offer)'
+  const rawOfferName = metadata?.offer_name
+  const bookSlug = rawOfferName ? slugFromBookOfferName(rawOfferName) : null
+
+  if (bookSlug) {
+    await handleBookPurchase({ slug: bookSlug, reference, amount, customer, name })
+    return NextResponse.json({ status: 'ok' })
+  }
+
+  const offerName = rawOfferName ?? matchOfferByAmount(amount) ?? 'Payment received (unmatched offer)'
 
   const normalizedEmail = normalizeEmail(customer.email)!
   const matchingUser = await db.user.findFirst({

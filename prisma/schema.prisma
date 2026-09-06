@@ -19,6 +19,7 @@ model User {
   crmRole             String               @default("customer")
   createdAt           DateTime             @default(now())
   bookings            Booking[]
+  bookPurchases       BookPurchase[]
   journalEntries      JournalEntry[]
   passwordResetTokens PasswordResetToken[]
   ownedContacts       CrmContact[]         @relation("ContactOwner")
@@ -81,6 +82,43 @@ model Booking {
   slotId            String?           @unique
   slot              AvailabilitySlot? @relation(fields: [slotId], references: [id])
   createdAt         DateTime          @default(now())
+}
+
+model BookPurchase {
+  id                String             @id @default(cuid())
+  bookSlug          String
+  email             String
+  name              String
+  userId            String?
+  user              User?              @relation(fields: [userId], references: [id])
+  paystackReference String             @unique
+  amountKobo        Int
+  emailSentAt       DateTime?
+  grants            BookDownloadGrant[]
+  createdAt         DateTime           @default(now())
+
+  @@index([bookSlug, email])
+}
+
+/**
+ * A single distributable download link for a purchase. Deliberately
+ * many-per-purchase, not one-per-purchase: the webhook mints one for the
+ * confirmation email, and the buyer's return-to-site page mints its own
+ * independently (it can't recover the emailed one — only its hash is ever
+ * stored) without invalidating the emailed link.
+ */
+model BookDownloadGrant {
+  id               String    @id @default(cuid())
+  purchaseId       String
+  purchase         BookPurchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  tokenHash        String    @unique
+  expiresAt        DateTime
+  downloadCount    Int       @default(0)
+  maxDownloads     Int       @default(5)
+  lastDownloadedAt DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([purchaseId])
 }
 
 model AvailabilitySlot {

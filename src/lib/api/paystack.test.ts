@@ -1,5 +1,5 @@
 import { createHmac } from 'crypto'
-import { verifyPaystackSignature, matchOfferByAmount } from './paystack'
+import { verifyPaystackSignature, matchOfferByAmount, verifyPaystackTransaction } from './paystack'
 import { programs } from '@/lib/data/programs'
 import { books } from '@/lib/data/books'
 
@@ -64,5 +64,37 @@ describe('matchOfferByAmount', () => {
 
   it('returns null for an amount that matches nothing', () => {
     expect(matchOfferByAmount(1)).toBeNull()
+  })
+
+  it('cannot distinguish between two books at the same price (documents why book checkout uses metadata.offer_name instead)', () => {
+    const available = books.filter((b) => b.status === 'available' && b.priceKes)
+    const samePrice = available.filter((b) => b.priceKes === available[0].priceKes)
+    expect(samePrice.length).toBeGreaterThan(1)
+    expect(matchOfferByAmount(samePrice[0].priceKes! * 100)).toBe(samePrice[0].title)
+    expect(matchOfferByAmount(samePrice[1].priceKes! * 100)).toBe(samePrice[0].title)
+  })
+})
+
+describe('verifyPaystackTransaction', () => {
+  it('calls the verify endpoint with the reference and auth header', async () => {
+    const fetcher = jest.fn().mockResolvedValue({
+      json: async () => ({ status: true, data: { status: 'success', reference: 'ref_1' } }),
+    }) as unknown as typeof fetch
+
+    await verifyPaystackTransaction('ref_1', 'sk_test', fetcher)
+
+    expect(fetcher).toHaveBeenCalledWith(
+      'https://api.paystack.co/transaction/verify/ref_1',
+      { headers: { Authorization: 'Bearer sk_test' } }
+    )
+  })
+
+  it('URL-encodes the reference', async () => {
+    const fetcher = jest.fn().mockResolvedValue({ json: async () => ({ status: true }) }) as unknown as typeof fetch
+    await verifyPaystackTransaction('ref with space', 'sk_test', fetcher)
+    expect(fetcher).toHaveBeenCalledWith(
+      'https://api.paystack.co/transaction/verify/ref%20with%20space',
+      expect.anything()
+    )
   })
 })

@@ -30,6 +30,7 @@
     "eval:payments": "node tests/evals/payment-options.eval.js",
     "eval:mobile-editorial-pages": "node tests/evals/mobile-editorial-pages.eval.js",
     "eval:home-premium": "node tests/evals/home-premium.eval.js",
+    "eval:book-purchase-download": "node tests/evals/book-purchase-download.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { bookOfferName } from '@/services/payments/book-purchases'
 
 export const donationRequestSchema = z.object({
   email: z.string().trim().email(),
@@ -49,6 +50,69 @@ export async function initializePaystackDonation({
         metadata: {
           purpose: 'Halisi Hub Connect mission support',
           offer_name: 'Support the Mission',
+        },
+      }),
+    }
+  )
+
+  const payload = (await response.json()) as PaystackInitializeResponse
+  if (!response.ok || !payload.status || !payload.data?.authorization_url) {
+    throw new Error(
+      payload.message || 'Paystack checkout could not be initialized'
+    )
+  }
+
+  return {
+    authorizationUrl: payload.data.authorization_url,
+    reference: payload.data.reference,
+  }
+}
+
+export const bookCheckoutRequestSchema = z.object({
+  email: z.string().trim().email(),
+  slug: z.string().trim().min(1).max(200),
+})
+
+/**
+ * Book purchases embed `metadata.offer_name = "book:<slug>"` so the webhook
+ * can identify exactly which title was bought. Amount-matching alone can't
+ * do this: every book shares the same flat price, so it can never tell two
+ * titles apart (see matchOfferByAmount's doc comment in lib/api/paystack.ts).
+ */
+export async function initializePaystackBookCheckout({
+  email,
+  slug,
+  title,
+  priceKes,
+  secretKey,
+  callbackUrl,
+  fetcher = fetch,
+}: {
+  email: string
+  slug: string
+  title: string
+  priceKes: number
+  secretKey: string
+  callbackUrl: string
+  fetcher?: typeof fetch
+}): Promise<DonationCheckout> {
+  const response = await fetcher(
+    'https://api.paystack.co/transaction/initialize',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${secretKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        amount: priceKes * 100,
+        currency: 'KES',
+        callback_url: callbackUrl,
+        metadata: {
+          purpose: 'Book purchase',
+          offer_name: bookOfferName(slug),
+          book_title: title,
         },
       }),
     }

@@ -1,4 +1,9 @@
-import { donationRequestSchema, initializePaystackDonation } from './paystack'
+import {
+  donationRequestSchema,
+  initializePaystackDonation,
+  bookCheckoutRequestSchema,
+  initializePaystackBookCheckout,
+} from './paystack'
 
 describe('Paystack donation checkout', () => {
   it('validates email and KES donation boundaries', () => {
@@ -74,5 +79,75 @@ describe('Paystack donation checkout', () => {
         fetcher,
       })
     ).rejects.toThrow('Invalid key')
+  })
+})
+
+describe('Paystack book checkout', () => {
+  it('validates email and slug', () => {
+    expect(
+      bookCheckoutRequestSchema.safeParse({ email: 'reader@example.com', slug: 'the-cost-of-infidelity' })
+        .success
+    ).toBe(true)
+    expect(bookCheckoutRequestSchema.safeParse({ email: 'invalid', slug: 'x' }).success).toBe(false)
+    expect(bookCheckoutRequestSchema.safeParse({ email: 'reader@example.com', slug: '' }).success).toBe(
+      false
+    )
+  })
+
+  it('embeds a book-specific offer_name so the webhook can tell titles apart', async () => {
+    const fetcher = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: true,
+        message: 'Authorization URL created',
+        data: {
+          authorization_url: 'https://checkout.paystack.com/example',
+          access_code: 'example',
+          reference: 'book_123',
+        },
+      }),
+    }) as unknown as typeof fetch
+
+    await initializePaystackBookCheckout({
+      email: 'reader@example.com',
+      slug: 'the-cost-of-infidelity',
+      title: 'The Cost of Infidelity',
+      priceKes: 1499,
+      secretKey: 'test-secret',
+      callbackUrl: 'https://salimcyrus.com/books/the-cost-of-infidelity',
+      fetcher,
+    })
+
+    expect(fetcher).toHaveBeenCalledWith(
+      'https://api.paystack.co/transaction/initialize',
+      expect.objectContaining({
+        body: expect.stringContaining('"offer_name":"book:the-cost-of-infidelity"'),
+      })
+    )
+  })
+
+  it('charges the exact book price in the smallest currency unit', async () => {
+    const fetcher = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: true,
+        data: { authorization_url: 'https://checkout.paystack.com/x', reference: 'r1' },
+      }),
+    }) as unknown as typeof fetch
+
+    await initializePaystackBookCheckout({
+      email: 'reader@example.com',
+      slug: 'slug',
+      title: 'Title',
+      priceKes: 1499,
+      secretKey: 'test-secret',
+      callbackUrl: 'https://salimcyrus.com/books/slug',
+      fetcher,
+    })
+
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ body: expect.stringContaining('"amount":149900') })
+    )
   })
 })

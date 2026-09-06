@@ -36,10 +36,15 @@ describe('books data', () => {
     expect(broken).toEqual([])
   })
 
-  it('publishes all 14 distinct supplied titles at KES 1,499', () => {
-    expect(books).toHaveLength(14)
-    expect(new Set(books.map((book) => book.title)).size).toBe(14)
+  it('publishes all 11 distinct confirmed titles at KES 1,499', () => {
+    expect(books).toHaveLength(11)
+    expect(new Set(books.map((book) => book.title)).size).toBe(11)
     expect(books.every((book) => book.priceKes === 1499)).toBe(true)
+  })
+
+  it('every book has a confirmed file for instant download (no ambiguous or missing mappings in the catalog)', () => {
+    const missingFile = books.filter((book) => !book.fileName).map((book) => book.slug)
+    expect(missingFile).toEqual([])
   })
 
   it('every book has an optimized local cover and a title-specific order message', () => {

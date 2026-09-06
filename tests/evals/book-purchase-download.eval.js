@@ -84,10 +84,11 @@ const checks = [
     storage.includes('BOOKS_STORAGE_DIR') && !storage.includes('public/'),
   ],
   [
-    'ambiguous or missing book-to-file mappings are explicitly tracked, not silently guessed',
-    fs.existsSync(path.join(root, 'docs/book-file-mapping-todo.md')) &&
-      booksData.includes('the-unhealed-traumas-of-our-parents') &&
-      !booksData.match(/book\(\s*'the-unhealed-traumas-of-our-parents'[\s\S]*?fileName:/),
+    'catalog never lists a book without a confirmed file (no guessed or ambiguous mappings on sale)',
+    !booksData.includes('the-unhealed-traumas-of-our-parents') &&
+      !booksData.includes('the-great-deception-of-pornography') &&
+      !booksData.includes("'the-great-deception'") &&
+      fs.existsSync(path.join(root, 'docs/book-file-mapping-todo.md')),
   ],
 ]
 

@@ -8,6 +8,25 @@ jest.mock('../../../../services/payments/paystack', () => ({
     .bookCheckoutRequestSchema,
   initializePaystackBookCheckout: jest.fn(),
 }))
+jest.mock('../../../../lib/data/books', () => {
+  const actual = jest.requireActual('../../../../lib/data/books')
+  return {
+    ...actual,
+    books: [
+      ...actual.books,
+      {
+        slug: 'not-yet-confirmed',
+        title: 'Not Yet Confirmed',
+        description: 'A book whose file has not been confirmed yet.',
+        priceKes: 1499,
+        status: 'available',
+        purchaseUrl: 'https://wa.me/000',
+        cover: '/images/books/not-yet-confirmed.webp',
+        // fileName deliberately absent.
+      },
+    ],
+  }
+})
 
 import { POST } from './route'
 import { initializePaystackBookCheckout } from '@/services/payments/paystack'
@@ -50,8 +69,7 @@ describe('POST /api/books/checkout', () => {
 
   it('returns 409 for a book without an assigned file (instant download not ready)', async () => {
     process.env.PAYSTACK_SECRET_KEY = 'sk_test'
-    const ambiguousBook = books.find((b) => b.status === 'available' && !b.fileName)!
-    const response = await POST(request({ email: 'reader@example.com', slug: ambiguousBook.slug }))
+    const response = await POST(request({ email: 'reader@example.com', slug: 'not-yet-confirmed' }))
     expect(response.status).toBe(409)
   })
 

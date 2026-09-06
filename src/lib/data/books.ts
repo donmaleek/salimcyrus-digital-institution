@@ -55,27 +55,11 @@ export const books: BookEntry[] = [
     'The Market Place - By Salim Cyrus.pdf'
   ),
   book(
-    'the-unhealed-traumas-of-our-parents',
-    'The Unhealed Traumas of Our Parents',
-    'A journey of healing that confronts generational patterns, emotional wounds, and inherited beliefs so families can build a healthier legacy.',
-    'Escaping the Chains of Generational Brokenness'
-    // No matching file in Books/ yet. See docs/book-file-mapping-todo.md.
-    // Falls back to WhatsApp ordering until confirmed.
-  ),
-  book(
     'the-greatest-tragedy',
     'The Greatest Tragedy Is Not Death',
     'An exploration of identity, calling, and Kingdom purpose for anyone determined to build a meaningful life in a world full of distraction.',
     'It Is a Life Without Purpose',
     'The_Greatest_Tragedy_Is_Not_Death_But_A_Life_Without_Purpose- By SALIM CYRUS.pdf'
-  ),
-  book(
-    'the-great-deception-of-pornography',
-    'The Great Deception of Pornography',
-    'A direct account of how pornography manipulates the mind, steals purpose, and damages spiritual life, with a path toward truth and freedom.',
-    'How It Manipulates Your Mind, Steals Your Purpose, and Kills Your Spiritual Life'
-    // Ambiguous vs. "the-great-deception" below. Two candidate files
-    // ("THE GREAT DECEPTION" and "THE DECEPTION"). See docs/book-file-mapping-todo.md.
   ),
   book(
     'emotional-blackmail',
@@ -90,12 +74,6 @@ export const books: BookEntry[] = [
     'A faith-centered examination of how time, money, and digital desire compete for attention, discipline, and devotion.',
     undefined,
     'TIME, MONEY, PORNOGRAPHY & THE GLORY OF GOD- By SALIM CYRUS.pdf'
-  ),
-  book(
-    'the-great-deception',
-    'The Great Deception',
-    'A brutal accounting of how the stories you tell yourself keep stealing your focus, and how to reclaim the narrative with accountability and clarity.'
-    // Ambiguous. See docs/book-file-mapping-todo.md.
   ),
   book(
     'the-cost-of-infidelity',

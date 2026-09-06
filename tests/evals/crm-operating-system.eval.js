@@ -60,10 +60,14 @@ const checks = [
     requiredWorkspaces.every((label) => nav.includes(label)),
   ],
   [
-    'site catalog seeds all current books and programs',
+    'site catalog seeds all current books and programs, priced per book',
     seed.includes('concealed-redemption') &&
+      seed.includes('the-deception') &&
+      seed.includes('marriage-and-knowing-the-right-partner') &&
+      !seed.includes('the-unhealed-traumas-of-our-parents') &&
+      !seed.includes('the-great-deception-of-pornography') &&
       seed.includes('Healing and Restoration Intensive') &&
-      seed.includes('149900'),
+      seed.includes('priceMinor: priceKes * 100'),
   ],
   [
     'Paystack events create CRM money and activity records',

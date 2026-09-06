@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
-import { books } from '@/lib/data/books'
+import { BookCover } from '@/components/books/BookCover'
+import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
 
 export const metadata: Metadata = {
@@ -48,7 +48,7 @@ const questions = [
   {
     question: 'Which books are available now?',
     answer:
-      'All 14 books in the catalog are currently listed at KES 1,499 each.',
+      'All 14 books in the catalog are available now, priced individually by length from KES 500 to KES 1,000.',
   },
   {
     question: 'Where do purchases happen?',
@@ -131,10 +131,10 @@ export default function BooksPage() {
               </div>
               <div className="border-t border-navy-200 py-7 sm:border-l sm:border-t-0 sm:pl-8">
                 <dt className="font-heading text-4xl font-bold text-navy">
-                  {formatCurrency(availableBooks[0]?.priceKes ?? 0)}
+                  {formatCurrency(BOOK_MIN_PRICE_KES)}&ndash;{formatCurrency(BOOK_MAX_PRICE_KES)}
                 </dt>
                 <dd className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-navy-500">
-                  Current price per available book
+                  Priced by book, KES {BOOK_MIN_PRICE_KES}&ndash;{BOOK_MAX_PRICE_KES}
                 </dd>
               </div>
             </dl>
@@ -160,48 +160,39 @@ export default function BooksPage() {
             </div>
 
             <div
-              className="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3"
+              className="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4"
               data-testid="available-book-list"
             >
               {availableBooks.map((book) => (
                 <article key={book.slug} className="flex flex-col">
                   <Link
                     href={`/books/${book.slug}`}
-                    className="group relative block aspect-[4/5] overflow-hidden bg-navy-50 shadow-[0_24px_55px_rgba(15,27,45,0.16)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                    className="mx-auto block w-full max-w-[200px] transition-transform duration-300 ease-out hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                   >
-                    <Image
-                      src={book.cover}
-                      alt={`${book.title} book cover`}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.025]"
-                    />
+                    <BookCover src={book.cover} alt={`${book.title} book cover`} />
                   </Link>
-                  <div className="flex flex-1 flex-col pt-6">
-                    <h3 className="font-heading text-2xl font-bold leading-tight text-navy">
-                      {book.title}
-                    </h3>
-                    {book.subtitle && (
-                      <p className="mt-2 text-sm italic leading-6 text-navy-500">
-                        {book.subtitle}
-                      </p>
-                    )}
-                    <p className="mt-4 line-clamp-4 leading-7 text-navy-600">
-                      {book.description}
+                  <div className="flex flex-1 flex-col pt-5 text-center">
+                    <Link href={`/books/${book.slug}`} className="hover:underline">
+                      <h3 className="line-clamp-2 font-heading text-lg font-bold leading-snug text-navy">
+                        {book.title}
+                      </h3>
+                    </Link>
+                    <p className="mt-1 text-sm text-navy-500">by Salim Cyrus</p>
+                    <p className="mt-1 text-xs uppercase tracking-wide text-navy-400">
+                      {book.pageCount} pages &middot; PDF
                     </p>
-                    <div className="mt-auto flex flex-wrap items-center gap-3 pt-6">
-                      <span className="mr-auto font-heading text-xl font-bold text-navy">
-                        {formatCurrency(book.priceKes)}
-                      </span>
+                    <span className="mt-3 font-heading text-xl font-bold text-navy">
+                      {formatCurrency(book.priceKes)}
+                    </span>
+                    <div className="mt-4">
                       {book.fileName ? (
-                        <Button href={`/books/${book.slug}`}>Buy &amp; Download</Button>
+                        <Button href={`/books/${book.slug}`} className="w-full">
+                          Buy &amp; Download
+                        </Button>
                       ) : (
-                        <>
-                          <Button href={book.purchaseUrl}>Order</Button>
-                          <Button href={`/books/${book.slug}`} variant="outline">
-                            Details
-                          </Button>
-                        </>
+                        <Button href={book.purchaseUrl} variant="outline" className="w-full">
+                          Order on WhatsApp
+                        </Button>
                       )}
                     </div>
                   </div>

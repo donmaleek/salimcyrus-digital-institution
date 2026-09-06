@@ -1,30 +1,36 @@
 const { PrismaClient } = require('@prisma/client')
 const db = new PrismaClient()
 
+// Kept in sync by hand with src/lib/data/books.ts (slug, title, priceKes) —
+// this is a plain Node script with no TypeScript runtime available, so it
+// can't import that module directly. Update both when the catalog changes.
 const bookTitles = [
-  ['understanding-the-marketplace', 'Understanding the Marketplace'],
-  [
-    'the-unhealed-traumas-of-our-parents',
-    'The Unhealed Traumas of Our Parents',
-  ],
-  ['the-greatest-tragedy', 'The Greatest Tragedy Is Not Death'],
-  ['the-great-deception-of-pornography', 'The Great Deception of Pornography'],
-  ['emotional-blackmail', 'Emotional Blackmail'],
+  ['understanding-the-marketplace', 'Understanding the Marketplace', 850],
+  ['the-greatest-tragedy', 'The Greatest Tragedy Is Not Death', 690],
+  ['emotional-blackmail', 'Emotional Blackmail', 580],
   [
     'time-money-pornography-and-the-glory-of-god',
     'Time, Money, Pornography and the Glory of God',
+    500,
   ],
-  ['the-great-deception', 'The Great Deception'],
-  ['the-cost-of-infidelity', 'The Cost of Infidelity'],
-  ['ritual-scorecard', 'Ritual Scorecard'],
+  ['the-great-deception', 'The Great Deception', 650],
+  ['the-cost-of-infidelity', 'The Cost of Infidelity', 620],
+  ['ritual-scorecard', 'Ritual Scorecard', 810],
   [
     'pornography-and-the-death-of-purpose',
     'Pornography and the Death of Purpose',
+    1000,
   ],
-  ['god-do-you-need-my-money', 'God, Do You Need My Money?'],
-  ['digital-economic-systems-decoded', 'Digital Economic Systems Decoded'],
-  ['unless-they-kill-god', 'Unless They Kill God'],
-  ['concealed-redemption', 'Concealed Redemption'],
+  ['god-do-you-need-my-money', 'God, Do You Need My Money?', 880],
+  ['digital-economic-systems-decoded', 'Digital Economic Systems Decoded', 920],
+  ['unless-they-kill-god', 'Unless They Kill God', 730],
+  ['concealed-redemption', 'Concealed Redemption', 770],
+  ['the-deception', 'The Deception', 960],
+  [
+    'marriage-and-knowing-the-right-partner',
+    'Marriage and Knowing the Right Partner',
+    540,
+  ],
 ]
 
 const programTitles = [
@@ -124,16 +130,16 @@ async function main() {
     }
   }
 
-  for (const [slug, title] of bookTitles)
+  for (const [slug, title, priceKes] of bookTitles)
     await db.crmProduct.upsert({
       where: { sku: `BOOK-${slug.toUpperCase()}` },
-      update: { name: title, priceMinor: 149900, isActive: true },
+      update: { name: title, priceMinor: priceKes * 100, isActive: true },
       create: {
         sku: `BOOK-${slug.toUpperCase()}`,
         name: title,
         type: 'book',
         businessLine: 'books',
-        priceMinor: 149900,
+        priceMinor: priceKes * 100,
         stockOnHand: 0,
         reorderLevel: 10,
       },

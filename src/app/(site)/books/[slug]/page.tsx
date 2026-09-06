@@ -1,14 +1,20 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import Image from 'next/image'
+import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { JsonLd } from '@/components/sections/shared/SEO'
-import { books } from '@/lib/data/books'
+import { books, type BookEntry } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
-import { PageHero } from '@/components/layout/PageHero'
+import { BookCover } from '@/components/books/BookCover'
 import { BookCheckoutForm } from '@/components/payments/BookCheckoutForm'
 import { BookPurchaseReturn } from '@/components/payments/BookPurchaseReturn'
+
+function moreBooksBy(current: BookEntry, count: number): BookEntry[] {
+  return books
+    .filter((b) => b.slug !== current.slug && b.status === 'available')
+    .slice(0, count)
+}
 
 interface PageProps {
   params: { slug: string }
@@ -43,6 +49,8 @@ export default function BookDetailPage({ params }: PageProps) {
     name: book.title,
     author: { '@type': 'Person', name: 'Salim Cyrus' },
     description: book.description,
+    numberOfPages: book.pageCount,
+    bookFormat: 'https://schema.org/EBook',
     ...(book.cover ? { image: book.cover } : {}),
     ...(book.status === 'available' && book.priceKes
       ? {
@@ -62,78 +70,157 @@ export default function BookDetailPage({ params }: PageProps) {
         }),
   }
 
+  const canBuyNow = book.status === 'available' && Boolean(book.priceKes)
+  const moreBooks = moreBooksBy(book, 4)
+
   return (
     <>
       <JsonLd data={jsonLd} />
-      <PageHero
-        eyebrow="Books"
-        title={book.title}
-        description={book.description}
-      />
-      <section className="bg-cream">
-        <div className="mx-auto grid max-w-content gap-10 px-6 py-20 lg:grid-cols-[280px_1fr] lg:items-start">
-          <div className="relative mx-auto aspect-[4/5] w-full max-w-[280px] overflow-hidden bg-navy-50 shadow-lg">
-            {book.cover ? (
-              <Image
-                src={book.cover}
-                alt={book.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center p-6 text-center font-heading text-navy-300">
+      <main className="bg-cream">
+        <div className="mx-auto max-w-content px-6 py-8 sm:py-12">
+          <nav aria-label="Breadcrumb" className="text-sm text-navy-500">
+            <ol className="flex flex-wrap items-center gap-2">
+              <li>
+                <Link href="/books" className="hover:text-navy hover:underline">
+                  Books
+                </Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li className="max-w-[60vw] truncate text-navy" aria-current="page">
                 {book.title}
+              </li>
+            </ol>
+          </nav>
+
+          <div className="mt-8 grid gap-10 lg:grid-cols-[300px_1fr_340px] lg:items-start">
+            <div className="mx-auto w-full max-w-[300px] lg:sticky lg:top-8">
+              <BookCover src={book.cover} alt={`${book.title} cover`} priority />
+            </div>
+
+            <div>
+              <h1 className="font-heading text-3xl font-bold leading-tight text-navy sm:text-4xl">
+                {book.title}
+              </h1>
+              {book.subtitle && (
+                <p className="mt-2 font-heading text-xl italic text-navy-500">
+                  {book.subtitle}
+                </p>
+              )}
+              <p className="mt-3 text-navy-600">
+                by{' '}
+                <Link href="/about" className="font-semibold text-navy underline-offset-2 hover:underline">
+                  Salim Cyrus
+                </Link>{' '}
+                <span className="text-navy-400">(Author)</span>
+              </p>
+
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-gold-200 bg-gold-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold-600">
+                Instant PDF Download
               </div>
-            )}
+
+              <hr className="my-6 border-navy-100" />
+
+              <h2 className="font-heading text-xl font-bold text-navy">
+                About this book
+              </h2>
+              <p className="mt-3 max-w-2xl leading-relaxed text-navy-600">
+                {book.description}
+              </p>
+
+              <h2 className="mt-8 font-heading text-xl font-bold text-navy">
+                Product details
+              </h2>
+              <dl className="mt-3 grid max-w-md grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                <dt className="text-navy-500">Print length</dt>
+                <dd className="text-navy">{book.pageCount} pages</dd>
+                <dt className="text-navy-500">Format</dt>
+                <dd className="text-navy">PDF (instant download)</dd>
+                <dt className="text-navy-500">Language</dt>
+                <dd className="text-navy">English</dd>
+                <dt className="text-navy-500">Publisher</dt>
+                <dd className="text-navy">Halisi Hub Connect</dd>
+              </dl>
+            </div>
+
+            <aside className="rounded-2xl border border-navy-100 bg-white p-6 shadow-sm lg:sticky lg:top-8">
+              {canBuyNow ? (
+                <>
+                  <p className="font-heading text-3xl font-bold text-navy">
+                    {formatCurrency(book.priceKes)}
+                  </p>
+                  <p className="mt-1 text-sm text-navy-500">
+                    Instant PDF download after payment
+                  </p>
+
+                  <div className="mt-5">
+                    {book.fileName ? (
+                      <>
+                        <BookCheckoutForm
+                          slug={book.slug}
+                          title={book.title}
+                          whatsappOrderUrl={book.purchaseUrl}
+                        />
+                        <Suspense>
+                          <BookPurchaseReturn slug={book.slug} />
+                        </Suspense>
+                      </>
+                    ) : (
+                      <Button href={book.purchaseUrl} size="lg" className="w-full">
+                        Order on WhatsApp
+                      </Button>
+                    )}
+                  </div>
+
+                  <ul className="mt-6 space-y-2 border-t border-navy-100 pt-5 text-sm text-navy-600">
+                    <li className="flex gap-2">
+                      <span aria-hidden="true">✓</span>
+                      Delivered instantly as a downloadable PDF
+                    </li>
+                    <li className="flex gap-2">
+                      <span aria-hidden="true">✓</span>
+                      Secure checkout via Paystack (card or mobile money)
+                    </li>
+                    <li className="flex gap-2">
+                      <span aria-hidden="true">✓</span>
+                      Download link works up to 5 times over 30 days
+                    </li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-navy-400">
+                    Coming Soon
+                  </p>
+                  <Button href="/contact" variant="outline" size="lg" className="mt-4 w-full">
+                    Get Notified
+                  </Button>
+                </>
+              )}
+            </aside>
           </div>
 
-          <div>
-            {book.subtitle && (
-              <p className="mt-2 font-heading text-2xl italic text-navy-500">
-                {book.subtitle}
-              </p>
-            )}
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              {book.status === 'available' && book.priceKes ? (
-                <span className="text-2xl font-bold text-navy">
-                  {formatCurrency(book.priceKes)}
-                </span>
-              ) : (
-                <span className="text-sm font-semibold uppercase tracking-wide text-navy-400">
-                  Coming Soon
-                </span>
-              )}
-            </div>
-            {book.status === 'available' && book.priceKes ? (
-              book.fileName ? (
-                <div className="mt-6 max-w-lg">
-                  <BookCheckoutForm
-                    slug={book.slug}
-                    title={book.title}
-                    whatsappOrderUrl={book.purchaseUrl}
-                  />
-                  <Suspense>
-                    <BookPurchaseReturn slug={book.slug} />
-                  </Suspense>
-                </div>
-              ) : (
-                <div className="mt-6">
-                  <Button href={book.purchaseUrl} size="lg">
-                    Order on WhatsApp
-                  </Button>
-                </div>
-              )
-            ) : (
-              <div className="mt-6">
-                <Button href="/contact" variant="outline" size="lg">
-                  Get Notified
-                </Button>
+          {moreBooks.length > 0 && (
+            <div className="mt-20 border-t border-navy-100 pt-12">
+              <h2 className="font-heading text-2xl font-bold text-navy">
+                More books by Salim Cyrus
+              </h2>
+              <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+                {moreBooks.map((other) => (
+                  <Link key={other.slug} href={`/books/${other.slug}`} className="group block">
+                    <BookCover src={other.cover} alt={`${other.title} book cover`} />
+                    <p className="mt-3 line-clamp-2 text-sm font-semibold text-navy group-hover:underline">
+                      {other.title}
+                    </p>
+                    <p className="mt-1 text-sm font-bold text-navy-600">
+                      {formatCurrency(other.priceKes)}
+                    </p>
+                  </Link>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      </section>
+      </main>
     </>
   )
 }

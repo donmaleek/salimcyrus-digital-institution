@@ -66,12 +66,13 @@ describe('matchOfferByAmount', () => {
     expect(matchOfferByAmount(1)).toBeNull()
   })
 
-  it('cannot distinguish between two books at the same price (documents why book checkout uses metadata.offer_name instead)', () => {
+  it('every available book has a unique price, so amount alone now reliably identifies which title sold (the real checkout flow still uses metadata.offer_name as the primary signal; this is a defense-in-depth property, not the load-bearing one)', () => {
     const available = books.filter((b) => b.status === 'available' && b.priceKes)
-    const samePrice = available.filter((b) => b.priceKes === available[0].priceKes)
-    expect(samePrice.length).toBeGreaterThan(1)
-    expect(matchOfferByAmount(samePrice[0].priceKes! * 100)).toBe(samePrice[0].title)
-    expect(matchOfferByAmount(samePrice[1].priceKes! * 100)).toBe(samePrice[0].title)
+    const prices = available.map((b) => b.priceKes)
+    expect(new Set(prices).size).toBe(prices.length)
+    for (const book of available) {
+      expect(matchOfferByAmount(book.priceKes * 100)).toBe(book.title)
+    }
   })
 })
 

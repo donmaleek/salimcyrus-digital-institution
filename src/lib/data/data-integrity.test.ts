@@ -1,4 +1,4 @@
-import { books } from './books'
+import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from './books'
 import { programs } from './programs'
 import { knowledgeCategories } from './knowledge-categories'
 import { coachingOffers } from './coaching-offers'
@@ -36,10 +36,15 @@ describe('books data', () => {
     expect(broken).toEqual([])
   })
 
-  it('publishes all 14 distinct confirmed titles at KES 1,499', () => {
+  it('publishes all 14 distinct confirmed titles', () => {
     expect(books).toHaveLength(14)
     expect(new Set(books.map((book) => book.title)).size).toBe(14)
-    expect(books.every((book) => book.priceKes === 1499)).toBe(true)
+  })
+
+  it('every book is priced within range and no two books share a price', () => {
+    const prices = books.map((book) => book.priceKes)
+    expect(prices.every((p) => p >= BOOK_MIN_PRICE_KES && p <= BOOK_MAX_PRICE_KES)).toBe(true)
+    expect(new Set(prices).size).toBe(prices.length)
   })
 
   it('every book has a confirmed file for instant download (no ambiguous or missing mappings in the catalog)', () => {

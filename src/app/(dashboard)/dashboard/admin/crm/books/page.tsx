@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { books, BOOK_PRICE_KES } from '@/lib/data/books'
+import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from '@/lib/data/books'
 import { requireCrmPage } from '@/services/crm/access'
 import {
   CrmPageHeader,
@@ -30,7 +30,7 @@ export default async function BooksPage() {
       <CrmPageHeader
         eyebrow="Salim Cyrus library"
         title="Books, orders and stock"
-        description={`All ${books.length} current titles use the site's standard KES ${BOOK_PRICE_KES.toLocaleString('en-KE')} price and connect each buyer to Relationship 360.`}
+        description={`All ${books.length} current titles are priced individually by length, from KES ${BOOK_MIN_PRICE_KES.toLocaleString('en-KE')} to KES ${BOOK_MAX_PRICE_KES.toLocaleString('en-KE')}, and connect each buyer to Relationship 360.`}
       />
       <div className="mt-7 grid gap-4 sm:grid-cols-3">
         <MetricCard

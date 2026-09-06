@@ -22,8 +22,17 @@ function collectPages(directory) {
   })
 }
 
+// Product-detail pages are deliberately exempt: a book's page is a
+// marketplace listing (breadcrumb, buy box, product details), not editorial
+// content, and a generic marketing hero banner above the buy box is exactly
+// the opposite of the Amazon/Kindle-style product page it's meant to read
+// as. Same reasoning class as the redirect exemption below — a page that
+// structurally can't/shouldn't carry the shared hero, not an oversight.
+const HERO_EXEMPT_PAGES = [path.join(pageRoot, 'books', '[slug]', 'page.tsx')]
+
 const pagesWithoutSharedHero = collectPages(pageRoot)
   .filter((file) => file !== path.join(pageRoot, 'page.tsx'))
+  .filter((file) => !HERO_EXEMPT_PAGES.includes(file))
   .filter((file) => {
     const source = fs.readFileSync(file, 'utf8')
     // Pure server-redirect pages (permanentRedirect/redirect with no JSX

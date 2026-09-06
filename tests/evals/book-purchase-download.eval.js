@@ -87,7 +87,6 @@ const checks = [
     'catalog never lists a book without a confirmed file (no guessed or ambiguous mappings on sale)',
     !booksData.includes('the-unhealed-traumas-of-our-parents') &&
       !booksData.includes('the-great-deception-of-pornography') &&
-      !booksData.includes("'the-great-deception'") &&
       fs.existsSync(path.join(root, 'docs/book-file-mapping-todo.md')),
   ],
 ]

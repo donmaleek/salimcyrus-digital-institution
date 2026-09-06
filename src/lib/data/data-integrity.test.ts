@@ -36,9 +36,9 @@ describe('books data', () => {
     expect(broken).toEqual([])
   })
 
-  it('publishes all 11 distinct confirmed titles at KES 1,499', () => {
-    expect(books).toHaveLength(11)
-    expect(new Set(books.map((book) => book.title)).size).toBe(11)
+  it('publishes all 12 distinct confirmed titles at KES 1,499', () => {
+    expect(books).toHaveLength(12)
+    expect(new Set(books.map((book) => book.title)).size).toBe(12)
     expect(books.every((book) => book.priceKes === 1499)).toBe(true)
   })
 

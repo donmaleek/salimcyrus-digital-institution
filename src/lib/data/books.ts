@@ -76,6 +76,13 @@ export const books: BookEntry[] = [
     'TIME, MONEY, PORNOGRAPHY & THE GLORY OF GOD- By SALIM CYRUS.pdf'
   ),
   book(
+    'the-great-deception',
+    'The Great Deception',
+    'A brutal accounting of how the stories you tell yourself keep stealing your focus, and how to reclaim the narrative with accountability and clarity.',
+    undefined,
+    'THE GREAT DECEPTION- By SALIM CYRUS.pdf'
+  ),
+  book(
     'the-cost-of-infidelity',
     'The Cost of Infidelity',
     'An honest examination of betrayal, broken trust, and the emotional and relational cost of infidelity.',

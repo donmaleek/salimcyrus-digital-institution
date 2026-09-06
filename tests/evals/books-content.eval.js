@@ -17,14 +17,14 @@ const checks = [
     !booksExperience.includes('—'),
   ],
   [
-    'catalog contains 11 distinct confirmed titles',
-    (catalog.match(/\n  book\(/g) || []).length === 11,
+    'catalog contains 12 distinct confirmed titles',
+    (catalog.match(/\n  book\(/g) || []).length === 12,
   ],
   [
     'every title uses the shared KES 1,499 price',
     catalog.includes('BOOK_PRICE_KES = 1499'),
   ],
-  ['every catalog title has an optimized cover', covers.length === 11],
+  ['every catalog title has an optimized cover', covers.length === 12],
   [
     'catalog provides title-specific WhatsApp ordering',
     catalog.includes('encodeURIComponent(message)') &&

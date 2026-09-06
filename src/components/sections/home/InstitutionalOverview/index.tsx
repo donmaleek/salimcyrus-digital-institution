@@ -1,7 +1,7 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { books } from '@/lib/data/books'
 import { programs } from '@/lib/data/programs'
+import { BookCover } from '@/components/books/BookCover'
 
 const credentials = [
   ['2024', 'Strategic Accountability Coach'],
@@ -60,24 +60,24 @@ export function InstitutionalOverview() {
       </section>
 
       <section className="bg-cream" data-testid="home-books">
-        <div className="mx-auto grid max-w-content gap-12 px-6 py-16 sm:py-24 lg:grid-cols-[0.75fr_1.25fr] lg:items-center lg:gap-20">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gold-500">Books by Salim Cyrus</p>
-            <h2 className="mt-3 font-heading text-4xl font-bold text-navy sm:text-5xl">Books that read you back.</h2>
-            <p className="mt-6 text-lg leading-8 text-navy-600">Direct writing for readers ready to confront repeated narratives, recover focus, accept responsibility, and build a life around purpose.</p>
-            <Link href="/books" className="mt-8 inline-flex min-h-11 items-center font-bold text-navy underline decoration-gold decoration-2 underline-offset-8">Enter the reading room</Link>
+        <div className="mx-auto max-w-content px-6 py-16 sm:py-24">
+          <div className="grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-gold-500">Books by Salim Cyrus</p>
+              <h2 className="mt-3 font-heading text-4xl font-bold text-navy sm:text-5xl">Books that read you back.</h2>
+            </div>
+            <p className="text-lg leading-8 text-navy-600">Direct writing for readers ready to confront repeated narratives, recover focus, accept responsibility, and build a life around purpose.</p>
           </div>
-          <div className="grid grid-cols-2 gap-5 sm:gap-8">
+          <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
             {publishedBooks.map((book) => (
-              <Link href={`/books/${book.slug}`} key={book.slug} className="group">
-                <div className="relative aspect-[4/5] overflow-hidden bg-navy-100">
-                  {book.cover && <Image src={book.cover} alt={`${book.title} book cover`} fill sizes="(min-width: 1024px) 300px, 45vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />}
-                </div>
-                <h3 className="mt-4 font-heading text-xl font-semibold text-navy">{book.title}</h3>
-                <p className="mt-1 text-sm text-navy-500">Digital edition · KES {book.priceKes?.toLocaleString()}</p>
+              <Link href={`/books/${book.slug}`} key={book.slug} className="group block">
+                <BookCover src={book.cover} alt={`${book.title} book cover`} />
+                <h3 className="mt-3 line-clamp-2 font-heading text-base font-bold leading-snug text-navy group-hover:underline">{book.title}</h3>
+                <p className="mt-1 text-sm text-navy-500">KES {book.priceKes?.toLocaleString()}</p>
               </Link>
             ))}
           </div>
+          <Link href="/books" className="mt-10 inline-flex min-h-11 items-center font-bold text-navy underline decoration-gold decoration-2 underline-offset-8">Enter the reading room</Link>
         </div>
       </section>
 

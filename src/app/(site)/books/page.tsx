@@ -3,8 +3,12 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { BookCover } from '@/components/books/BookCover'
+import { StarRating } from '@/components/books/StarRating'
 import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
+import { db } from '@/lib/db'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Books',
@@ -62,8 +66,21 @@ const questions = [
   },
 ]
 
-export default function BooksPage() {
+export default async function BooksPage() {
   const availableBooks = books.filter((book) => book.status === 'available')
+
+  const ratingGroups = await db.bookReview.groupBy({
+    by: ['bookSlug'],
+    where: { status: 'approved' },
+    _avg: { rating: true },
+    _count: { rating: true },
+  })
+  const ratingsBySlug = new Map(
+    ratingGroups.map((group) => [
+      group.bookSlug,
+      { average: group._avg.rating ?? 0, count: group._count.rating },
+    ])
+  )
 
   return (
     <>
@@ -163,7 +180,9 @@ export default function BooksPage() {
               className="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4"
               data-testid="available-book-list"
             >
-              {availableBooks.map((book) => (
+              {availableBooks.map((book) => {
+                const rating = ratingsBySlug.get(book.slug)
+                return (
                 <article key={book.slug} className="flex flex-col">
                   <Link
                     href={`/books/${book.slug}`}
@@ -178,6 +197,11 @@ export default function BooksPage() {
                       </h3>
                     </Link>
                     <p className="mt-1 text-sm text-navy-500">by Salim Cyrus</p>
+                    {rating && rating.count > 0 && (
+                      <div className="mt-1 flex justify-center">
+                        <StarRating average={rating.average} count={rating.count} />
+                      </div>
+                    )}
                     <p className="mt-1 text-xs uppercase tracking-wide text-navy-400">
                       {book.pageCount} pages &middot; PDF
                     </p>
@@ -197,7 +221,8 @@ export default function BooksPage() {
                     </div>
                   </div>
                 </article>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>

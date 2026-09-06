@@ -32,6 +32,7 @@
     "eval:home-premium": "node tests/evals/home-premium.eval.js",
     "eval:book-purchase-download": "node tests/evals/book-purchase-download.eval.js",
     "eval:notfound-status-code": "node tests/evals/notfound-status-code.eval.js",
+    "eval:book-reviews": "node tests/evals/book-reviews.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

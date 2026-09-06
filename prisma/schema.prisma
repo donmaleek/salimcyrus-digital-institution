@@ -95,9 +95,34 @@ model BookPurchase {
   amountKobo        Int
   emailSentAt       DateTime?
   grants            BookDownloadGrant[]
+  review            BookReview?
   createdAt         DateTime           @default(now())
 
   @@index([bookSlug, email])
+}
+
+/**
+ * A review is only ever created against a real BookPurchase — one review
+ * per purchase (see the unique constraint), so it's structurally impossible
+ * to review a book you didn't buy or to post more than one review per
+ * purchase. Starts "pending" and only counts toward the public rating once
+ * an admin approves it (see requireCrmApi-gated moderation routes) — small
+ * catalog, so light moderation beats an unmoderated review wall.
+ */
+model BookReview {
+  id           String       @id @default(cuid())
+  bookSlug     String
+  purchaseId   String       @unique
+  purchase     BookPurchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  reviewerName String
+  rating       Int
+  title        String?
+  body         String
+  status       String       @default("pending")
+  createdAt    DateTime     @default(now())
+  moderatedAt  DateTime?
+
+  @@index([bookSlug, status])
 }
 
 /**

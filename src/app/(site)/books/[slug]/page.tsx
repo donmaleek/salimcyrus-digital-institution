@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/Button'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { books, type BookEntry } from '@/lib/data/books'
 import { formatCurrency } from '@/lib/utils/currency'
+import { db } from '@/lib/db'
+import { summarizeRatings } from '@/lib/api/book-reviews'
 import { BookCover } from '@/components/books/BookCover'
+import { StarRating } from '@/components/books/StarRating'
+import { AuthorCard } from '@/components/books/AuthorCard'
+import { BookReviewsSection } from '@/components/books/BookReviewsSection'
 import { BookCheckoutForm } from '@/components/payments/BookCheckoutForm'
 import { BookPurchaseReturn } from '@/components/payments/BookPurchaseReturn'
 
@@ -19,6 +24,10 @@ function moreBooksBy(current: BookEntry, count: number): BookEntry[] {
 interface PageProps {
   params: { slug: string }
 }
+
+// Reviews change over time; static params keep the page fast to build while
+// ISR keeps the rating/review list from going stale.
+export const revalidate = 60
 
 export function generateStaticParams() {
   return books.map((book) => ({ slug: book.slug }))
@@ -39,9 +48,15 @@ export function generateMetadata({ params }: PageProps): Metadata {
   }
 }
 
-export default function BookDetailPage({ params }: PageProps) {
+export default async function BookDetailPage({ params }: PageProps) {
   const book = books.find((b) => b.slug === params.slug)
   if (!book) notFound()
+
+  const approvedReviews = await db.bookReview.findMany({
+    where: { bookSlug: book.slug, status: 'approved' },
+    orderBy: { createdAt: 'desc' },
+  })
+  const summary = summarizeRatings(approvedReviews.map((r) => r.rating))
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -52,6 +67,15 @@ export default function BookDetailPage({ params }: PageProps) {
     numberOfPages: book.pageCount,
     bookFormat: 'https://schema.org/EBook',
     ...(book.cover ? { image: book.cover } : {}),
+    ...(summary.count > 0
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: summary.average.toFixed(1),
+            reviewCount: summary.count,
+          },
+        }
+      : {}),
     ...(book.status === 'available' && book.priceKes
       ? {
           offers: {
@@ -114,6 +138,14 @@ export default function BookDetailPage({ params }: PageProps) {
                 <span className="text-navy-400">(Author)</span>
               </p>
 
+              {summary.count > 0 && (
+                <div className="mt-2">
+                  <a href="#reviews" className="inline-block hover:opacity-80">
+                    <StarRating average={summary.average} count={summary.count} />
+                  </a>
+                </div>
+              )}
+
               <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-gold-200 bg-gold-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold-600">
                 Instant PDF Download
               </div>
@@ -140,6 +172,10 @@ export default function BookDetailPage({ params }: PageProps) {
                 <dt className="text-navy-500">Publisher</dt>
                 <dd className="text-navy">Halisi Hub Connect</dd>
               </dl>
+
+              <div className="mt-8 max-w-md">
+                <AuthorCard />
+              </div>
             </div>
 
             <aside className="rounded-2xl border border-navy-100 bg-white p-6 shadow-sm lg:sticky lg:top-8">
@@ -198,6 +234,19 @@ export default function BookDetailPage({ params }: PageProps) {
               )}
             </aside>
           </div>
+
+          <BookReviewsSection
+            slug={book.slug}
+            summary={summary}
+            reviews={approvedReviews.map((r) => ({
+              id: r.id,
+              reviewerName: r.reviewerName,
+              rating: r.rating,
+              title: r.title,
+              body: r.body,
+              createdAt: r.createdAt.toISOString(),
+            }))}
+          />
 
           {moreBooks.length > 0 && (
             <div className="mt-20 border-t border-navy-100 pt-12">

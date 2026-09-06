@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from '@/lib/data/books'
 import { requireCrmPage } from '@/services/crm/access'
+import { BookReviewModerationManager } from '@/components/dashboard/BookReviewModerationManager'
 import {
   CrmPageHeader,
   MetricCard,
@@ -10,7 +11,7 @@ import {
 export const dynamic = 'force-dynamic'
 export default async function BooksPage() {
   await requireCrmPage()
-  const [products, orders] = await Promise.all([
+  const [products, orders, pendingReviews] = await Promise.all([
     db.crmProduct.findMany({
       where: { type: 'book' },
       orderBy: { name: 'asc' },
@@ -19,6 +20,10 @@ export default async function BooksPage() {
       include: { contact: true, items: { include: { product: true } } },
       orderBy: { createdAt: 'desc' },
       take: 50,
+    }),
+    db.bookReview.findMany({
+      where: { status: 'pending' },
+      orderBy: { createdAt: 'asc' },
     }),
   ])
   const stock = products.reduce((s, p) => s + (p.stockOnHand || 0), 0)
@@ -107,6 +112,29 @@ export default async function BooksPage() {
           </div>
         </section>
       </div>
+      <section className="mt-7 rounded-3xl border border-navy-100 bg-white p-5">
+        <h2 className="font-heading text-xl font-bold text-navy">
+          Reviews awaiting moderation
+        </h2>
+        <p className="mt-1 text-sm text-navy-500">
+          Only verified buyers can submit a review. Approve or reject before it counts
+          toward the public rating.
+        </p>
+        <div className="mt-4">
+          <BookReviewModerationManager
+            initialReviews={pendingReviews.map((review) => ({
+              id: review.id,
+              bookSlug: review.bookSlug,
+              bookTitle: books.find((b) => b.slug === review.bookSlug)?.title ?? review.bookSlug,
+              reviewerName: review.reviewerName,
+              rating: review.rating,
+              title: review.title,
+              body: review.body,
+              createdAt: review.createdAt.toISOString(),
+            }))}
+          />
+        </div>
+      </section>
     </div>
   )
 }

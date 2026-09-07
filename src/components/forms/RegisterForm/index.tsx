@@ -1,10 +1,13 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { isSafeRedirectPath } from '@/lib/utils/safe-redirect'
 
 export function RegisterForm() {
+  const searchParams = useSearchParams()
   const [values, setValues] = useState({ name: '', email: '', password: '' })
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [error, setError] = useState('')
@@ -31,7 +34,10 @@ export function RegisterForm() {
         return
       }
       setStatus('success')
-      window.location.href = '/login'
+      const callbackUrl = searchParams.get('callbackUrl')
+      window.location.href = isSafeRedirectPath(callbackUrl)
+        ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`
+        : '/login'
     } catch {
       setError('Could not create account. Try again.')
       setStatus('error')

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import {
   bookCheckoutRequestSchema,
   initializePaystackBookCheckout,
@@ -14,6 +16,19 @@ export async function POST(request: NextRequest) {
           'Online checkout is temporarily unavailable. Please use the WhatsApp order option below.',
       },
       { status: 503 }
+    )
+  }
+
+  // Book purchases require an account (see MemberBenefitsPanel / the
+  // register+login gate on the book detail page) — enforced here too, not
+  // just in the UI, so a direct request can't skip the account requirement.
+  // The session's email is authoritative; a client-submitted email is only
+  // used for request-shape validation, never trusted for the actual charge.
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.email) {
+    return NextResponse.json(
+      { error: 'Sign in to buy this book.' },
+      { status: 401 }
     )
   }
 
@@ -46,7 +61,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const checkout = await initializePaystackBookCheckout({
-      email: parsed.data.email,
+      email: session.user.email,
       slug: book.slug,
       title: book.title,
       priceKes: book.priceKes,

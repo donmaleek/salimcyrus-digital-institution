@@ -14,7 +14,7 @@ export default function ResetPasswordPage({
   const token = searchParams.token
 
   return (
-    <>
+    <div className="mx-auto max-w-sm">
       <h1 className="mt-8 font-heading text-2xl font-bold text-cream">Set a New Password</h1>
       <div className="mt-8 rounded-2xl border border-navy-100 bg-white p-8 shadow-[0_24px_60px_rgba(15,27,45,0.35)]">
         {token ? (
@@ -29,6 +29,6 @@ export default function ResetPasswordPage({
           </p>
         )}
       </div>
-    </>
+    </div>
   )
 }

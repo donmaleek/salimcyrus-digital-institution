@@ -1,11 +1,14 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { safeRedirectPath } from '@/lib/utils/safe-redirect'
 
 export function LoginForm() {
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
@@ -17,7 +20,7 @@ export function LoginForm() {
     if (result?.error) {
       setStatus('error')
     } else {
-      window.location.href = '/dashboard'
+      window.location.href = safeRedirectPath(searchParams.get('callbackUrl'), '/dashboard')
     }
   }
 

@@ -3,6 +3,8 @@
  */
 import { NextRequest } from 'next/server'
 
+jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
+jest.mock('../../../../lib/auth', () => ({ authOptions: {} }))
 jest.mock('../../../../services/payments/paystack', () => ({
   bookCheckoutRequestSchema: jest.requireActual('../../../../services/payments/paystack')
     .bookCheckoutRequestSchema,
@@ -30,10 +32,12 @@ jest.mock('../../../../lib/data/books', () => {
 })
 
 import { POST } from './route'
+import { getServerSession } from 'next-auth'
 import { initializePaystackBookCheckout } from '@/services/payments/paystack'
 import { books } from '@/lib/data/books'
 
 const mockInitialize = initializePaystackBookCheckout as jest.Mock
+const mockGetServerSession = getServerSession as jest.Mock
 
 function request(body: unknown) {
   return new NextRequest('https://salimcyrus.com/api/books/checkout', {
@@ -45,6 +49,10 @@ function request(body: unknown) {
 describe('POST /api/books/checkout', () => {
   const originalKey = process.env.PAYSTACK_SECRET_KEY
 
+  beforeEach(() => {
+    mockGetServerSession.mockResolvedValue({ user: { email: 'reader@example.com' } })
+  })
+
   afterEach(() => {
     process.env.PAYSTACK_SECRET_KEY = originalKey
     jest.clearAllMocks()
@@ -54,6 +62,14 @@ describe('POST /api/books/checkout', () => {
     delete process.env.PAYSTACK_SECRET_KEY
     const response = await POST(request({ email: 'reader@example.com', slug: 'the-cost-of-infidelity' }))
     expect(response.status).toBe(503)
+  })
+
+  it('returns 401 when the buyer is not signed in', async () => {
+    process.env.PAYSTACK_SECRET_KEY = 'sk_test'
+    mockGetServerSession.mockResolvedValue(null)
+    const response = await POST(request({ email: 'reader@example.com', slug: 'the-cost-of-infidelity' }))
+    expect(response.status).toBe(401)
+    expect(mockInitialize).not.toHaveBeenCalled()
   })
 
   it('returns 400 for an invalid email', async () => {
@@ -74,21 +90,28 @@ describe('POST /api/books/checkout', () => {
     expect(response.status).toBe(409)
   })
 
-  it('starts checkout for a book with a confirmed file', async () => {
+  it('starts checkout for a book with a confirmed file, using the session email not the submitted one', async () => {
     process.env.PAYSTACK_SECRET_KEY = 'sk_test'
+    mockGetServerSession.mockResolvedValue({ user: { email: 'account-owner@example.com' } })
     const readyBook = books.find((b) => b.status === 'available' && b.fileName)!
     mockInitialize.mockResolvedValue({
       authorizationUrl: 'https://checkout.paystack.com/x',
       reference: 'ref_1',
     })
 
-    const response = await POST(request({ email: 'reader@example.com', slug: readyBook.slug }))
+    const response = await POST(
+      request({ email: 'someone-else@example.com', slug: readyBook.slug })
+    )
     const payload = await response.json()
 
     expect(response.status).toBe(200)
     expect(payload.authorizationUrl).toBe('https://checkout.paystack.com/x')
     expect(mockInitialize).toHaveBeenCalledWith(
-      expect.objectContaining({ slug: readyBook.slug, priceKes: readyBook.priceKes })
+      expect.objectContaining({
+        slug: readyBook.slug,
+        priceKes: readyBook.priceKes,
+        email: 'account-owner@example.com',
+      })
     )
   })
 

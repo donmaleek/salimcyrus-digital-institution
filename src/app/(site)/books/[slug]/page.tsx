@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from 'next/link'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { Button } from '@/components/ui/Button'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { books, type BookEntry } from '@/lib/data/books'
@@ -51,6 +53,9 @@ export function generateMetadata({ params }: PageProps): Metadata {
 export default async function BookDetailPage({ params }: PageProps) {
   const book = books.find((b) => b.slug === params.slug)
   if (!book) notFound()
+
+  const session = await getServerSession(authOptions)
+  const buyerEmail = session?.user?.email ?? null
 
   const approvedReviews = await db.bookReview.findMany({
     where: { bookSlug: book.slug, status: 'approved' },
@@ -190,16 +195,42 @@ export default async function BookDetailPage({ params }: PageProps) {
 
                   <div className="mt-5">
                     {book.fileName ? (
-                      <>
-                        <BookCheckoutForm
-                          slug={book.slug}
-                          title={book.title}
-                          whatsappOrderUrl={book.purchaseUrl}
-                        />
-                        <Suspense>
-                          <BookPurchaseReturn slug={book.slug} />
-                        </Suspense>
-                      </>
+                      buyerEmail ? (
+                        <>
+                          <BookCheckoutForm
+                            slug={book.slug}
+                            title={book.title}
+                            whatsappOrderUrl={book.purchaseUrl}
+                            email={buyerEmail}
+                          />
+                          <Suspense>
+                            <BookPurchaseReturn slug={book.slug} />
+                          </Suspense>
+                        </>
+                      ) : (
+                        <div data-testid="book-signin-gate">
+                          <p className="text-sm text-navy-600">
+                            Create a free account to buy this book. Your purchase and
+                            download link are tied to your account.
+                          </p>
+                          <Button
+                            href={`/register?callbackUrl=${encodeURIComponent(`/books/${book.slug}`)}`}
+                            size="lg"
+                            className="mt-3 w-full"
+                          >
+                            Sign Up to Buy
+                          </Button>
+                          <p className="mt-3 text-center text-sm text-navy-500">
+                            Already have an account?{' '}
+                            <Link
+                              href={`/login?callbackUrl=${encodeURIComponent(`/books/${book.slug}`)}`}
+                              className="font-semibold text-navy underline"
+                            >
+                              Log in
+                            </Link>
+                          </p>
+                        </div>
+                      )
                     ) : (
                       <Button href={book.purchaseUrl} size="lg" className="w-full">
                         Order on WhatsApp

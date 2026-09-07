@@ -7,10 +7,15 @@ export function BookCheckoutForm({
   slug,
   title,
   whatsappOrderUrl,
+  email,
 }: {
   slug: string
   title: string
   whatsappOrderUrl: string
+  /** The signed-in buyer's account email — purchases are always tied to the
+   * account they registered/logged in with, never a freely typed address,
+   * so the download and "my library" history line up with their account. */
+  email: string
 }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,11 +25,10 @@ export function BookCheckoutForm({
     setError('')
     setLoading(true)
 
-    const form = new FormData(event.currentTarget)
     const response = await fetch('/api/books/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: form.get('email'), slug }),
+      body: JSON.stringify({ email, slug }),
     }).catch(() => null)
 
     if (!response) {
@@ -45,20 +49,11 @@ export function BookCheckoutForm({
 
   return (
     <div className="flex flex-col gap-3" data-testid="book-checkout-form">
-      <form onSubmit={startCheckout} className="flex flex-col gap-3 sm:flex-row sm:items-start">
-        <label htmlFor={`book-email-${slug}`} className="sr-only">
-          Email for your download link
-        </label>
-        <input
-          id={`book-email-${slug}`}
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          placeholder="you@example.com"
-          className="w-full rounded-xl border border-navy-200 bg-cream px-4 py-3 text-navy outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20 sm:max-w-xs"
-        />
-        <Button type="submit" loading={loading} size="lg">
+      <form onSubmit={startCheckout} className="flex flex-col gap-3">
+        <p className="text-sm text-navy-500">
+          Buying as <span className="font-semibold text-navy">{email}</span>
+        </p>
+        <Button type="submit" loading={loading} size="lg" className="w-full">
           Buy &amp; Download Now
         </Button>
       </form>

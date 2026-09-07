@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ForgotPasswordPage() {
   return (
-    <>
+    <div className="mx-auto max-w-sm">
       <h1 className="mt-8 font-heading text-2xl font-bold text-cream">Reset Your Password</h1>
       <div className="mt-8 rounded-2xl border border-navy-100 bg-white p-8 shadow-[0_24px_60px_rgba(15,27,45,0.35)]">
         <ForgotPasswordForm />
@@ -18,6 +18,6 @@ export default function ForgotPasswordPage() {
           Back to login
         </Link>
       </p>
-    </>
+    </div>
   )
 }

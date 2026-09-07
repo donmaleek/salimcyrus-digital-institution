@@ -7,6 +7,7 @@ import { CrmGlobalSearch } from '@/components/dashboard/crm/GlobalSearch'
 
 const navItems = [
   { label: 'Overview', href: '/dashboard' },
+  { label: 'My Books', href: '/dashboard/my-books' },
   { label: 'My Learning', href: '/dashboard/my-learning' },
   { label: 'My Community', href: '/dashboard/my-community' },
   { label: 'My Bookings', href: '/dashboard/my-bookings' },

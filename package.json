@@ -34,6 +34,7 @@
     "eval:notfound-status-code": "node tests/evals/notfound-status-code.eval.js",
     "eval:book-reviews": "node tests/evals/book-reviews.eval.js",
     "eval:book-purchase-auth-gate": "node tests/evals/book-purchase-auth-gate.eval.js",
+    "eval:member-dashboard": "node tests/evals/member-dashboard.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

@@ -20,6 +20,7 @@ model User {
   createdAt           DateTime             @default(now())
   bookings            Booking[]
   bookPurchases       BookPurchase[]
+  teachingPurchases   TeachingPurchase[]
   journalEntries      JournalEntry[]
   passwordResetTokens PasswordResetToken[]
   ownedContacts       CrmContact[]         @relation("ContactOwner")
@@ -97,7 +98,7 @@ model BookPurchase {
   externalReference String
   provider          String             @default("paystack")
   amountKobo        Int
-  /// Currency of amountKobo — Paystack charges are KES, PayPal charges are
+  /// Currency of amountKobo, Paystack charges are KES, PayPal charges are
   /// USD (PayPal doesn't support KES). Without this, summing amountKobo
   /// across providers silently mixes two currencies as if they were one.
   currency          String             @default("KES")
@@ -111,11 +112,11 @@ model BookPurchase {
 }
 
 /**
- * A review is only ever created against a real BookPurchase — one review
+ * A review is only ever created against a real BookPurchase, one review
  * per purchase (see the unique constraint), so it's structurally impossible
  * to review a book you didn't buy or to post more than one review per
  * purchase. Starts "pending" and only counts toward the public rating once
- * an admin approves it (see requireCrmApi-gated moderation routes) — small
+ * an admin approves it (see requireCrmApi-gated moderation routes), small
  * catalog, so light moderation beats an unmoderated review wall.
  */
 model BookReview {
@@ -138,7 +139,7 @@ model BookReview {
  * A single distributable download link for a purchase. Deliberately
  * many-per-purchase, not one-per-purchase: the webhook mints one for the
  * confirmation email, and the buyer's return-to-site page mints its own
- * independently (it can't recover the emailed one — only its hash is ever
+ * independently (it cannot recover the emailed one, only its hash is ever
  * stored) without invalidating the emailed link.
  */
 model BookDownloadGrant {
@@ -153,6 +154,51 @@ model BookDownloadGrant {
   createdAt        DateTime  @default(now())
 
   @@index([purchaseId])
+}
+
+/**
+ * A video teaching the admin uploads directly (not a live cohort program,
+ * those are Program in src/lib/data/programs.ts and use static Paystack
+ * payment links; "masterclass" was already taken by that system, hence the
+ * different name here). The actual video file lives under
+ * TEACHINGS_STORAGE_DIR, never in /public, same reasoning as book PDFs,
+ * see src/lib/api/books-storage.ts.
+ */
+model Teaching {
+  id              String             @id @default(cuid())
+  slug            String             @unique
+  title           String
+  description     String
+  category        String
+  priceKes        Int
+  priceUsd        Int
+  videoFileName   String
+  thumbnailPath   String?
+  durationSeconds Int?
+  status          String             @default("draft")
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  purchases       TeachingPurchase[]
+
+  @@index([status, category])
+}
+
+model TeachingPurchase {
+  id                String   @id @default(cuid())
+  teachingId        String
+  teaching          Teaching @relation(fields: [teachingId], references: [id])
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  email             String
+  name              String
+  provider          String   @default("paystack")
+  externalReference String
+  amountKobo        Int
+  currency          String   @default("KES")
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, externalReference])
+  @@index([teachingId, userId])
 }
 
 model AvailabilitySlot {

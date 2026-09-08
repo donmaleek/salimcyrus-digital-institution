@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { bookOfferName } from '@/services/payments/book-purchases'
+import { teachingOfferName } from '@/services/payments/teaching-purchases'
 
 export const donationRequestSchema = z.object({
   email: z.string().trim().email(),
@@ -123,6 +124,64 @@ export async function initializePaystackBookCheckout({
     throw new Error(
       payload.message || 'Paystack checkout could not be initialized'
     )
+  }
+
+  return {
+    authorizationUrl: payload.data.authorization_url,
+    reference: payload.data.reference,
+  }
+}
+
+export const teachingCheckoutRequestSchema = z.object({
+  email: z.string().trim().email(),
+  teachingId: z.string().trim().min(1).max(200),
+})
+
+export async function initializePaystackTeachingCheckout({
+  email,
+  teachingId,
+  userId,
+  slug,
+  title,
+  priceKes,
+  secretKey,
+  callbackUrl,
+  fetcher = fetch,
+}: {
+  email: string
+  teachingId: string
+  userId: string
+  slug: string
+  title: string
+  priceKes: number
+  secretKey: string
+  callbackUrl: string
+  fetcher?: typeof fetch
+}): Promise<DonationCheckout> {
+  const response = await fetcher('https://api.paystack.co/transaction/initialize', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      amount: priceKes * 100,
+      currency: 'KES',
+      callback_url: callbackUrl,
+      metadata: {
+        purpose: 'Teaching purchase',
+        offer_name: teachingOfferName(slug),
+        teaching_id: teachingId,
+        teaching_title: title,
+        user_id: userId,
+      },
+    }),
+  })
+
+  const payload = (await response.json()) as PaystackInitializeResponse
+  if (!response.ok || !payload.status || !payload.data?.authorization_url) {
+    throw new Error(payload.message || 'Paystack checkout could not be initialized')
   }
 
   return {

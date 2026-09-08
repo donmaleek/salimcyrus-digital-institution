@@ -9,6 +9,7 @@ import {
   createDownloadGrant,
   downloadUrlFor,
 } from '@/services/payments/book-purchases'
+import { slugFromTeachingOfferName, recordTeachingPurchase } from '@/services/payments/teaching-purchases'
 import { sendEmail, bookDownloadEmailHtml } from '@/lib/api/email'
 
 async function handleBookPurchase({
@@ -61,6 +62,45 @@ async function handleBookPurchase({
   }
 }
 
+async function handleTeachingPurchase({
+  slug,
+  reference,
+  amount,
+  customer,
+  name,
+  userId,
+}: {
+  slug: string
+  reference: string
+  amount: number
+  customer: { email: string }
+  name: string
+  userId?: string
+}) {
+  if (!userId) {
+    console.error('Paystack webhook: teaching purchase missing user_id metadata', { slug, reference })
+    return
+  }
+  const teaching = await db.teaching.findUnique({ where: { slug } })
+  if (!teaching) {
+    console.error('Paystack webhook: teaching purchase for unknown slug', { slug, reference })
+    return
+  }
+  const result = await recordTeachingPurchase({
+    teachingId: teaching.id,
+    reference,
+    provider: 'paystack',
+    amountKobo: amount,
+    currency: 'KES',
+    userId,
+    email: customer.email,
+    name,
+  })
+  if (!result) {
+    console.error('Paystack webhook: teaching purchase failed to record', { slug, reference })
+  }
+}
+
 const paystackEventSchema = z.object({
   event: z.string(),
   data: z.object({
@@ -71,7 +111,14 @@ const paystackEventSchema = z.object({
       first_name: z.string().max(120).optional(),
       last_name: z.string().max(120).optional(),
     }),
-    metadata: z.object({ offer_name: z.string().max(200).optional() }).nullable().optional(),
+    metadata: z
+      .object({
+        offer_name: z.string().max(200).optional(),
+        teaching_id: z.string().max(200).optional(),
+        user_id: z.string().max(200).optional(),
+      })
+      .nullable()
+      .optional(),
   }),
 })
 
@@ -106,6 +153,12 @@ export async function POST(request: NextRequest) {
 
   if (bookSlug) {
     await handleBookPurchase({ slug: bookSlug, reference, amount, customer, name })
+    return NextResponse.json({ status: 'ok' })
+  }
+
+  const teachingSlug = rawOfferName ? slugFromTeachingOfferName(rawOfferName) : null
+  if (teachingSlug) {
+    await handleTeachingPurchase({ slug: teachingSlug, reference, amount, customer, name, userId: metadata?.user_id })
     return NextResponse.json({ status: 'ok' })
   }
 

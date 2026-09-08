@@ -24,7 +24,7 @@ export function verifyPaystackSignature(rawBody: string, signature: string | nul
  * Paystack payment links carry no reliable custom metadata by default, so we
  * reconcile a successful charge back to a known offer by matching the amount
  * paid (in the smallest currency unit) against published program and book
- * prices — the only offers whose prices are tracked in our own data.
+ * prices, the only offers whose prices are tracked in our own data.
  * Coaching session prices live only on the Paystack checkout page itself
  * (by design, see /book-now), so they can't be matched this way; those
  * bookings are recorded with a generic label instead of a guessed one.
@@ -36,14 +36,14 @@ export interface PaystackVerifyResult {
     reference: string
     amount: number
     customer: { email: string }
-    metadata?: { offer_name?: string } | null
+    metadata?: { offer_name?: string; user_id?: string } | null
   }
 }
 
 /**
  * Independently confirms a transaction's outcome with Paystack, keyed only by
  * reference. Used on the buyer's return trip (the callback_url redirect) so
- * we never trust query params alone to decide whether a payment succeeded —
+ * we never trust query params alone to decide whether a payment succeeded,
  * an attacker can craft any query string, but can't forge Paystack's own
  * server-to-server answer. https://paystack.com/docs/api/transaction/#verify
  */

@@ -9,7 +9,7 @@ import { TUKO_FEATURE_URL } from '@/lib/utils/constants'
 export const metadata: Metadata = {
   title: 'Support the Mission',
   description:
-    'Support Halisi Hub Connect mentorship, community initiatives, and free educational resources through Paystack, M-Pesa Paybill, or PayPal.',
+    'Support Halisi Hub Connect mentorship, community initiatives, and free educational resources through M-Pesa Paybill or PayPal.',
 }
 
 const impactAreas = [
@@ -110,12 +110,11 @@ export default function SupportTheMissionPage({
                 id="payment-options-heading"
                 className="mt-3 font-heading text-4xl font-bold text-navy"
               >
-                Paystack, M-Pesa, or PayPal
+                M-Pesa Paybill or PayPal
               </h2>
               <p className="mt-5 text-lg leading-8 text-navy-600">
-                Paystack keeps card and mobile-money details on its secure
-                checkout. Manual M-Pesa and PayPal instructions are shown
-                clearly for direct support.
+                Pay via M-Pesa Paybill and submit your confirmation code for
+                review, or use PayPal&apos;s own secure checkout.
               </p>
             </div>
             <div className="mt-12">

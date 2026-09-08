@@ -202,6 +202,7 @@ export default async function BookDetailPage({ params }: PageProps) {
                             title={book.title}
                             whatsappOrderUrl={book.purchaseUrl}
                             email={buyerEmail}
+                            priceKes={book.priceKes}
                             priceUsd={book.priceUsd}
                           />
                           <Suspense>
@@ -246,7 +247,7 @@ export default async function BookDetailPage({ params }: PageProps) {
                     </li>
                     <li className="flex gap-2">
                       <span aria-hidden="true">✓</span>
-                      Secure checkout via Paystack (card or mobile money)
+                      Pay with PayPal, or M-Pesa Paybill with a quick review
                     </li>
                     <li className="flex gap-2">
                       <span aria-hidden="true">✓</span>

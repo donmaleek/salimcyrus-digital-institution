@@ -42,6 +42,7 @@ export function DashboardLayout({ children, userName, isAdmin, crmRole }: Dashbo
         ...crmNav,
         { label: 'Journal', href: '/dashboard/admin/journal' },
         { label: 'Teaching Library', href: '/dashboard/admin/teachings' },
+        { label: 'Payment Claims', href: '/dashboard/admin/payment-claims' },
         { label: 'Ask Salim', href: '/dashboard/admin/ask-salim' },
         { label: 'Availability', href: '/dashboard/admin/availability' },
       ]

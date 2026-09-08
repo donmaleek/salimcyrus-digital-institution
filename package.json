@@ -37,6 +37,7 @@
     "eval:member-dashboard": "node tests/evals/member-dashboard.eval.js",
     "eval:paypal-payments": "node tests/evals/paypal-payments.eval.js",
     "eval:teaching-library": "node tests/evals/teaching-library.eval.js",
+    "eval:paybill-claims": "node tests/evals/paybill-claims.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

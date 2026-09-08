@@ -19,7 +19,7 @@ export function slugFromBookOfferName(offerName: string): string | null {
     : null
 }
 
-export type PaymentProvider = 'paystack' | 'paypal'
+export type PaymentProvider = 'paystack' | 'paypal' | 'paybill'
 
 export interface RecordBookPurchaseInput {
   slug: string

@@ -1,13 +1,13 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-
-type Busy = 'paystack' | 'paypal' | null
+import { PaybillClaimForm } from '@/components/payments/PaybillClaimForm'
 
 export function TeachingCheckoutForm({
   teachingId,
   email,
+  priceKes,
   priceUsd,
 }: {
   teachingId: string
@@ -15,41 +15,15 @@ export function TeachingCheckoutForm({
    * account they registered/logged in with, never a freely typed address,
    * so "my learning" history and video access line up with their account. */
   email: string
+  priceKes: number
   priceUsd: number
 }) {
   const [error, setError] = useState('')
-  const [busy, setBusy] = useState<Busy>(null)
-
-  async function startCheckout(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError('')
-    setBusy('paystack')
-
-    const response = await fetch('/api/teachings/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, teachingId }),
-    }).catch(() => null)
-
-    if (!response) {
-      setError('Could not connect to checkout. Please try again.')
-      setBusy(null)
-      return
-    }
-
-    const payload = (await response.json()) as { authorizationUrl?: string; error?: string }
-    if (!response.ok || !payload.authorizationUrl) {
-      setError(payload.error ?? 'Checkout could not be started.')
-      setBusy(null)
-      return
-    }
-
-    window.location.assign(payload.authorizationUrl)
-  }
+  const [busy, setBusy] = useState(false)
 
   async function startPayPalCheckout() {
     setError('')
-    setBusy('paypal')
+    setBusy(true)
 
     const response = await fetch('/api/teachings/checkout-paypal', {
       method: 'POST',
@@ -59,14 +33,14 @@ export function TeachingCheckoutForm({
 
     if (!response) {
       setError('Could not connect to PayPal. Please try again or use another method.')
-      setBusy(null)
+      setBusy(false)
       return
     }
 
     const payload = (await response.json()) as { approvalUrl?: string; error?: string }
     if (!response.ok || !payload.approvalUrl) {
       setError(payload.error ?? 'PayPal checkout could not be started.')
-      setBusy(null)
+      setBusy(false)
       return
     }
 
@@ -75,23 +49,10 @@ export function TeachingCheckoutForm({
 
   return (
     <div className="flex flex-col gap-3" data-testid="teaching-checkout-form">
-      <form onSubmit={startCheckout} className="flex flex-col gap-3">
-        <p className="text-sm text-navy-500">
-          Buying as <span className="font-semibold text-navy">{email}</span>
-        </p>
-        <Button type="submit" loading={busy === 'paystack'} disabled={busy !== null && busy !== 'paystack'} size="lg" className="w-full">
-          Buy &amp; Watch Now
-        </Button>
-      </form>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={startPayPalCheckout}
-        loading={busy === 'paypal'}
-        disabled={busy !== null && busy !== 'paypal'}
-        size="lg"
-        className="w-full"
-      >
+      <p className="text-sm text-navy-500">
+        Buying as <span className="font-semibold text-navy">{email}</span>
+      </p>
+      <Button type="button" onClick={startPayPalCheckout} loading={busy} disabled={busy} size="lg" className="w-full">
         Pay with PayPal (${priceUsd})
       </Button>
       {error && (
@@ -99,6 +60,7 @@ export function TeachingCheckoutForm({
           {error}
         </p>
       )}
+      <PaybillClaimForm offerType="teaching" teachingId={teachingId} amountKes={priceKes} />
     </div>
   )
 }

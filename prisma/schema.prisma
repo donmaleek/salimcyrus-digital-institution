@@ -21,6 +21,7 @@ model User {
   bookings            Booking[]
   bookPurchases       BookPurchase[]
   teachingPurchases   TeachingPurchase[]
+  paymentClaims       PaymentClaim[]
   journalEntries      JournalEntry[]
   passwordResetTokens PasswordResetToken[]
   ownedContacts       CrmContact[]         @relation("ContactOwner")
@@ -199,6 +200,36 @@ model TeachingPurchase {
 
   @@unique([provider, externalReference])
   @@index([teachingId, userId])
+}
+
+/**
+ * A buyer's self-reported M-Pesa Paybill payment, pending manual admin
+ * review before it becomes a real purchase. Unlike Paystack/PayPal, Paybill
+ * has no API callback we control, so a claim never grants access by
+ * itself; approving one calls the same recordBookPurchase /
+ * recordTeachingPurchase / recordDonation used by the other providers
+ * (with provider: "paybill", externalReference: the M-Pesa code), so a
+ * paybill purchase is indistinguishable from any other once approved.
+ */
+model PaymentClaim {
+  id               String    @id @default(cuid())
+  offerType        String
+  bookSlug         String?
+  teachingId       String?
+  userId           String?
+  user             User?     @relation(fields: [userId], references: [id])
+  email            String
+  name             String
+  amountKes        Int
+  mpesaCode        String    @unique
+  evidenceFileName String?
+  status           String    @default("pending")
+  adminNotes       String?
+  reviewedAt       DateTime?
+  reviewedByEmail  String?
+  createdAt        DateTime  @default(now())
+
+  @@index([status, createdAt])
 }
 
 model AvailabilitySlot {

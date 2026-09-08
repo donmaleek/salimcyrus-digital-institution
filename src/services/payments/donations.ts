@@ -101,7 +101,7 @@ export async function recordDonation({
     })
     await tx.crmAuditEvent.create({
       data: {
-        action: provider === 'paystack' ? 'webhook' : 'paypal_capture',
+        action: provider === 'paystack' ? 'webhook' : provider === 'paypal' ? 'paypal_capture' : 'paybill_claim_approved',
         entityType: 'CrmTransaction',
         entityId: reference,
         summary: `Recorded ${provider} donation ${reference}`,

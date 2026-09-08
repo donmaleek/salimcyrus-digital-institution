@@ -133,7 +133,12 @@ export default async function TeachingDetailPage({ params }: PageProps) {
                   </Button>
                 ) : buyerEmail ? (
                   <>
-                    <TeachingCheckoutForm teachingId={teaching.id} email={buyerEmail} priceUsd={teaching.priceUsd} />
+                    <TeachingCheckoutForm
+                      teachingId={teaching.id}
+                      email={buyerEmail}
+                      priceKes={teaching.priceKes}
+                      priceUsd={teaching.priceUsd}
+                    />
                     <Suspense>
                       <TeachingPurchaseReturn teachingId={teaching.id} watchUrl={watchUrl} />
                     </Suspense>
@@ -171,7 +176,7 @@ export default async function TeachingDetailPage({ params }: PageProps) {
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden="true">✓</span>
-                  Secure checkout via Paystack (card or mobile money) or PayPal
+                  Pay with PayPal, or M-Pesa Paybill with a quick review
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden="true">✓</span>

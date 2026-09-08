@@ -26,9 +26,9 @@ const checks = [
     mobile.includes('Book Now') && mobile.includes('href="/book-now"'),
   ],
   [
-    'Book Now page renders all four verified coaching offers',
+    'Book Now page renders all three real-priced coaching offers, each with a real KES price',
     page.includes('coachingOffers.map') &&
-      (offers.match(/https:\/\/paystack\.com/g) || []).length === 4,
+      (offers.match(/priceKes: \d+/g) || []).length === 3,
   ],
   [
     'page explains the four-stage booking process',
@@ -37,13 +37,16 @@ const checks = [
     ),
   ],
   [
-    'page provides a four-option fit guide',
-    (page.match(/recommendation:/g) || []).length === 4,
+    'page provides a fit guide matching the three real offers',
+    (page.match(/recommendation:/g) || []).length === 3,
   ],
   [
-    'page states that live pricing appears before purchase',
-    page.includes('Current pricing and payment details appear') &&
-      page.includes('Review the current price'),
+    'page states real prices up front, not deferred to an external checkout page',
+    page.includes('formatCurrency(offer.priceKes)') && page.includes('Prices are shown below'),
+  ],
+  [
+    'Paystack is no longer offered as a payment method on Book Now',
+    !page.includes('offer.paystackUrl') && page.includes('CoachingCheckoutForm'),
   ],
   [
     'page provides coaching scope boundaries',

@@ -122,6 +122,90 @@ test('updates the paid booking instead of creating a duplicate booking', async (
   expect(tx.crmTask.create).toHaveBeenCalledTimes(1)
 })
 
+test('accepts a booking paid via PayPal, not just Paystack', async () => {
+  const tx = transactionClient({
+    booking: {
+      findUnique: jest.fn().mockResolvedValue({
+        id: 'booking-2',
+        email: 'paid@example.com',
+        offerName: 'Starter Session',
+        source: 'paypal_checkout',
+        status: 'paid',
+        paystackReference: 'paypal_ref_123',
+        userId: null,
+        slotId: null,
+        confirmedAt: null,
+      }),
+      update: jest.fn().mockResolvedValue({ id: 'booking-2', status: 'confirmed' }),
+    },
+    crmTransaction: {
+      findUnique: jest.fn().mockResolvedValue({ provider: 'paypal', status: 'successful' }),
+    },
+  })
+  mockDb.$transaction.mockImplementation((callback) => callback(tx))
+
+  const response = await POST(request({ ...validBody, paymentReference: 'paypal_ref_123' }))
+
+  expect(response.status).toBe(201)
+  expect(tx.booking.update).toHaveBeenCalled()
+})
+
+test('accepts a booking paid via an approved Paybill claim', async () => {
+  const tx = transactionClient({
+    booking: {
+      findUnique: jest.fn().mockResolvedValue({
+        id: 'booking-3',
+        email: 'paid@example.com',
+        offerName: 'Starter Session',
+        source: 'paybill_checkout',
+        status: 'paid',
+        paystackReference: 'MPESA_CODE_1',
+        userId: null,
+        slotId: null,
+        confirmedAt: null,
+      }),
+      update: jest.fn().mockResolvedValue({ id: 'booking-3', status: 'confirmed' }),
+    },
+    crmTransaction: {
+      findUnique: jest.fn().mockResolvedValue({ provider: 'paybill', status: 'successful' }),
+    },
+  })
+  mockDb.$transaction.mockImplementation((callback) => callback(tx))
+
+  const response = await POST(request({ ...validBody, paymentReference: 'MPESA_CODE_1' }))
+
+  expect(response.status).toBe(201)
+  expect(tx.booking.update).toHaveBeenCalled()
+})
+
+test('rejects a booking row that was never actually paid through a verified provider', async () => {
+  const tx = transactionClient({
+    booking: {
+      findUnique: jest.fn().mockResolvedValue({
+        id: 'booking-4',
+        email: 'paid@example.com',
+        offerName: 'Starter Session',
+        source: 'manual',
+        status: 'pending',
+        paystackReference: 'fabricated_ref',
+        userId: null,
+        slotId: null,
+        confirmedAt: null,
+      }),
+      update: jest.fn(),
+    },
+    crmTransaction: {
+      findUnique: jest.fn().mockResolvedValue({ provider: 'paystack', status: 'successful' }),
+    },
+  })
+  mockDb.$transaction.mockImplementation((callback) => callback(tx))
+
+  const response = await POST(request({ ...validBody, paymentReference: 'fabricated_ref' }))
+
+  expect(response.status).toBe(422)
+  expect(tx.booking.update).not.toHaveBeenCalled()
+})
+
 test('rejects malformed JSON and arbitrary offer names before database access', async () => {
   const invalidJson = new NextRequest('http://localhost/api/booking/confirm', {
     method: 'POST',

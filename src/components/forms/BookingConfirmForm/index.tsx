@@ -22,12 +22,19 @@ function formatSlot(isoString: string, durationMinutes: number): string {
   })} (${durationMinutes} min)`
 }
 
-export function BookingConfirmForm() {
+export interface BookingConfirmPrefill {
+  name: string
+  email: string
+  offerName: string
+  paymentReference: string
+}
+
+export function BookingConfirmForm({ prefill }: { prefill?: BookingConfirmPrefill } = {}) {
   const [slots, setSlots] = useState<Slot[] | null>(null)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [offerName, setOfferName] = useState(coachingOffers[0].name)
-  const [paymentReference, setPaymentReference] = useState('')
+  const [name, setName] = useState(prefill?.name ?? '')
+  const [email, setEmail] = useState(prefill?.email ?? '')
+  const [offerName, setOfferName] = useState(prefill?.offerName ?? coachingOffers[0].name)
+  const [paymentReference, setPaymentReference] = useState(prefill?.paymentReference ?? '')
   const [slotId, setSlotId] = useState('')
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -128,29 +135,33 @@ export function BookingConfirmForm() {
             id="booking-email"
             type="email"
             required
+            readOnly={Boolean(prefill)}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30 read-only:bg-navy-50 read-only:text-navy-500"
           />
         </div>
       </div>
 
       <div>
         <label htmlFor="booking-payment-reference" className="block font-semibold text-navy">
-          Paystack payment reference
+          Payment reference
         </label>
         <input
           id="booking-payment-reference"
           required
           autoComplete="off"
+          readOnly={Boolean(prefill)}
           value={paymentReference}
           onChange={(e) => setPaymentReference(e.target.value)}
           placeholder="Found on your Paystack receipt"
           aria-describedby="booking-payment-reference-help"
-          className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy placeholder:text-navy-300 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
+          className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy placeholder:text-navy-300 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30 read-only:bg-navy-50 read-only:text-navy-500"
         />
         <p id="booking-payment-reference-help" className="mt-2 text-sm leading-6 text-navy-500">
-          We match this reference and email to a successful payment before scheduling your session.
+          {prefill
+            ? 'Confirmed automatically from your PayPal payment.'
+            : 'We match this reference and email to a successful payment before scheduling your session.'}
         </p>
       </div>
 
@@ -162,7 +173,8 @@ export function BookingConfirmForm() {
           id="booking-offer"
           value={offerName}
           onChange={(e) => setOfferName(e.target.value)}
-          className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30"
+          disabled={Boolean(prefill)}
+          className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30 disabled:bg-navy-50 disabled:text-navy-500"
         >
           {coachingOffers.map((offer) => (
             <option key={offer.name} value={offer.name}>

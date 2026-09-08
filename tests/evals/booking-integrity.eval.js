@@ -12,10 +12,14 @@ const schema = read('prisma/schema.prisma')
 
 const checks = [
   [
-    'customer confirmation requires payment evidence',
+    'customer confirmation requires payment evidence from a real payment provider (Paystack webhook, PayPal capture, or an approved Paybill claim), not just any booking row',
     confirmation.includes('paymentReference') &&
       confirmation.includes("transaction.status !== 'successful'") &&
-      confirmation.includes("paidBooking.source !== 'paystack_webhook'"),
+      confirmation.includes('VERIFIED_BOOKING_SOURCES.has(paidBooking.source)') &&
+      confirmation.includes('VERIFIED_PROVIDERS.has(transaction.provider)') &&
+      confirmation.includes("'paystack_webhook'") &&
+      confirmation.includes("'paypal_checkout'") &&
+      confirmation.includes("'paybill_checkout'"),
   ],
   [
     'payment and confirmation update one booking record',

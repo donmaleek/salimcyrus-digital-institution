@@ -2,6 +2,7 @@ import { createHmac } from 'crypto'
 import { verifyPaystackSignature, matchOfferByAmount, verifyPaystackTransaction } from './paystack'
 import { programs } from '@/lib/data/programs'
 import { books } from '@/lib/data/books'
+import { coachingOffers } from '@/lib/data/coaching-offers'
 
 describe('verifyPaystackSignature', () => {
   const originalSecret = process.env.PAYSTACK_SECRET_KEY
@@ -60,6 +61,16 @@ describe('matchOfferByAmount', () => {
   it('matches an available book by its KES price', () => {
     const book = books.find((b) => b.status === 'available' && b.priceKes)!
     expect(matchOfferByAmount(book.priceKes! * 100)).toBe(book.title)
+  })
+
+  it('matches a coaching offer by its KES price (stray Paystack links still get labeled correctly)', () => {
+    const offer = coachingOffers[0]
+    expect(matchOfferByAmount(offer.priceKes * 100)).toBe(offer.name)
+  })
+
+  it('matches a coaching offer by its USD price', () => {
+    const offer = coachingOffers[0]
+    expect(matchOfferByAmount(offer.priceUsd * 100)).toBe(offer.name)
   })
 
   it('returns null for an amount that matches nothing', () => {

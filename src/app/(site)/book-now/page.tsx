@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { coachingOffers } from '@/lib/data/coaching-offers'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
+import { formatCurrency } from '@/lib/utils/currency'
+import { CoachingCheckoutForm } from '@/components/payments/CoachingCheckoutForm'
 
 export const metadata: Metadata = {
   title: 'Book Now | Private Coaching with Salim Cyrus',
@@ -17,7 +19,7 @@ const bookingSteps = [
   ],
   [
     'Reserve',
-    'Open the secure checkout page, review the current price, and complete payment.',
+    'Pay with PayPal, or M-Pesa Paybill with a quick review, right on this page.',
   ],
   [
     'Confirm',
@@ -54,12 +56,6 @@ const fitGuide = [
     recommendation: 'Deep Reset Session',
     reason:
       'Use 120 minutes to examine the root loop and build a structured reset plan.',
-  },
-  {
-    need: 'Ongoing implementation support',
-    recommendation: 'Private Coaching',
-    reason:
-      'Use a multiweek engagement for repeated practice, accountability, and review.',
   },
 ]
 
@@ -126,15 +122,14 @@ export default function BookNowPage() {
                 id="sessions-heading"
                 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl"
               >
-                Four ways to begin the work
+                Three ways to begin the work
               </h2>
               <p className="mt-5 text-lg leading-8 text-navy-600">
-                Current pricing and payment details appear on the secure
-                checkout page before purchase.
+                Prices are shown below. Pay with PayPal, or M-Pesa Paybill with a quick review.
               </p>
             </div>
             <div
-              className="mt-12 grid gap-px overflow-hidden border border-navy-200 bg-navy-200 sm:grid-cols-2 lg:grid-cols-4"
+              className="mt-12 grid gap-px overflow-hidden border border-navy-200 bg-navy-200 sm:grid-cols-2 lg:grid-cols-3"
               data-testid="booking-offers"
             >
               {coachingOffers.map((offer, index) => (
@@ -173,14 +168,10 @@ export default function BookNowPage() {
                     <p className="mb-5 text-xs font-bold uppercase leading-5 tracking-[0.12em] text-navy-500">
                       Outcome: {offer.outcome}
                     </p>
-                    <Button
-                      href={offer.paystackUrl}
-                      className="w-full"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Book {offer.duration}
-                    </Button>
+                    <p className="mb-4 font-heading text-2xl font-bold text-navy">
+                      {formatCurrency(offer.priceKes)}
+                    </p>
+                    <CoachingCheckoutForm offerName={offer.name} priceKes={offer.priceKes} priceUsd={offer.priceUsd} />
                   </div>
                 </article>
               ))}
@@ -327,10 +318,8 @@ export default function BookNowPage() {
                 advice, or financial advice.
               </p>
               <p>
-                Review the current price and payment information on the secure
-                checkout page before completing purchase. If you need help
-                choosing, have an accessibility requirement, or need to confirm
-                practical details, ask before booking.
+                Prices are listed above each session. If you need help choosing, have an
+                accessibility requirement, or need to confirm practical details, ask before booking.
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
                 <Button href={WHATSAPP_URL}>Ask on WhatsApp</Button>

@@ -30,7 +30,7 @@ const paybillSurface = [
 const checks = [
   [
     'PaymentClaim model exists and an M-Pesa code can never be submitted twice',
-    schema.includes('model PaymentClaim {') && schema.includes('mpesaCode        String    @unique'),
+    schema.includes('model PaymentClaim {') && /mpesaCode\s+String\s+@unique/.test(schema),
   ],
   [
     'a claim starts pending and never grants access on its own, only approvePaymentClaim can',

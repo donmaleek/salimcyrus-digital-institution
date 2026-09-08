@@ -4,6 +4,11 @@ export interface CoachingOffer {
   tagline: string
   points: string[]
   outcome: string
+  priceKes: number
+  /** Computed at the same fixed rate used for books and programs
+   * (~129.4 KES/USD), matching that existing convention rather than a
+   * live exchange rate lookup. */
+  priceUsd: number
   paystackUrl: string
 }
 
@@ -14,6 +19,8 @@ export const coachingOffers: CoachingOffer[] = [
     tagline: 'Quick clarity on one decision.',
     points: ['Name the blocker.', 'Pick the next move.'],
     outcome: 'Leave with one clear next step.',
+    priceKes: 3500,
+    priceUsd: 27,
     paystackUrl:
       'https://paystack.com/buy/30-mins-personal-clarity-and-direction-session-qsrjip',
   },
@@ -23,6 +30,8 @@ export const coachingOffers: CoachingOffer[] = [
     tagline: 'Solve one key decision fast.',
     points: ['Map what is blocking you.', 'Set one committed action.'],
     outcome: 'Clear plan for this week.',
+    priceKes: 5000,
+    priceUsd: 39,
     paystackUrl:
       'https://paystack.com/buy/1-hour-personal-coaching-session-mfkrkq',
   },
@@ -32,15 +41,9 @@ export const coachingOffers: CoachingOffer[] = [
     tagline: 'Reset patterns that keep repeating.',
     points: ['Find the root loop.', 'Build a focused reset routine.'],
     outcome: 'A reset plan you can keep.',
+    priceKes: 7500,
+    priceUsd: 58,
     paystackUrl: 'https://paystack.com/buy/2-hours-mindset-reset-qufnqu',
-  },
-  {
-    name: 'Private Coaching',
-    duration: '4-8 weeks',
-    tagline: 'Weekly support and accountability.',
-    points: ['Weekly coaching call.', 'Midweek check-in support.'],
-    outcome: 'Steady momentum for 4-8 weeks.',
-    paystackUrl: 'https://paystack.com/buy/vip-breakthrough-experience-gaogfu',
   },
 ]
 

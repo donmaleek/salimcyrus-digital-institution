@@ -73,7 +73,7 @@ export function PaymentClaimManager({ initialClaims }: { initialClaims: ClaimSum
         ) : (
           <div className="mt-4 space-y-3">
             {pending.map((claim) => (
-              <div key={claim.id} className="rounded-2xl border border-gold/40 bg-gold-50 p-5">
+              <div key={claim.id} data-testid={`payment-claim-${claim.id}`} className="rounded-2xl border border-gold/40 bg-gold-50 p-5">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="font-semibold text-navy">

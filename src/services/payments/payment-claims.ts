@@ -3,13 +3,15 @@ import { Prisma } from '@prisma/client'
 import { recordBookPurchase } from '@/services/payments/book-purchases'
 import { recordTeachingPurchase } from '@/services/payments/teaching-purchases'
 import { recordDonation } from '@/services/payments/donations'
+import { recordCoachingPayment } from '@/services/payments/coaching-bookings'
 
-export type PaymentClaimOfferType = 'book' | 'teaching' | 'donation'
+export type PaymentClaimOfferType = 'book' | 'teaching' | 'donation' | 'coaching'
 
 export interface SubmitPaymentClaimInput {
   offerType: PaymentClaimOfferType
   bookSlug?: string
   teachingId?: string
+  coachingOfferName?: string
   userId?: string
   email: string
   name: string
@@ -40,6 +42,7 @@ export async function submitPaymentClaim(
         offerType: input.offerType,
         bookSlug: input.bookSlug,
         teachingId: input.teachingId,
+        coachingOfferName: input.coachingOfferName,
         userId: input.userId,
         email: input.email,
         name: input.name,
@@ -99,6 +102,18 @@ export async function approvePaymentClaim(
       name: claim.name,
     })
     if (!result) return { status: 'offer_missing' }
+  } else if (claim.offerType === 'coaching') {
+    if (!claim.coachingOfferName) return { status: 'offer_missing' }
+    await recordCoachingPayment({
+      offerName: claim.coachingOfferName,
+      reference: claim.mpesaCode,
+      provider: 'paybill',
+      amountMinor: amountKobo,
+      currency: 'KES',
+      email: claim.email,
+      name: claim.name,
+      userId: claim.userId ?? undefined,
+    })
   } else {
     await recordDonation({
       reference: claim.mpesaCode,

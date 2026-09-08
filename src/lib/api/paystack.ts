@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 import { programs } from '@/lib/data/programs'
 import { books } from '@/lib/data/books'
+import { coachingOffers } from '@/lib/data/coaching-offers'
 
 /**
  * Verifies a Paystack webhook request came from Paystack, per their documented
@@ -67,6 +68,9 @@ export function matchOfferByAmount(amountSmallestUnit: number): string | null {
   }
   for (const book of books) {
     if (book.priceKes === amountWhole) return book.title
+  }
+  for (const offer of coachingOffers) {
+    if (offer.priceKes === amountWhole || offer.priceUsd === amountWhole) return offer.name
   }
 
   return null

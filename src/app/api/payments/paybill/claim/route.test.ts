@@ -21,6 +21,7 @@ import { getServerSession } from 'next-auth'
 import { db } from '@/lib/db'
 import { submitPaymentClaim } from '@/services/payments/payment-claims'
 import { books } from '@/lib/data/books'
+import { coachingOffers } from '@/lib/data/coaching-offers'
 
 const mockGetServerSession = getServerSession as jest.Mock
 const mockTeachingFindUnique = db.teaching.findUnique as jest.Mock
@@ -137,6 +138,51 @@ describe('POST /api/payments/paybill/claim', () => {
     mockGetServerSession.mockResolvedValue(null)
     const form = new FormData()
     form.set('offerType', 'donation')
+    form.set('mpesaCode', 'QGH7XXXXX1')
+    const response = await POST(request(form))
+    expect(response.status).toBe(400)
+  })
+
+  it('does not require a session for a coaching claim', async () => {
+    mockGetServerSession.mockResolvedValue(null)
+    const offer = coachingOffers[0]
+    const form = new FormData()
+    form.set('offerType', 'coaching')
+    form.set('coachingOfferName', offer.name)
+    form.set('email', 'coachee@example.com')
+    form.set('name', 'Coachee')
+    form.set('mpesaCode', 'QGH7XXXXX1')
+    const response = await POST(request(form))
+    expect(response.status).toBe(200)
+    expect(mockSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        offerType: 'coaching',
+        coachingOfferName: offer.name,
+        amountKes: offer.priceKes,
+        email: 'coachee@example.com',
+        name: 'Coachee',
+      })
+    )
+  })
+
+  it('returns 404 for an unknown coaching offer (e.g. the removed Private Coaching)', async () => {
+    mockGetServerSession.mockResolvedValue(null)
+    const form = new FormData()
+    form.set('offerType', 'coaching')
+    form.set('coachingOfferName', 'Private Coaching')
+    form.set('email', 'coachee@example.com')
+    form.set('name', 'Coachee')
+    form.set('mpesaCode', 'QGH7XXXXX1')
+    const response = await POST(request(form))
+    expect(response.status).toBe(404)
+    expect(mockSubmit).not.toHaveBeenCalled()
+  })
+
+  it('returns 400 for a coaching claim missing email or name', async () => {
+    mockGetServerSession.mockResolvedValue(null)
+    const form = new FormData()
+    form.set('offerType', 'coaching')
+    form.set('coachingOfferName', coachingOffers[0].name)
     form.set('mpesaCode', 'QGH7XXXXX1')
     const response = await POST(request(form))
     expect(response.status).toBe(400)

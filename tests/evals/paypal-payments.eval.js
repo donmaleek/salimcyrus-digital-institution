@@ -26,8 +26,8 @@ const checks = [
   ],
   [
     'book purchase table distinguishes provider and currency (no mixing KES and USD under one summed field)',
-    schema.includes('provider          String             @default("paystack")') &&
-      schema.includes('currency          String             @default("KES")') &&
+    /provider\s+String\s+@default\("paystack"\)/.test(schema) &&
+      /currency\s+String\s+@default\("KES"\)/.test(schema) &&
       schema.includes('@@unique([provider, externalReference])'),
   ],
   [

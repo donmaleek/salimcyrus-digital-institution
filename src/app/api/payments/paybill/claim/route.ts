@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { books } from '@/lib/data/books'
+import { coachingOffers } from '@/lib/data/coaching-offers'
 import { submitPaymentClaim } from '@/services/payments/payment-claims'
 import { evidenceStorageDir, evidenceFilePath } from '@/lib/api/payment-evidence-storage'
 
@@ -16,9 +17,10 @@ const ALLOWED_EVIDENCE_TYPES: Record<string, string> = {
 const MAX_EVIDENCE_BYTES = 8 * 1024 * 1024 // 8MB, a phone screenshot easily fits
 
 const metaSchema = z.object({
-  offerType: z.enum(['book', 'teaching', 'donation']),
+  offerType: z.enum(['book', 'teaching', 'donation', 'coaching']),
   bookSlug: z.string().trim().max(200).optional(),
   teachingId: z.string().trim().max(200).optional(),
+  coachingOfferName: z.string().trim().max(200).optional(),
   mpesaCode: z
     .string()
     .trim()
@@ -45,6 +47,7 @@ export async function POST(request: NextRequest) {
     offerType: form.get('offerType'),
     bookSlug: form.get('bookSlug') ?? undefined,
     teachingId: form.get('teachingId') ?? undefined,
+    coachingOfferName: form.get('coachingOfferName') ?? undefined,
     mpesaCode: form.get('mpesaCode'),
     amountKes: form.get('amountKes') ?? undefined,
     email: form.get('email') ?? undefined,
@@ -65,6 +68,7 @@ export async function POST(request: NextRequest) {
   let amountKes: number
   let bookSlug: string | undefined
   let teachingId: string | undefined
+  let coachingOfferName: string | undefined
 
   if (data.offerType === 'book') {
     if (!sessionUserId || !sessionEmail) {
@@ -98,6 +102,22 @@ export async function POST(request: NextRequest) {
     userId = sessionUserId
     amountKes = teaching.priceKes
     teachingId = teaching.id
+  } else if (data.offerType === 'coaching') {
+    if (!data.coachingOfferName) {
+      return NextResponse.json({ error: 'Missing session.' }, { status: 400 })
+    }
+    const offer = coachingOffers.find((o) => o.name === data.coachingOfferName)
+    if (!offer) {
+      return NextResponse.json({ error: 'This session is not available for booking.' }, { status: 404 })
+    }
+    email = data.email ?? sessionEmail ?? ''
+    name = data.name ?? sessionName ?? ''
+    if (!email || !name) {
+      return NextResponse.json({ error: 'Enter your name and email.' }, { status: 400 })
+    }
+    userId = sessionUserId
+    amountKes = offer.priceKes
+    coachingOfferName = offer.name
   } else {
     if (!data.amountKes) {
       return NextResponse.json({ error: 'Enter the amount you paid.' }, { status: 400 })
@@ -131,6 +151,7 @@ export async function POST(request: NextRequest) {
     offerType: data.offerType,
     bookSlug,
     teachingId,
+    coachingOfferName,
     userId,
     email,
     name,

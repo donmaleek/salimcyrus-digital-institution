@@ -29,15 +29,22 @@ function CopyValue({ value, label }: { value: string; label: string }) {
 }
 
 interface PaybillClaimFormProps {
-  offerType: 'book' | 'teaching' | 'donation'
+  offerType: 'book' | 'teaching' | 'donation' | 'coaching'
   bookSlug?: string
   teachingId?: string
-  /** Fixed price for book/teaching; for donations this is left undefined
-   * and the buyer enters their own amount instead. */
+  coachingOfferName?: string
+  /** Fixed price for book/teaching/coaching; for donations this is left
+   * undefined and the buyer enters their own amount instead. */
   amountKes?: number
 }
 
-export function PaybillClaimForm({ offerType, bookSlug, teachingId, amountKes }: PaybillClaimFormProps) {
+export function PaybillClaimForm({
+  offerType,
+  bookSlug,
+  teachingId,
+  coachingOfferName,
+  amountKes,
+}: PaybillClaimFormProps) {
   const [expanded, setExpanded] = useState(false)
   const [mpesaCode, setMpesaCode] = useState('')
   const [donationAmount, setDonationAmount] = useState('')
@@ -60,9 +67,14 @@ export function PaybillClaimForm({ offerType, bookSlug, teachingId, amountKes }:
     form.set('offerType', offerType)
     if (bookSlug) form.set('bookSlug', bookSlug)
     if (teachingId) form.set('teachingId', teachingId)
+    if (coachingOfferName) form.set('coachingOfferName', coachingOfferName)
     form.set('mpesaCode', mpesaCode)
     if (offerType === 'donation') {
       form.set('amountKes', donationAmount)
+      form.set('email', email)
+      form.set('name', name)
+    }
+    if (offerType === 'coaching') {
       form.set('email', email)
       form.set('name', name)
     }
@@ -144,6 +156,10 @@ export function PaybillClaimForm({ offerType, bookSlug, teachingId, amountKes }:
                 onChange={(e) => setDonationAmount(e.target.value)}
                 className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
+            </>
+          )}
+          {(offerType === 'donation' || offerType === 'coaching') && (
+            <>
               <label className="block text-sm font-semibold text-navy" htmlFor="paybill-donation-email">
                 Email
               </label>

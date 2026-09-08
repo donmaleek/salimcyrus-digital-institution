@@ -7,6 +7,12 @@ import { normalizeEmail } from '@/services/crm/normalization'
 import { coachingOffers } from '@/lib/data/coaching-offers'
 
 const offerNames = new Set(coachingOffers.map((offer) => offer.name))
+// A booking counts as "really paid" only if it was created by a server that
+// independently verified the payment (the Paystack webhook, or a PayPal
+// capture / Paybill claim approval), never by /api/booking/confirm itself,
+// which only ever updates one of these rows and can't create one.
+const VERIFIED_BOOKING_SOURCES = new Set(['paystack_webhook', 'paypal_checkout', 'paybill_checkout'])
+const VERIFIED_PROVIDERS = new Set(['paystack', 'paypal', 'paybill'])
 
 const bookingSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -53,9 +59,9 @@ export async function POST(request: NextRequest) {
 
       if (
         !paidBooking ||
-        paidBooking.source !== 'paystack_webhook' ||
+        !VERIFIED_BOOKING_SOURCES.has(paidBooking.source) ||
         !transaction ||
-        transaction.provider !== 'paystack' ||
+        !VERIFIED_PROVIDERS.has(transaction.provider) ||
         transaction.status !== 'successful' ||
         paidEmail !== normalizedEmail ||
         !offerMatches
@@ -125,7 +131,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'This payment has already been used to confirm a booking.' }, { status: 409 })
     }
     if (error instanceof BookingConfirmationError && error.code === 'PAYMENT_NOT_VERIFIED') {
-      return NextResponse.json({ error: 'We could not verify that payment. Check the email and reference on your Paystack receipt, then try again.' }, { status: 422 })
+      return NextResponse.json({ error: 'We could not verify that payment. Check the email and payment reference, then try again.' }, { status: 422 })
     }
     throw error
   }

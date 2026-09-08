@@ -6,6 +6,7 @@ jest.mock('../../lib/db', () => ({
 jest.mock('./book-purchases', () => ({ recordBookPurchase: jest.fn() }))
 jest.mock('./teaching-purchases', () => ({ recordTeachingPurchase: jest.fn() }))
 jest.mock('./donations', () => ({ recordDonation: jest.fn() }))
+jest.mock('./coaching-bookings', () => ({ recordCoachingPayment: jest.fn() }))
 
 import { Prisma } from '@prisma/client'
 import {
@@ -17,6 +18,7 @@ import { db } from '@/lib/db'
 import { recordBookPurchase } from './book-purchases'
 import { recordTeachingPurchase } from './teaching-purchases'
 import { recordDonation } from './donations'
+import { recordCoachingPayment } from './coaching-bookings'
 
 const mockCreate = db.paymentClaim.create as jest.Mock
 const mockFindUnique = db.paymentClaim.findUnique as jest.Mock
@@ -24,6 +26,7 @@ const mockUpdate = db.paymentClaim.update as jest.Mock
 const mockRecordBook = recordBookPurchase as jest.Mock
 const mockRecordTeaching = recordTeachingPurchase as jest.Mock
 const mockRecordDonation = recordDonation as jest.Mock
+const mockRecordCoachingPayment = recordCoachingPayment as jest.Mock
 
 describe('submitPaymentClaim', () => {
   beforeEach(() => jest.clearAllMocks())
@@ -187,6 +190,53 @@ describe('approvePaymentClaim', () => {
       email: 'donor@example.com',
       name: 'Donor',
     })
+  })
+
+  it('records a coaching payment on approval, without requiring an account', async () => {
+    mockFindUnique.mockResolvedValue({
+      id: 'claim-1',
+      status: 'pending',
+      offerType: 'coaching',
+      coachingOfferName: 'Starter Session',
+      userId: null,
+      email: 'coachee@example.com',
+      name: 'Coachee',
+      amountKes: 3500,
+      mpesaCode: 'QGH7XXXXX4',
+    })
+    mockRecordCoachingPayment.mockResolvedValue({ isNew: true })
+
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+
+    expect(result).toEqual({ status: 'approved' })
+    expect(mockRecordCoachingPayment).toHaveBeenCalledWith({
+      offerName: 'Starter Session',
+      reference: 'QGH7XXXXX4',
+      provider: 'paybill',
+      amountMinor: 350000,
+      currency: 'KES',
+      email: 'coachee@example.com',
+      name: 'Coachee',
+      userId: undefined,
+    })
+  })
+
+  it('returns offer_missing when a coaching claim has no coachingOfferName', async () => {
+    mockFindUnique.mockResolvedValue({
+      id: 'claim-1',
+      status: 'pending',
+      offerType: 'coaching',
+      coachingOfferName: null,
+      amountKes: 3500,
+      mpesaCode: 'QGH7XXXXX5',
+      email: 'coachee@example.com',
+      name: 'Coachee',
+    })
+
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+
+    expect(result).toEqual({ status: 'offer_missing' })
+    expect(mockRecordCoachingPayment).not.toHaveBeenCalled()
   })
 })
 

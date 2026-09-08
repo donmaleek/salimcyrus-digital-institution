@@ -87,26 +87,26 @@ model Booking {
 }
 
 model BookPurchase {
-  id                String             @id @default(cuid())
+  id                String              @id @default(cuid())
   bookSlug          String
   email             String
   name              String
   userId            String?
-  user              User?              @relation(fields: [userId], references: [id])
+  user              User?               @relation(fields: [userId], references: [id])
   /// Provider-specific charge id: a Paystack reference or a PayPal order id.
   /// Unique within a provider, not globally, since the two id spaces are
   /// independent (see the compound unique constraint below).
   externalReference String
-  provider          String             @default("paystack")
+  provider          String              @default("paystack")
   amountKobo        Int
   /// Currency of amountKobo, Paystack charges are KES, PayPal charges are
   /// USD (PayPal doesn't support KES). Without this, summing amountKobo
   /// across providers silently mixes two currencies as if they were one.
-  currency          String             @default("KES")
+  currency          String              @default("KES")
   emailSentAt       DateTime?
   grants            BookDownloadGrant[]
   review            BookReview?
-  createdAt         DateTime           @default(now())
+  createdAt         DateTime            @default(now())
 
   @@unique([provider, externalReference])
   @@index([bookSlug, email])
@@ -144,15 +144,15 @@ model BookReview {
  * stored) without invalidating the emailed link.
  */
 model BookDownloadGrant {
-  id               String    @id @default(cuid())
+  id               String       @id @default(cuid())
   purchaseId       String
   purchase         BookPurchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
-  tokenHash        String    @unique
+  tokenHash        String       @unique
   expiresAt        DateTime
-  downloadCount    Int       @default(0)
-  maxDownloads     Int       @default(5)
+  downloadCount    Int          @default(0)
+  maxDownloads     Int          @default(5)
   lastDownloadedAt DateTime?
-  createdAt        DateTime  @default(now())
+  createdAt        DateTime     @default(now())
 
   @@index([purchaseId])
 }
@@ -212,22 +212,23 @@ model TeachingPurchase {
  * paybill purchase is indistinguishable from any other once approved.
  */
 model PaymentClaim {
-  id               String    @id @default(cuid())
-  offerType        String
-  bookSlug         String?
-  teachingId       String?
-  userId           String?
-  user             User?     @relation(fields: [userId], references: [id])
-  email            String
-  name             String
-  amountKes        Int
-  mpesaCode        String    @unique
-  evidenceFileName String?
-  status           String    @default("pending")
-  adminNotes       String?
-  reviewedAt       DateTime?
-  reviewedByEmail  String?
-  createdAt        DateTime  @default(now())
+  id                String    @id @default(cuid())
+  offerType         String
+  bookSlug          String?
+  teachingId        String?
+  coachingOfferName String?
+  userId            String?
+  user              User?     @relation(fields: [userId], references: [id])
+  email             String
+  name              String
+  amountKes         Int
+  mpesaCode         String    @unique
+  evidenceFileName  String?
+  status            String    @default("pending")
+  adminNotes        String?
+  reviewedAt        DateTime?
+  reviewedByEmail   String?
+  createdAt         DateTime  @default(now())
 
   @@index([status, createdAt])
 }

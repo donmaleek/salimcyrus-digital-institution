@@ -91,13 +91,22 @@ model BookPurchase {
   name              String
   userId            String?
   user              User?              @relation(fields: [userId], references: [id])
-  paystackReference String             @unique
+  /// Provider-specific charge id: a Paystack reference or a PayPal order id.
+  /// Unique within a provider, not globally, since the two id spaces are
+  /// independent (see the compound unique constraint below).
+  externalReference String
+  provider          String             @default("paystack")
   amountKobo        Int
+  /// Currency of amountKobo — Paystack charges are KES, PayPal charges are
+  /// USD (PayPal doesn't support KES). Without this, summing amountKobo
+  /// across providers silently mixes two currencies as if they were one.
+  currency          String             @default("KES")
   emailSentAt       DateTime?
   grants            BookDownloadGrant[]
   review            BookReview?
   createdAt         DateTime           @default(now())
 
+  @@unique([provider, externalReference])
   @@index([bookSlug, email])
 }
 

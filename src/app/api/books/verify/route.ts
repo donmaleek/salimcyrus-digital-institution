@@ -46,7 +46,9 @@ export async function GET(request: NextRequest) {
   const result = await recordBookPurchase({
     slug,
     reference,
+    provider: 'paystack',
     amountKobo: data.amount,
+    currency: 'KES',
     email: data.customer.email,
     name: data.customer.email,
   })

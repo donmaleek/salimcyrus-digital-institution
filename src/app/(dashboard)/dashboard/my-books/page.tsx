@@ -64,7 +64,7 @@ export default async function MyBooksPage() {
                   </p>
                   <p className="mt-1 text-sm text-navy-400">
                     Bought {formatDate(purchase.createdAt)} &middot;{' '}
-                    {formatCurrency(purchase.amountKobo / 100)}
+                    {formatCurrency(purchase.amountKobo / 100, purchase.currency)}
                   </p>
                 </div>
                 <DownloadBookButton purchaseId={purchase.id} />

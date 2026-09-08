@@ -202,6 +202,7 @@ export default async function BookDetailPage({ params }: PageProps) {
                             title={book.title}
                             whatsappOrderUrl={book.purchaseUrl}
                             email={buyerEmail}
+                            priceUsd={book.priceUsd}
                           />
                           <Suspense>
                             <BookPurchaseReturn slug={book.slug} />

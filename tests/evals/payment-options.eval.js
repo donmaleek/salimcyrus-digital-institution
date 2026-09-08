@@ -20,8 +20,13 @@ const checks = [
       constants.includes("MPESA_ACCOUNT_NUMBER = 'S6UB#'"),
   ],
   [
-    'PayPal uses the confirmed recipient email',
-    constants.includes("PAYPAL_EMAIL = 'salimcyrus@gmail.com'"),
+    'PayPal is a real checkout, not a manual "send money to this email" instruction',
+    options.includes("fetch('/api/payments/paypal-donate'") &&
+      !options.includes('PAYPAL_EMAIL'),
+  ],
+  [
+    'PayPal donation checkout charges in USD (PayPal does not support KES)',
+    read('src/app/api/payments/paypal-donate/route.ts').includes('amountUsd'),
   ],
   [
     'payment values have copy controls',

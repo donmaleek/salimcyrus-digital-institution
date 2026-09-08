@@ -4,7 +4,6 @@ export const DEFAULT_CURRENCY = 'KES'
 export const CONTACT_EMAIL = 'halisihubconnect@gmail.com'
 export const WHATSAPP_NUMBER = '254721123273'
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`
-export const PAYPAL_EMAIL = 'salimcyrus@gmail.com'
 export const MPESA_PAYBILL_NUMBER = '303030'
 export const MPESA_ACCOUNT_NUMBER = 'S6UB#'
 export const TUKO_FEATURE_URL =

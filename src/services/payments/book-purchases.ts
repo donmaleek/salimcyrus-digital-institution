@@ -19,24 +19,33 @@ export function slugFromBookOfferName(offerName: string): string | null {
     : null
 }
 
+export type PaymentProvider = 'paystack' | 'paypal'
+
 export interface RecordBookPurchaseInput {
   slug: string
   reference: string
+  provider: PaymentProvider
   amountKobo: number
+  /** Currency of amountKobo. Paystack charges are KES; PayPal charges are
+   * USD (PayPal doesn't support KES — see src/lib/api/paypal.ts). */
+  currency: 'KES' | 'USD'
   email: string
   name: string
 }
 
 /**
- * Idempotently records a paid book purchase (by unique paystackReference)
- * and its CRM trail. Safe to call from both the webhook (fast path) and the
- * buyer's return-to-site page (fallback path, in case the webhook hasn't
- * landed yet) — whichever runs first wins, the other is a no-op.
+ * Idempotently records a paid book purchase (by unique [provider,
+ * externalReference]) and its CRM trail. Safe to call from both the webhook
+ * (fast path) and the buyer's return-to-site page (fallback path, in case
+ * the webhook hasn't landed yet) — whichever runs first wins, the other is
+ * a no-op.
  */
 export async function recordBookPurchase({
   slug,
   reference,
+  provider,
   amountKobo,
+  currency,
   email,
   name,
 }: RecordBookPurchaseInput): Promise<{ purchaseId: string; book: BookEntry; isNew: boolean } | null> {
@@ -49,7 +58,9 @@ export async function recordBookPurchase({
   })
 
   const result = await db.$transaction(async (tx) => {
-    const existing = await tx.bookPurchase.findUnique({ where: { paystackReference: reference } })
+    const existing = await tx.bookPurchase.findUnique({
+      where: { provider_externalReference: { provider, externalReference: reference } },
+    })
     if (existing) return { purchaseId: existing.id, isNew: false }
 
     let contact = await tx.crmContact.findFirst({ where: { normalizedEmail, deletedAt: null } })
@@ -64,7 +75,7 @@ export async function recordBookPurchase({
           normalizedEmail,
           lifecycleStage: 'client',
           relationshipTypes: ['client', 'reader'],
-          source: 'paystack_webhook',
+          source: `${provider}_checkout`,
         },
       })
     }
@@ -75,8 +86,10 @@ export async function recordBookPurchase({
         email,
         name,
         userId: matchingUser?.id,
-        paystackReference: reference,
+        externalReference: reference,
+        provider,
         amountKobo,
+        currency,
       },
     })
 
@@ -84,13 +97,14 @@ export async function recordBookPurchase({
       data: {
         externalReference: reference,
         contactId: contact.id,
-        provider: 'paystack',
+        provider,
         method: 'online_checkout',
         status: 'successful',
         reconciliationStatus: 'reconciled',
         businessLine: 'books',
         grossMinor: amountKobo,
         netMinor: amountKobo,
+        currency,
         paidAt: new Date(),
         metadata: { bookSlug: slug, bookTitle: book.title, purchaseId: purchase.id },
       },
@@ -101,7 +115,7 @@ export async function recordBookPurchase({
         type: 'payment',
         direction: 'inbound',
         subject: `Book purchase: ${book.title}`,
-        channel: 'paystack',
+        channel: provider,
         externalId: reference,
         metadata: { amount: amountKobo, bookSlug: slug },
       },

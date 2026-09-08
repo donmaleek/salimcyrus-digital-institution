@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { DonationPaymentOptions } from '@/components/payments/DonationPaymentOptions'
+import { PayPalDonationReturn } from '@/components/payments/PayPalDonationReturn'
 import { TUKO_FEATURE_URL } from '@/lib/utils/constants'
 
 export const metadata: Metadata = {
@@ -31,7 +33,7 @@ const impactAreas = [
 export default function SupportTheMissionPage({
   searchParams,
 }: {
-  searchParams?: { payment?: string }
+  searchParams?: { payment?: string; token?: string }
 }) {
   return (
     <>
@@ -47,7 +49,12 @@ export default function SupportTheMissionPage({
       />
 
       <main data-testid="support-the-mission-content">
-        {searchParams?.payment === 'returned' && (
+        {searchParams?.payment === 'returned' && searchParams?.token && (
+          <Suspense>
+            <PayPalDonationReturn />
+          </Suspense>
+        )}
+        {searchParams?.payment === 'returned' && !searchParams?.token && (
           <div
             className="bg-emerald-50 px-6 py-4 text-center text-sm font-semibold leading-6 text-emerald-900"
             role="status"

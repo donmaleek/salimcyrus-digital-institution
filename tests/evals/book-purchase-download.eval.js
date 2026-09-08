@@ -64,8 +64,9 @@ const checks = [
     verify.includes('data.metadata?.offer_name !== bookOfferName(slug)') && verify.includes('403'),
   ],
   [
-    'purchase recording is idempotent on the Paystack reference (safe if webhook and return-page both fire)',
-    purchases.includes('paystackReference: reference') &&
+    'purchase recording is idempotent on the provider + reference (safe if webhook and return-page both fire, and safe across two providers)',
+    purchases.includes('externalReference: reference') &&
+      purchases.includes('provider_externalReference') &&
       purchases.includes('if (existing) return') &&
       purchases.includes("isolationLevel: 'Serializable'"),
   ],

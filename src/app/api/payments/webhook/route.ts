@@ -27,7 +27,9 @@ async function handleBookPurchase({
   const result = await recordBookPurchase({
     slug,
     reference,
+    provider: 'paystack',
     amountKobo: amount,
+    currency: 'KES',
     email: customer.email,
     name,
   })

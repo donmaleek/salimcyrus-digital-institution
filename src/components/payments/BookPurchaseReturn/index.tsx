@@ -12,16 +12,24 @@ type VerifyState =
 
 export function BookPurchaseReturn({ slug }: { slug: string }) {
   const searchParams = useSearchParams()
-  const reference = searchParams.get('reference') ?? searchParams.get('trxref')
+  const paystackReference = searchParams.get('reference') ?? searchParams.get('trxref')
+  // PayPal's return_url gets ?token=<orderId>&PayerID=<id> appended automatically.
+  const paypalOrderId = searchParams.get('token')
+  const verifyEndpoint = paystackReference
+    ? `/api/books/verify?reference=${encodeURIComponent(paystackReference)}&slug=${encodeURIComponent(slug)}`
+    : paypalOrderId
+      ? `/api/books/verify-paypal?token=${encodeURIComponent(paypalOrderId)}&slug=${encodeURIComponent(slug)}`
+      : null
+  const verifyKey = paystackReference ?? paypalOrderId
   const [state, setState] = useState<VerifyState>({ status: 'idle' })
   const verifiedRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!reference || verifiedRef.current === reference) return
-    verifiedRef.current = reference
+    if (!verifyEndpoint || !verifyKey || verifiedRef.current === verifyKey) return
+    verifiedRef.current = verifyKey
     setState({ status: 'verifying' })
 
-    fetch(`/api/books/verify?reference=${encodeURIComponent(reference)}&slug=${encodeURIComponent(slug)}`)
+    fetch(verifyEndpoint)
       .then(async (response) => {
         const payload = (await response.json()) as {
           downloadUrl?: string
@@ -35,7 +43,7 @@ export function BookPurchaseReturn({ slug }: { slug: string }) {
         setState({ status: 'ready', downloadUrl: payload.downloadUrl, bookTitle: payload.bookTitle ?? '' })
       })
       .catch(() => setState({ status: 'error', message: 'Could not verify payment. Please contact support.' }))
-  }, [reference, slug])
+  }, [verifyEndpoint, verifyKey])
 
   if (state.status === 'idle') return null
 

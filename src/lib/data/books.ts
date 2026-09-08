@@ -9,6 +9,11 @@ export interface BookEntry {
   subtitle?: string
   description: string
   priceKes: number
+  /** PayPal can't charge in KES (unsupported currency), see PayPal's
+   * currency-codes reference. Statically priced in USD at the same rate
+   * used for programs (~129.4 KES/USD), matching that existing convention
+   * rather than a live FX lookup. */
+  priceUsd: number
   pageCount: number
   status: 'available' | 'upcoming'
   purchaseUrl: string
@@ -32,6 +37,7 @@ function book(
   slug: string,
   title: string,
   priceKes: number,
+  priceUsd: number,
   pageCount: number,
   description: string,
   subtitle?: string,
@@ -43,6 +49,7 @@ function book(
     subtitle,
     description,
     priceKes,
+    priceUsd,
     pageCount,
     status: 'available',
     purchaseUrl: whatsappOrderUrl(title, priceKes),
@@ -59,6 +66,7 @@ export const books: BookEntry[] = [
     'understanding-the-marketplace',
     'Understanding the Marketplace',
     850,
+    7,
     133,
     'A Kingdom-minded guide for entrepreneurs, leaders, and professionals navigating business, stewardship, innovation, and economic change.',
     'Navigating the Storms of Business',
@@ -68,6 +76,7 @@ export const books: BookEntry[] = [
     'the-greatest-tragedy',
     'The Greatest Tragedy Is Not Death',
     690,
+    5,
     83,
     'An exploration of identity, calling, and Kingdom purpose for anyone determined to build a meaningful life in a world full of distraction.',
     'It Is a Life Without Purpose',
@@ -77,6 +86,7 @@ export const books: BookEntry[] = [
     'emotional-blackmail',
     'Emotional Blackmail',
     580,
+    4,
     64,
     'A practical guide to recognizing manipulation, confronting guilt and fear, setting boundaries, and breaking patterns of toxic control.',
     'Breaking Free from Manipulation, Guilt or Fear, and Toxic Control',
@@ -86,6 +96,7 @@ export const books: BookEntry[] = [
     'time-money-pornography-and-the-glory-of-god',
     'Time, Money, Pornography and the Glory of God',
     500,
+    4,
     49,
     'A faith-centered examination of how time, money, and digital desire compete for attention, discipline, and devotion.',
     undefined,
@@ -95,6 +106,7 @@ export const books: BookEntry[] = [
     'the-great-deception',
     'The Great Deception',
     650,
+    5,
     70,
     'A brutal accounting of how the stories you tell yourself keep stealing your focus, and how to reclaim the narrative with accountability and clarity.',
     undefined,
@@ -104,6 +116,7 @@ export const books: BookEntry[] = [
     'the-cost-of-infidelity',
     'The Cost of Infidelity',
     620,
+    5,
     66,
     'An honest examination of betrayal, broken trust, and the emotional and relational cost of infidelity.',
     undefined,
@@ -113,6 +126,7 @@ export const books: BookEntry[] = [
     'ritual-scorecard',
     'Ritual Scorecard',
     810,
+    6,
     102,
     'A structured practice for measuring daily alignment and weekly truth across discipline, identity, purpose, and accountability.',
     'The Discipline of Daily Alignment and Weekly Truth',
@@ -122,6 +136,7 @@ export const books: BookEntry[] = [
     'pornography-and-the-death-of-purpose',
     'Pornography and the Death of Purpose',
     1000,
+    8,
     185,
     'A focused examination of identity theft in the digital age and the way destructive media habits erode direction, discipline, and purpose.',
     'Identity Theft in the Digital Age',
@@ -131,6 +146,7 @@ export const books: BookEntry[] = [
     'god-do-you-need-my-money',
     'God, Do You Need My Money?',
     880,
+    7,
     134,
     'A challenge to religious manipulation that reclaims biblical truth, generosity, stewardship, and integrity.',
     'Exposing the Manipulation, Reclaiming the Truth, and Returning to Biblical Generosity',
@@ -140,6 +156,7 @@ export const books: BookEntry[] = [
     'digital-economic-systems-decoded',
     'Digital Economic Systems Decoded',
     920,
+    7,
     148,
     'An accessible look at how platforms, governments, and algorithms influence identity, data, opportunity, and economic power.',
     undefined,
@@ -149,6 +166,7 @@ export const books: BookEntry[] = [
     'unless-they-kill-god',
     'Unless They Kill God',
     730,
+    6,
     87,
     'A forceful reflection on why no system, religion, or power can stop the purposes of God in a person’s life.',
     'Why No System, Religion, or Power Can Stop the Purposes of God in a Man’s Life',
@@ -158,6 +176,7 @@ export const books: BookEntry[] = [
     'concealed-redemption',
     'Concealed Redemption',
     770,
+    6,
     100,
     'A hopeful exploration of how God works behind broken places to reveal purpose, renewal, and restoration.',
     'How God Works Behind the Broken Places to Reveal His Greatest Purpose',
@@ -167,6 +186,7 @@ export const books: BookEntry[] = [
     'the-deception',
     'The Deception',
     960,
+    7,
     157,
     'A brutal accounting of the lies you live by across ten territories of self-deception, from personal narrative to spiritual performance, and the truth that sets you free.',
     undefined,
@@ -176,6 +196,7 @@ export const books: BookEntry[] = [
     'marriage-and-knowing-the-right-partner',
     'Marriage and Knowing the Right Partner',
     540,
+    4,
     64,
     'A framework for discerning character and compatibility before marriage, covering self-knowledge, observation, hard conversations, evaluation, and decision, so commitment follows real covenant readiness rather than chemistry alone.',
     'Discerning Love, Character, Compatibility, Covenant and Purpose',

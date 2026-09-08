@@ -24,6 +24,7 @@ export const mainNav: NavItem[] = [
     ],
   },
   { label: 'Books', href: '/books' },
+  { label: 'Teaching Library', href: '/teachings' },
   { label: 'Knowledge Centre', href: '/knowledge-centre' },
   {
     label: 'Halisi Hub Connect',
@@ -45,6 +46,7 @@ export const footerNav: NavItem[] = [
   { label: 'Academy', href: '/academy' },
   { label: 'Knowledge Centre', href: '/knowledge-centre' },
   { label: 'Books', href: '/books' },
+  { label: 'Teaching Library', href: '/teachings' },
   { label: 'Halisi Hub Connect', href: '/halisi-hub-connect' },
   { label: 'Events', href: '/events' },
   { label: 'Resources', href: '/resources' },

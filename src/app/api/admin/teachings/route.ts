@@ -5,6 +5,7 @@ import { requireCrmApi } from '@/services/crm/access'
 import { db } from '@/lib/db'
 import { slugify } from '@/lib/utils/slugify'
 import { teachingsStorageDir, teachingFilePath } from '@/lib/api/teachings-storage'
+import { TEACHING_CATEGORIES } from '@/lib/data/teaching-categories'
 
 const ALLOWED_VIDEO_TYPES: Record<string, string> = {
   'video/mp4': 'mp4',
@@ -18,12 +19,11 @@ const ALLOWED_THUMBNAIL_TYPES = new Set(['image/webp', 'image/jpeg', 'image/png'
 // shared with other unrelated sites, kept well below what would be
 // individually safe to leave margin for them.
 const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024 // 2GB
-const CATEGORIES = ['Relationships', 'Purpose', 'Manhood', 'Kingdom', 'Leadership', 'Marketplace']
 
 const metaSchema = z.object({
   title: z.string().trim().min(1).max(200),
   description: z.string().trim().min(1).max(5000),
-  category: z.enum(CATEGORIES as [string, ...string[]]),
+  category: z.enum(TEACHING_CATEGORIES),
   priceKes: z.coerce.number().int().min(0).max(1_000_000),
   priceUsd: z.coerce.number().int().min(0).max(10_000),
   publish: z.coerce.boolean().optional(),

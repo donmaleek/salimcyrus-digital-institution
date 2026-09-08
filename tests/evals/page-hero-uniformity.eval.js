@@ -28,7 +28,10 @@ function collectPages(directory) {
 // the opposite of the Amazon/Kindle-style product page it's meant to read
 // as. Same reasoning class as the redirect exemption below — a page that
 // structurally can't/shouldn't carry the shared hero, not an oversight.
-const HERO_EXEMPT_PAGES = [path.join(pageRoot, 'books', '[slug]', 'page.tsx')]
+const HERO_EXEMPT_PAGES = [
+  path.join(pageRoot, 'books', '[slug]', 'page.tsx'),
+  path.join(pageRoot, 'teachings', '[slug]', 'page.tsx'),
+]
 
 const pagesWithoutSharedHero = collectPages(pageRoot)
   .filter((file) => file !== path.join(pageRoot, 'page.tsx'))

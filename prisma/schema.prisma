@@ -88,6 +88,34 @@ model Booking {
   createdAt         DateTime          @default(now())
 }
 
+/**
+ * A book Salim uploads directly through the admin dashboard, distinct from
+ * the 14 hand-curated titles in src/lib/data/books.ts (which stay static,
+ * unmigrated, to avoid touching real purchase history tied to their exact
+ * slugs). BookPurchase.bookSlug is a plain string, not a foreign key, so
+ * a purchase of either kind of book is recorded identically; the two
+ * catalogs are merged at read time by src/lib/data/book-catalog.ts.
+ * Unlike the static entries, fileName is required: an admin-uploaded book
+ * without a PDF has nothing to publish.
+ */
+model Book {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  subtitle    String?
+  description String
+  priceKes    Int
+  priceUsd    Int
+  pageCount   Int?
+  fileName    String
+  coverPath   String
+  status      String   @default("draft")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+}
+
 model BookPurchase {
   id                String              @id @default(cuid())
   bookSlug          String

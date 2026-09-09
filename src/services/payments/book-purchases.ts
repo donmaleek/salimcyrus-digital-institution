@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
-import { books, type BookEntry } from '@/lib/data/books'
+import { type BookEntry } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import { normalizeEmail } from '@/services/crm/normalization'
 import {
   generateDownloadToken,
@@ -49,7 +50,7 @@ export async function recordBookPurchase({
   email,
   name,
 }: RecordBookPurchaseInput): Promise<{ purchaseId: string; book: BookEntry; isNew: boolean } | null> {
-  const book = books.find((b) => b.slug === slug)
+  const book = await getBookBySlug(slug)
   if (!book) return null
 
   const normalizedEmail = normalizeEmail(email)!

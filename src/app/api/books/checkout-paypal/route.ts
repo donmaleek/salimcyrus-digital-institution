@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getPayPalAccessToken, createPayPalOrder } from '@/lib/api/paypal'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 
 const requestSchema = z.object({
   slug: z.string().trim().min(1).max(200),
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request.' }, { status: 400 })
   }
 
-  const book = books.find((b) => b.slug === parsed.data.slug)
+  const book = await getBookBySlug(parsed.data.slug)
   if (!book || book.status !== 'available') {
     return NextResponse.json({ error: 'This book is not available for purchase.' }, { status: 404 })
   }

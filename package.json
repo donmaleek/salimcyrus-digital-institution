@@ -39,6 +39,7 @@
     "eval:teaching-library": "node tests/evals/teaching-library.eval.js",
     "eval:paybill-claims": "node tests/evals/paybill-claims.eval.js",
     "eval:coaching-payments": "node tests/evals/coaching-payments.eval.js",
+    "eval:admin-book-upload": "node tests/evals/admin-book-upload.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

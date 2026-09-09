@@ -10,7 +10,7 @@ jest.mock('fs', () => ({
 jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
 jest.mock('../../../../../lib/auth', () => ({ authOptions: {} }))
 jest.mock('../../../../../lib/db', () => ({
-  db: { teaching: { findUnique: jest.fn() } },
+  db: { teaching: { findUnique: jest.fn() }, book: { findUnique: jest.fn() } },
 }))
 jest.mock('../../../../../services/payments/payment-claims', () => ({
   submitPaymentClaim: jest.fn(),

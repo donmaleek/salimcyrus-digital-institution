@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { books } from '@/lib/data/books'
+import { getAvailableBooks } from '@/lib/data/book-catalog'
 import { programs } from '@/lib/data/programs'
 import { BookCover } from '@/components/books/BookCover'
 
@@ -11,9 +11,14 @@ const credentials = [
   ['2020', 'Decision Architecture Specialist'],
 ]
 
-export function InstitutionalOverview() {
+// The homepage shows a fixed-size teaser grid (2 rows of 4), not the whole
+// catalog, so it stays a clean square as Salim adds more books over time.
+// The full, unbounded list lives on /books.
+const HOME_BOOK_TEASER_COUNT = 8
+
+export async function InstitutionalOverview() {
   const featuredPrograms = programs.slice(0, 3)
-  const publishedBooks = books.filter((book) => book.status === 'available')
+  const publishedBooks = (await getAvailableBooks()).slice(0, HOME_BOOK_TEASER_COUNT)
 
   return (
     <>

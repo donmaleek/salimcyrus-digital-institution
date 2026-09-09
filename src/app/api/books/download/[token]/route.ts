@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createReadStream, statSync } from 'fs'
 import { Readable } from 'stream'
 import { db } from '@/lib/db'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import { hashDownloadToken, checkDownloadGrant } from '@/lib/api/book-download-tokens'
 import { bookFilePath, bookFileExists } from '@/lib/api/books-storage'
 
@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: GRANT_ERROR_MESSAGES[status] }, { status: 410 })
   }
 
-  const book = books.find((b) => b.slug === grant.purchase.bookSlug)
+  const book = await getBookBySlug(grant.purchase.bookSlug)
   if (!book?.fileName || !bookFileExists(book.fileName)) {
     console.error('Book download: file missing for purchase', {
       purchaseId: grant.purchase.id,

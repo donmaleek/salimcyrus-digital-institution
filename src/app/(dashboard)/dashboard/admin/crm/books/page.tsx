@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
 import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import { requireCrmPage } from '@/services/crm/access'
 import { BookReviewModerationManager } from '@/components/dashboard/BookReviewModerationManager'
 import {
@@ -30,6 +31,11 @@ export default async function BooksPage() {
   const sales = orders
     .filter((o) => ['paid', 'completed'].includes(o.status))
     .reduce((s, o) => s + o.totalMinor, 0)
+  const reviewBookTitles = new Map(
+    await Promise.all(
+      pendingReviews.map(async (review) => [review.bookSlug, (await getBookBySlug(review.bookSlug))?.title] as const)
+    )
+  )
   return (
     <div className="mx-auto max-w-[1500px]">
       <CrmPageHeader
@@ -125,7 +131,7 @@ export default async function BooksPage() {
             initialReviews={pendingReviews.map((review) => ({
               id: review.id,
               bookSlug: review.bookSlug,
-              bookTitle: books.find((b) => b.slug === review.bookSlug)?.title ?? review.bookSlug,
+              bookTitle: reviewBookTitles.get(review.bookSlug) ?? review.bookSlug,
               reviewerName: review.reviewerName,
               rating: review.rating,
               title: review.title,

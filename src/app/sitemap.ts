@@ -70,6 +70,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
+  const adminBooks = await db.book
+    .findMany({ where: { status: 'available' }, select: { slug: true, updatedAt: true } })
+    .catch((error: unknown) => {
+      console.warn('Sitemap generated without admin-uploaded books', {
+        reason: error instanceof Error ? error.name : 'database unavailable',
+      })
+      return []
+    })
+
+  for (const book of adminBooks) {
+    entries.push({
+      url: `${BASE_URL}/books/${book.slug}`,
+      lastModified: book.updatedAt,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    })
+  }
+
   for (const category of knowledgeCategories) {
     entries.push({
       url: `${BASE_URL}/knowledge-centre/category/${category.slug}`,

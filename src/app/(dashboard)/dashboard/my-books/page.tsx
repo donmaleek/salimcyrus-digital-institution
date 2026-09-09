@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { books } from '@/lib/data/books'
+import { getBookBySlug, getAvailableBooks } from '@/lib/data/book-catalog'
 import { Button } from '@/components/ui/Button'
 import { DownloadBookButton } from '@/components/dashboard/DownloadBookButton'
 import { formatCurrency } from '@/lib/utils/currency'
@@ -24,22 +24,28 @@ export default async function MyBooksPage() {
     ? await db.bookPurchase.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } })
     : []
 
+  const purchasedBooks = new Map(
+    (await Promise.all(purchases.map(async (p) => [p.bookSlug, await getBookBySlug(p.bookSlug)] as const)))
+  )
+
   const ownedSlugs = new Set(purchases.map((p) => p.bookSlug))
-  const recommended = books
-    .filter((book) => book.status === 'available' && !ownedSlugs.has(book.slug))
+  const recommended = (await getAvailableBooks())
+    .filter((book) => !ownedSlugs.has(book.slug))
     .slice(0, 4)
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">My Books</h1>
-      <p className="mt-2 text-sm text-navy-500">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-700">Private library</p>
+      <h1 className="mt-2 font-heading text-3xl font-bold text-navy sm:text-4xl">My Books</h1>
+      <p className="mt-3 max-w-2xl text-base leading-7 text-navy-500">
         Every book you&apos;ve bought, with a download link that never expires on you
         — mint a fresh one here any time.
       </p>
 
       {purchases.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
-          <p className="text-navy-400">You haven&apos;t bought any books yet.</p>
+        <div className="mt-8 border border-dashed border-navy-200 bg-white p-8 sm:p-10">
+          <p className="font-heading text-xl font-bold text-navy">Start your private library</p>
+          <p className="mt-2 max-w-xl text-navy-500">Purchase a Salim Cyrus title and it will stay available here with a fresh download whenever you need it.</p>
           <Button href="/books" className="mt-6">
             Browse Books
           </Button>
@@ -47,11 +53,11 @@ export default async function MyBooksPage() {
       ) : (
         <div className="mt-8 space-y-3">
           {purchases.map((purchase) => {
-            const book = books.find((b) => b.slug === purchase.bookSlug)
+            const book = purchasedBooks.get(purchase.bookSlug)
             return (
               <div
                 key={purchase.id}
-                className="flex flex-wrap items-center gap-5 rounded-2xl border border-navy-100 bg-white p-5"
+                className="flex flex-wrap items-center gap-5 border border-navy/10 bg-white p-5 shadow-[0_12px_32px_rgba(15,30,48,0.04)]"
               >
                 <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-md bg-navy-50">
                   {book?.cover && (

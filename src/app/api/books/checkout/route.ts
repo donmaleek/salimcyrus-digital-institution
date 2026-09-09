@@ -5,7 +5,7 @@ import {
   bookCheckoutRequestSchema,
   initializePaystackBookCheckout,
 } from '@/services/payments/paystack'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 
 export async function POST(request: NextRequest) {
   const secretKey = process.env.PAYSTACK_SECRET_KEY
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const book = books.find((b) => b.slug === parsed.data.slug)
+  const book = await getBookBySlug(parsed.data.slug)
   if (!book || book.status !== 'available') {
     return NextResponse.json({ error: 'This book is not available for purchase.' }, { status: 404 })
   }

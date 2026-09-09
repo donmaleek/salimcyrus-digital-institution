@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { BookCover } from '@/components/books/BookCover'
 import { StarRating } from '@/components/books/StarRating'
-import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from '@/lib/data/books'
+import { getAvailableBooks } from '@/lib/data/book-catalog'
 import { formatCurrency } from '@/lib/utils/currency'
 import { db } from '@/lib/db'
 
@@ -43,31 +43,35 @@ const readingPractice = [
   },
 ]
 
-const questions = [
-  {
-    question: 'Which book should I read first?',
-    answer:
-      'Start with the title that names the issue you are ready to confront. Each book page includes a summary to help you choose.',
-  },
-  {
-    question: 'Which books are available now?',
-    answer:
-      'All 14 books in the catalog are available now, priced individually by length from KES 500 to KES 1,000.',
-  },
-  {
-    question: 'Where do purchases happen?',
-    answer:
-      'Most titles offer Buy & Download: pay by card or mobile money and the PDF unlocks immediately. The rest use WhatsApp ordering, sending a prefilled message with the book title and price so the team can confirm payment and delivery.',
-  },
-  {
-    question: 'Are there free resources too?',
-    answer:
-      'Yes. The Resources section includes free guides and a wider digital library for readers who want a shorter starting point.',
-  },
-]
+function buildQuestions(availableCount: number) {
+  return [
+    {
+      question: 'Which book should I read first?',
+      answer:
+        'Start with the title that names the issue you are ready to confront. Each book page includes a summary to help you choose.',
+    },
+    {
+      question: 'Which books are available now?',
+      answer: `All ${availableCount} books in the catalog are available now, each priced individually.`,
+    },
+    {
+      question: 'Where do purchases happen?',
+      answer:
+        'Most titles offer Buy & Download: pay with PayPal, or M-Pesa Paybill with a quick review, and the PDF unlocks immediately. The rest use WhatsApp ordering, sending a prefilled message with the book title and price so the team can confirm payment and delivery.',
+    },
+    {
+      question: 'Are there free resources too?',
+      answer:
+        'Yes. The Resources section includes free guides and a wider digital library for readers who want a shorter starting point.',
+    },
+  ]
+}
 
 export default async function BooksPage() {
-  const availableBooks = books.filter((book) => book.status === 'available')
+  const availableBooks = await getAvailableBooks()
+  const questions = buildQuestions(availableBooks.length)
+  const prices = availableBooks.map((b) => b.priceKes)
+  const priceRange = { min: Math.min(...prices), max: Math.max(...prices) }
 
   const ratingGroups = await db.bookReview.groupBy({
     by: ['bookSlug'],
@@ -140,18 +144,18 @@ export default async function BooksPage() {
               </div>
               <div className="border-t border-navy-200 py-7 sm:border-l sm:border-t-0 sm:px-8">
                 <dt className="font-heading text-4xl font-bold text-navy">
-                  {books.length}
+                  {formatCurrency(priceRange.min)}&ndash;{formatCurrency(priceRange.max)}
                 </dt>
                 <dd className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-navy-500">
-                  Distinct titles
+                  Priced individually by book
                 </dd>
               </div>
               <div className="border-t border-navy-200 py-7 sm:border-l sm:border-t-0 sm:pl-8">
                 <dt className="font-heading text-4xl font-bold text-navy">
-                  {formatCurrency(BOOK_MIN_PRICE_KES)}&ndash;{formatCurrency(BOOK_MAX_PRICE_KES)}
+                  PDF
                 </dt>
                 <dd className="mt-2 text-sm font-semibold uppercase tracking-[0.12em] text-navy-500">
-                  Priced by book, KES {BOOK_MIN_PRICE_KES}&ndash;{BOOK_MAX_PRICE_KES}
+                  Instant download after payment
                 </dd>
               </div>
             </dl>

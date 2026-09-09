@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmApi } from '@/services/crm/access'
 import { db } from '@/lib/db'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 
 export async function GET(request: NextRequest) {
   if (!(await requireCrmApi('finance:read'))) {
@@ -20,15 +20,19 @@ export async function GET(request: NextRequest) {
     : []
   const teachingTitleById = new Map(teachings.map((t) => [t.id, t.title]))
 
-  const enriched = claims.map((claim) => ({
-    ...claim,
-    offerTitle:
-      claim.offerType === 'book'
-        ? books.find((b) => b.slug === claim.bookSlug)?.title ?? claim.bookSlug
-        : claim.offerType === 'teaching'
-          ? teachingTitleById.get(claim.teachingId ?? '') ?? claim.teachingId
-          : 'Support the Mission',
-  }))
+  const enriched = await Promise.all(
+    claims.map(async (claim) => ({
+      ...claim,
+      offerTitle:
+        claim.offerType === 'book'
+          ? (claim.bookSlug ? (await getBookBySlug(claim.bookSlug))?.title : undefined) ?? claim.bookSlug
+          : claim.offerType === 'teaching'
+            ? teachingTitleById.get(claim.teachingId ?? '') ?? claim.teachingId
+            : claim.offerType === 'coaching'
+              ? claim.coachingOfferName ?? 'Unknown session'
+              : 'Support the Mission',
+    }))
+  )
 
   return NextResponse.json({ claims: enriched })
 }

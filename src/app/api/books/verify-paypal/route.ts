@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getPayPalAccessToken, capturePayPalOrder } from '@/lib/api/paypal'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import { recordBookPurchase, createDownloadGrant, downloadUrlFor } from '@/services/payments/book-purchases'
 
 /**
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing PayPal order reference.' }, { status: 400 })
   }
 
-  const book = books.find((b) => b.slug === slug)
+  const book = await getBookBySlug(slug)
   if (!book) {
     return NextResponse.json({ error: 'Unknown book.' }, { status: 404 })
   }

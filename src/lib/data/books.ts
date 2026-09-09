@@ -28,7 +28,7 @@ export interface BookEntry {
   fileName?: string
 }
 
-function whatsappOrderUrl(title: string, priceKes: number) {
+export function whatsappOrderUrl(title: string, priceKes: number) {
   const message = `Hello, I would like to order "${title}" by Salim Cyrus for KES ${priceKes.toLocaleString('en-KE')}.`
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
 }

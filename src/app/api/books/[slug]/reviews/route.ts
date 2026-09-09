@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import { normalizeEmail } from '@/services/crm/normalization'
 
 const reviewRequestSchema = z.object({
@@ -23,7 +23,7 @@ interface RouteParams {
  * toward the public rating until an admin approves them.
  */
 export async function POST(request: NextRequest, { params }: RouteParams) {
-  const book = books.find((b) => b.slug === params.slug)
+  const book = await getBookBySlug(params.slug)
   if (!book) {
     return NextResponse.json({ error: 'Unknown book.' }, { status: 404 })
   }

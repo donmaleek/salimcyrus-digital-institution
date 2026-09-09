@@ -7,6 +7,7 @@ jest.mock('../../../../../lib/db', () => ({
   db: {
     bookPurchase: { findFirst: jest.fn() },
     bookReview: { create: jest.fn() },
+    book: { findUnique: jest.fn() },
   },
 }))
 

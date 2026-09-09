@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyPaystackTransaction } from '@/lib/api/paystack'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import {
   bookOfferName,
   recordBookPurchase,
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing payment reference.' }, { status: 400 })
   }
 
-  const book = books.find((b) => b.slug === slug)
+  const book = await getBookBySlug(slug)
   if (!book) {
     return NextResponse.json({ error: 'Unknown book.' }, { status: 404 })
   }

@@ -17,7 +17,7 @@ const checks = [
   ['homepage presents verified credentials', source.includes('Certified Life Coach') && source.includes('Advanced Emotional Intelligence')],
   ['homepage explains four need-based entry paths', ['I need clarity now', 'I want structured formation', 'I want ideas I can study', 'I want community and contribution'].every((text) => source.includes(text))],
   ['academy programs come from canonical data', source.includes("import { programs } from '@/lib/data/programs'")],
-  ['books come from canonical data', source.includes("import { books } from '@/lib/data/books'")],
+  ['books come from the canonical merged catalog (static + admin-uploaded)', source.includes("import { getAvailableBooks } from '@/lib/data/book-catalog'")],
   ['all institutional destinations are represented', ['/academy', '/books', '/knowledge-centre', '/halisi-hub-connect', '/journal', '/ask-salim', '/contact'].every((href) => source.includes(`href=\"${href}\"`) || source.includes(`href: '${href}'`))],
   ['homepage has no em dash characters', !source.includes('—')],
   ['homepage uses specific next actions', source.includes('Find Your Starting Point') && source.includes('Contact the Institution')],

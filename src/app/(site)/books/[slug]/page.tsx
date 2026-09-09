@@ -7,6 +7,7 @@ import { authOptions } from '@/lib/auth'
 import { Button } from '@/components/ui/Button'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import { books, type BookEntry } from '@/lib/data/books'
+import { getBookBySlug, getAvailableBooks } from '@/lib/data/book-catalog'
 import { formatCurrency } from '@/lib/utils/currency'
 import { db } from '@/lib/db'
 import { summarizeRatings } from '@/lib/api/book-reviews'
@@ -17,10 +18,9 @@ import { BookReviewsSection } from '@/components/books/BookReviewsSection'
 import { BookCheckoutForm } from '@/components/payments/BookCheckoutForm'
 import { BookPurchaseReturn } from '@/components/payments/BookPurchaseReturn'
 
-function moreBooksBy(current: BookEntry, count: number): BookEntry[] {
-  return books
-    .filter((b) => b.slug !== current.slug && b.status === 'available')
-    .slice(0, count)
+async function moreBooksBy(current: BookEntry, count: number): Promise<BookEntry[]> {
+  const available = await getAvailableBooks()
+  return available.filter((b) => b.slug !== current.slug).slice(0, count)
 }
 
 interface PageProps {
@@ -28,16 +28,18 @@ interface PageProps {
 }
 
 // Reviews change over time; static params keep the page fast to build while
-// ISR keeps the rating/review list from going stale.
-export const revalidate = 60
-
+// ISR keeps the rating/review list from going stale. Admin-uploaded books
+// aren't in this list (built at deploy time), but Next.js still renders
+// them on demand and caches the result, since dynamicParams isn't disabled.
 export function generateStaticParams() {
   return books.map((book) => ({ slug: book.slug }))
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const book = books.find((b) => b.slug === params.slug)
-  if (!book) return { title: 'Book' }
+export const revalidate = 60
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const book = await getBookBySlug(params.slug)
+  if (!book || book.status !== 'available') return { title: 'Book' }
   return {
     title: book.title,
     description: book.description,
@@ -51,8 +53,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
 }
 
 export default async function BookDetailPage({ params }: PageProps) {
-  const book = books.find((b) => b.slug === params.slug)
-  if (!book) notFound()
+  const book = await getBookBySlug(params.slug)
+  if (!book || book.status !== 'available') notFound()
 
   const session = await getServerSession(authOptions)
   const buyerEmail = session?.user?.email ?? null
@@ -100,7 +102,7 @@ export default async function BookDetailPage({ params }: PageProps) {
   }
 
   const canBuyNow = book.status === 'available' && Boolean(book.priceKes)
-  const moreBooks = moreBooksBy(book, 4)
+  const moreBooks = await moreBooksBy(book, 4)
 
   return (
     <>

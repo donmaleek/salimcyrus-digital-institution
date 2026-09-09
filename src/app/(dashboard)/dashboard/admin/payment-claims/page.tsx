@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { db } from '@/lib/db'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import { PaymentClaimManager } from '@/components/dashboard/PaymentClaimManager'
 import { requireCrmPage } from '@/services/crm/access'
 
@@ -21,6 +21,28 @@ export default async function AdminPaymentClaimsPage() {
     : []
   const teachingTitleById = new Map(teachings.map((t) => [t.id, t.title]))
 
+  const initialClaims = await Promise.all(
+    claims.map(async (claim) => ({
+      id: claim.id,
+      offerType: claim.offerType,
+      offerTitle:
+        claim.offerType === 'book'
+          ? (claim.bookSlug ? (await getBookBySlug(claim.bookSlug))?.title : undefined) ?? claim.bookSlug ?? 'Unknown book'
+          : claim.offerType === 'teaching'
+            ? teachingTitleById.get(claim.teachingId ?? '') ?? claim.teachingId ?? 'Unknown teaching'
+            : claim.offerType === 'coaching'
+              ? claim.coachingOfferName ?? 'Unknown session'
+              : 'Support the Mission',
+      email: claim.email,
+      name: claim.name,
+      amountKes: claim.amountKes,
+      mpesaCode: claim.mpesaCode,
+      hasEvidence: Boolean(claim.evidenceFileName),
+      status: claim.status,
+      createdAt: claim.createdAt.toISOString(),
+    }))
+  )
+
   return (
     <div>
       <div className="rounded-3xl bg-navy px-6 py-8 text-white sm:px-10">
@@ -32,25 +54,7 @@ export default async function AdminPaymentClaimsPage() {
         </p>
       </div>
       <div className="mt-8">
-        <PaymentClaimManager
-          initialClaims={claims.map((claim) => ({
-            id: claim.id,
-            offerType: claim.offerType,
-            offerTitle:
-              claim.offerType === 'book'
-                ? books.find((b) => b.slug === claim.bookSlug)?.title ?? claim.bookSlug ?? 'Unknown book'
-                : claim.offerType === 'teaching'
-                  ? teachingTitleById.get(claim.teachingId ?? '') ?? claim.teachingId ?? 'Unknown teaching'
-                  : 'Support the Mission',
-            email: claim.email,
-            name: claim.name,
-            amountKes: claim.amountKes,
-            mpesaCode: claim.mpesaCode,
-            hasEvidence: Boolean(claim.evidenceFileName),
-            status: claim.status,
-            createdAt: claim.createdAt.toISOString(),
-          }))}
-        />
+        <PaymentClaimManager initialClaims={initialClaims} />
       </div>
     </div>
   )

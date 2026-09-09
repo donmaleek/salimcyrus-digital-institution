@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
-import { books } from '@/lib/data/books'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 import { coachingOffers } from '@/lib/data/coaching-offers'
 import { submitPaymentClaim } from '@/services/payments/payment-claims'
 import { evidenceStorageDir, evidenceFilePath } from '@/lib/api/payment-evidence-storage'
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     if (!data.bookSlug) {
       return NextResponse.json({ error: 'Missing book.' }, { status: 400 })
     }
-    const book = books.find((b) => b.slug === data.bookSlug)
+    const book = await getBookBySlug(data.bookSlug)
     if (!book || book.status !== 'available' || !book.priceKes || !book.fileName) {
       return NextResponse.json({ error: 'This book is not available for purchase.' }, { status: 404 })
     }

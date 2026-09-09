@@ -62,7 +62,9 @@ const checks = [
   ],
   [
     'all navigation controls meet the 44px minimum touch target',
-    navigation.includes('min-h-11') && mobileNavigation.includes('h-11 w-11'),
+    navigation.includes('min-h-11') &&
+      mobileNavigation.includes('h-11 w-11') &&
+      (mobileNavigation.match(/min-h-11/g) || []).length >= 2,
   ],
 ]
 

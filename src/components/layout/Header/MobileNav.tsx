@@ -49,22 +49,22 @@ export function MobileNav() {
         >
           <ul className="flex flex-col divide-y divide-white/10">
             {mainNav.map((item) => (
-              <li key={item.label} className="px-6 py-3">
+              <li key={item.label} className="px-6 py-2">
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block font-heading text-lg text-cream"
+                  className="flex min-h-11 items-center font-heading text-lg text-cream"
                 >
                   {item.label}
                 </Link>
                 {item.children && (
-                  <ul className="mt-2 flex flex-col gap-2 pl-4">
+                  <ul className="mt-1 flex flex-col pl-4">
                     {item.children.map((child) => (
                       <li key={child.href}>
                         <Link
                           href={child.href}
                           onClick={() => setOpen(false)}
-                          className="block font-heading text-base text-cream/70"
+                          className="flex min-h-11 items-center font-heading text-base text-cream/70 transition-colors hover:text-gold-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
                         >
                           {child.label}
                         </Link>

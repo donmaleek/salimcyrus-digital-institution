@@ -16,9 +16,9 @@ test('footer uses the cinematic background with readable content', async ({
 
   const background = footer.locator('img[alt=""]')
   await expect(background).toBeVisible()
-  expect(await background.evaluate((image) => image.naturalWidth)).toBeGreaterThan(
-    1000
-  )
+  expect(
+    await background.evaluate((image) => image.naturalWidth)
+  ).toBeGreaterThan(1000)
 })
 
 test('homepage hero includes the sliding media recognition strip', async ({
@@ -116,6 +116,12 @@ test('mobile menu includes login and keeps booking as the primary action', async
   await expect(
     nav.getByRole('link', { name: 'Explore', exact: true })
   ).toBeVisible()
+
+  const menuLinks = nav.getByRole('link')
+  for (let index = 0; index < (await menuLinks.count()); index += 1) {
+    const box = await menuLinks.nth(index).boundingBox()
+    expect(box.height).toBeGreaterThanOrEqual(44)
+  }
 })
 
 test('keynote hero keeps Salim and primary actions visible on desktop', async ({

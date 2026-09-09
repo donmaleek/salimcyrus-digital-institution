@@ -14,13 +14,28 @@ test('a new user can register and lands on login', async ({ page }) => {
   await expect(page).toHaveURL(/\/login$/)
 })
 
-test('login rejects an unknown account with a visible error', async ({ page }) => {
+test('login rejects an unknown account with a visible error', async ({
+  page,
+}) => {
   await page.goto('/login')
   await page.getByLabel('Email').fill('definitely-not-registered@example.com')
   await page.getByLabel('Password').fill('WhateverPassword123!')
   await page.getByRole('button', { name: 'Sign In' }).click()
 
   await expect(page.getByText('Invalid email or password.')).toBeVisible()
+})
+
+test('login page provides a clear route back to the public home page', async ({
+  page,
+}) => {
+  await page.goto('/login')
+
+  const backLink = page.getByRole('link', { name: 'Back to Home' })
+  await expect(backLink).toBeVisible()
+  await expect(backLink).toHaveAttribute('href', '/')
+
+  const box = await backLink.boundingBox()
+  expect(box.height).toBeGreaterThanOrEqual(44)
 })
 
 test('forgot password gives the same confirmation for any email, registered or not', async ({
@@ -30,13 +45,17 @@ test('forgot password gives the same confirmation for any email, registered or n
   await page.getByLabel('Email').fill('nobody-at-all@example.com')
 
   const [response] = await Promise.all([
-    page.waitForResponse((res) => res.url().includes('/api/auth/forgot-password')),
+    page.waitForResponse((res) =>
+      res.url().includes('/api/auth/forgot-password')
+    ),
     page.getByRole('button', { name: 'Send Reset Link' }).click(),
   ])
 
   expect(response.status()).toBe(200)
   await expect(
-    page.getByText(/If an account exists for that email, a reset link has been generated/)
+    page.getByText(
+      /If an account exists for that email, a reset link has been generated/
+    )
   ).toBeVisible()
 })
 
@@ -45,21 +64,24 @@ test('reset password page without a token tells the user to request a new link',
 }) => {
   await page.goto('/reset-password')
   await expect(page.getByText(/missing its reset token/)).toBeVisible()
-  await expect(page.getByRole('link', { name: 'forgot password' })).toHaveAttribute(
-    'href',
-    '/forgot-password'
-  )
+  await expect(
+    page.getByRole('link', { name: 'forgot password' })
+  ).toHaveAttribute('href', '/forgot-password')
 })
 
 test('reset password rejects an invalid or already-used token with a clear error', async ({
   page,
 }) => {
   await page.goto('/reset-password?token=this-token-was-never-issued')
-  await page.getByLabel('New Password', { exact: true }).fill('BrandNewPassword123!')
+  await page
+    .getByLabel('New Password', { exact: true })
+    .fill('BrandNewPassword123!')
   await page.getByLabel('Confirm New Password').fill('BrandNewPassword123!')
 
   const [response] = await Promise.all([
-    page.waitForResponse((res) => res.url().includes('/api/auth/reset-password')),
+    page.waitForResponse((res) =>
+      res.url().includes('/api/auth/reset-password')
+    ),
     page.getByRole('button', { name: 'Reset Password' }).click(),
   ])
 
@@ -71,14 +93,18 @@ test('reset password rejects mismatched confirmation before ever calling the API
   page,
 }) => {
   await page.goto('/reset-password?token=irrelevant-for-this-check')
-  await page.getByLabel('New Password', { exact: true }).fill('FirstPassword123!')
+  await page
+    .getByLabel('New Password', { exact: true })
+    .fill('FirstPassword123!')
   await page.getByLabel('Confirm New Password').fill('DifferentPassword456!')
 
   await page.getByRole('button', { name: 'Reset Password' }).click()
   await expect(page.getByText('Passwords do not match.')).toBeVisible()
 })
 
-test('auth pages use the real brand wordmark, not plain heading text', async ({ page }) => {
+test('auth pages use the real brand wordmark, not plain heading text', async ({
+  page,
+}) => {
   for (const path of ['/login', '/register', '/forgot-password']) {
     await page.goto(path)
     const wordmark = page.getByRole('link', { name: 'Salim Cyrus' }).first()

@@ -15,10 +15,33 @@ export default function LoginPage({
   searchParams: { callbackUrl?: string }
 }) {
   const callbackUrl = searchParams.callbackUrl
-  const isBookPurchase = isSafeRedirectPath(callbackUrl) && callbackUrl.startsWith('/books/')
+  const isBookPurchase =
+    isSafeRedirectPath(callbackUrl) && callbackUrl.startsWith('/books/')
 
   const form = (
     <div className="mx-auto w-full max-w-sm">
+      <Link
+        href="/"
+        className="group inline-flex min-h-11 items-center gap-2 font-body text-sm font-semibold tracking-[0.03em] text-cream/70 transition-colors hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+      >
+        <svg
+          aria-hidden="true"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          className="transition-transform duration-200 group-hover:-translate-x-1"
+        >
+          <path
+            d="M13 8H3m4-4L3 8l4 4"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        Back to Home
+      </Link>
       <h1 className="mt-8 font-heading text-2xl font-bold text-cream">
         {isBookPurchase ? 'Log In to Buy This Book' : 'Welcome Back'}
       </h1>
@@ -30,14 +53,21 @@ export default function LoginPage({
       <p className="mt-6 text-sm text-cream/70">
         No account?{' '}
         <Link
-          href={callbackUrl ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/register'}
+          href={
+            callbackUrl
+              ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`
+              : '/register'
+          }
           className="font-semibold text-gold hover:underline"
         >
           Register
         </Link>
       </p>
       <p className="mt-2 text-sm text-cream/70">
-        <Link href="/forgot-password" className="font-semibold text-gold hover:underline">
+        <Link
+          href="/forgot-password"
+          className="font-semibold text-gold hover:underline"
+        >
           Forgot password?
         </Link>
       </p>

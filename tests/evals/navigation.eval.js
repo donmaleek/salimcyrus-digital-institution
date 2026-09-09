@@ -22,6 +22,10 @@ const globalStyles = fs.readFileSync(
   path.join(root, 'src/styles/globals.css'),
   'utf8'
 )
+const loginPage = fs.readFileSync(
+  path.join(root, 'src/app/(auth)/login/page.tsx'),
+  'utf8'
+)
 
 const checks = [
   [
@@ -82,6 +86,12 @@ const checks = [
       globalStyles.includes('@keyframes booking-cta-glow') &&
       globalStyles.includes('.nav-booking-glow::before') &&
       globalStyles.includes('animation: none'),
+  ],
+  [
+    'login page provides an accessible route back home',
+    loginPage.includes('Back to Home') &&
+      loginPage.includes('href="/"') &&
+      loginPage.includes('min-h-11'),
   ],
 ]
 

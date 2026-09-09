@@ -10,11 +10,15 @@ const downloadRoute = read(
   'src/app/api/books/my-purchases/[purchaseId]/download/route.ts'
 )
 const navLayout = read('src/components/dashboard/DashboardLayout/index.tsx')
+const accountPage = read('src/app/(dashboard)/dashboard/my-account/page.tsx')
+const accountForm = read('src/components/forms/AccountForm/index.tsx')
+const avatarRoute = read('src/app/api/account/avatar/route.ts')
+const passwordRoute = read('src/app/api/account/password/route.ts')
 
 const checks = [
   [
     'My Books is a real nav destination, not just described in a coming-soon panel',
-    navLayout.includes("{ label: 'My Books', href: '/dashboard/my-books' }"),
+    navLayout.includes("label: 'My Books'") && navLayout.includes("href: '/dashboard/my-books'"),
   ],
   [
     'My Books page scopes purchases to the signed-in user (not a global list)',
@@ -37,6 +41,22 @@ const checks = [
   [
     'recommended books come from the real catalog, excluding what the member already owns',
     overview.includes('!ownedSlugs.has(book.slug)') && myBooks.includes('!ownedSlugs.has(book.slug)'),
+  ],
+  [
+    'mobile clients retain direct navigation to every member destination',
+    navLayout.includes('Dashboard mobile navigation') && navLayout.includes('grid-cols-6'),
+  ],
+  [
+    'account page provides profile photo and password management',
+    accountPage.includes('hasProfileImage') && accountForm.includes('Upload Photo') && accountForm.includes('Update Password'),
+  ],
+  [
+    'profile photos stay behind authenticated storage rather than public files',
+    avatarRoute.includes("getServerSession(authOptions)") && avatarRoute.includes("'Cache-Control': 'private, no-store'"),
+  ],
+  [
+    'password changes verify the current hash and write a fresh bcrypt hash',
+    passwordRoute.includes('bcrypt.compare') && passwordRoute.includes('bcrypt.hash') && passwordRoute.includes('currentPassword'),
   ],
 ]
 

@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 
-const updateSchema = z.object({ name: z.string().min(1) })
+const updateSchema = z.object({ name: z.string().trim().min(2).max(80) })
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions)

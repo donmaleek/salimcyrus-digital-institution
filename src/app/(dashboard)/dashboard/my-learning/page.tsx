@@ -34,16 +34,18 @@ export default async function MyLearningPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">My Learning</h1>
-      <p className="mt-2 text-sm text-navy-500">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-700">Growth library</p>
+      <h1 className="mt-2 font-heading text-3xl font-bold text-navy sm:text-4xl">My Learning</h1>
+      <p className="mt-3 max-w-3xl text-base leading-7 text-navy-500">
         Live programs and masterclasses you&apos;ve enrolled in, plus every video teaching you&apos;ve bought
         from the Teaching Library.
       </p>
 
       <h2 className="mt-10 font-heading text-lg font-bold text-navy">Live Programs</h2>
       {programBookings.length === 0 ? (
-        <div className="mt-4 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
-          <p className="text-navy-400">You haven&apos;t enrolled in any programs yet.</p>
+        <div className="mt-4 border border-dashed border-navy-200 bg-white p-8 sm:p-10">
+          <p className="font-semibold text-navy">Your next live program starts here.</p>
+          <p className="mt-2 text-sm text-navy-500">Explore guided programs built for purposeful leadership and personal growth.</p>
           <Button href="/academy/masterclasses" className="mt-6">
             Browse Programs
           </Button>
@@ -84,8 +86,9 @@ export default async function MyLearningPage() {
 
       <h2 className="mt-10 font-heading text-lg font-bold text-navy">Teaching Library</h2>
       {teachingPurchases.length === 0 ? (
-        <div className="mt-4 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
-          <p className="text-navy-400">You haven&apos;t bought any teachings yet.</p>
+        <div className="mt-4 border border-dashed border-navy-200 bg-white p-8 sm:p-10">
+          <p className="font-semibold text-navy">Your on-demand learning shelf is ready.</p>
+          <p className="mt-2 text-sm text-navy-500">Choose a teaching and return here whenever you are ready to watch.</p>
           <Button href="/teachings" className="mt-6">
             Browse the Teaching Library
           </Button>

@@ -22,9 +22,11 @@ export default async function MyCommunityPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-navy">My Community</h1>
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-700">Belonging & connection</p>
+      <h1 className="mt-2 font-heading text-3xl font-bold text-navy sm:text-4xl">My Community</h1>
+      <p className="mt-3 max-w-2xl text-base leading-7 text-navy-500">Your gateway to the Halisi Inner Circle and its community of values-led people.</p>
       {membership ? (
-        <div className="mt-8 rounded-2xl border border-navy-100 bg-white p-10 text-center">
+        <div className="mt-8 border border-navy/10 bg-white p-8 shadow-[0_18px_50px_rgba(15,30,48,0.06)] sm:p-10">
           <p className="font-heading text-lg font-semibold text-navy">
             You&apos;re a Halisi Inner Circle member.
           </p>
@@ -37,8 +39,9 @@ export default async function MyCommunityPage() {
           </Button>
         </div>
       ) : (
-        <div className="mt-8 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
-          <p className="text-navy-400">Join the Halisi Inner Circle to unlock community access.</p>
+        <div className="mt-8 border border-dashed border-navy-200 bg-white p-8 sm:p-10">
+          <p className="font-heading text-xl font-bold text-navy">Find your circle.</p>
+          <p className="mt-2 max-w-xl text-navy-500">Join the Halisi Inner Circle for deeper conversations, accountability, and community access.</p>
           <Button href="/academy/masterclasses/halisi-inner-circle" className="mt-6">
             View Membership
           </Button>

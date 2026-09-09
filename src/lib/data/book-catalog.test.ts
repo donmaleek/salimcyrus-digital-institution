@@ -108,6 +108,30 @@ describe('getAvailableBooks', () => {
     expect(result.map((b) => b.slug)).toContain('a-new-book')
   })
 
+  it('places admin-uploaded books ahead of the static 14, so a bounded homepage/recommendation slice can actually surface a new upload', async () => {
+    mockFindMany.mockResolvedValue([
+      {
+        id: 'db-1',
+        slug: 'a-new-book',
+        title: 'A New Book',
+        subtitle: null,
+        description: 'Description',
+        priceKes: 1200,
+        priceUsd: 9,
+        pageCount: 80,
+        fileName: 'a-new-book.pdf',
+        coverPath: '/images/books/a-new-book.webp',
+        status: 'available',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ])
+
+    const result = await getAvailableBooks()
+
+    expect(result[0].slug).toBe('a-new-book')
+  })
+
   it('never returns a draft admin book in the available list', async () => {
     mockFindMany.mockResolvedValue([])
     const result = await getAvailableBooks()

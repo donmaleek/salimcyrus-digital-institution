@@ -42,12 +42,18 @@ export async function getBookBySlug(slug: string): Promise<BookEntry | null> {
   return dbBook ? dbBookToEntry(dbBook) : null
 }
 
-/** All available books across both catalogs, newest admin uploads first
- * within their group, for the public /books listing and homepage. */
+/**
+ * All available books across both catalogs, for the public /books listing
+ * and homepage. Newest admin uploads come first, ahead of the static 14:
+ * both the homepage teaser and the my-books "recommended" strip only ever
+ * show a slice of this list, so a book Salim just published needs to be
+ * near the front to actually be seen, not permanently buried behind an
+ * unchanging static catalog.
+ */
 export async function getAvailableBooks(): Promise<BookEntry[]> {
   const dbBooks = await db.book.findMany({
     where: { status: 'available' },
     orderBy: { createdAt: 'desc' },
   })
-  return [...books.filter((b) => b.status === 'available'), ...dbBooks.map(dbBookToEntry)]
+  return [...dbBooks.map(dbBookToEntry), ...books.filter((b) => b.status === 'available')]
 }

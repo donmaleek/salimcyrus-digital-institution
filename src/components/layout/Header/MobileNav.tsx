@@ -87,9 +87,9 @@ export function MobileNav() {
               <Link
                 href="/book-now"
                 onClick={() => setOpen(false)}
-                className="flex min-h-12 items-center justify-center rounded-full bg-gold px-6 font-semibold text-navy-900"
+                className="nav-booking-glow flex min-h-12 items-center justify-center rounded-full bg-gold px-6 font-semibold text-navy-900"
               >
-                Book Now
+                Book Session Now
               </Link>
             </li>
           </ul>

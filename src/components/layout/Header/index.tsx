@@ -27,9 +27,9 @@ export function Header() {
           <Button
             href="/book-now"
             size="sm"
-            className="hidden min-h-11 border border-gold bg-gold px-5 text-navy-900 shadow-[0_8px_24px_rgba(0,0,0,0.18)] hover:bg-gold-300 sm:inline-flex"
+            className="nav-booking-glow hidden min-h-11 border border-gold bg-gold px-5 text-navy-900 hover:bg-gold-300 sm:inline-flex"
           >
-            Book Now
+            Book Session Now
           </Button>
           <MobileNav />
         </div>

@@ -18,6 +18,10 @@ const navigationData = fs.readFileSync(
   path.join(root, 'src/lib/data/navigation.ts'),
   'utf8'
 )
+const globalStyles = fs.readFileSync(
+  path.join(root, 'src/styles/globals.css'),
+  'utf8'
+)
 
 const checks = [
   [
@@ -65,6 +69,19 @@ const checks = [
     navigation.includes('min-h-11') &&
       mobileNavigation.includes('h-11 w-11') &&
       (mobileNavigation.match(/min-h-11/g) || []).length >= 2,
+  ],
+  [
+    'booking CTA uses the requested action label on desktop and mobile',
+    header.includes('Book Session Now') &&
+      mobileNavigation.includes('Book Session Now'),
+  ],
+  [
+    'booking glow is restrained and respects reduced motion',
+    header.includes('nav-booking-glow') &&
+      mobileNavigation.includes('nav-booking-glow') &&
+      globalStyles.includes('@keyframes booking-cta-glow') &&
+      globalStyles.includes('.nav-booking-glow::before') &&
+      globalStyles.includes('animation: none'),
   ],
 ]
 

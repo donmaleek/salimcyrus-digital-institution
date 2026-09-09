@@ -111,7 +111,7 @@ test('mobile menu includes login and keeps booking as the primary action', async
     nav.getByRole('link', { name: 'Login', exact: true })
   ).toBeVisible()
   await expect(
-    nav.getByRole('link', { name: 'Book Now', exact: true })
+    nav.getByRole('link', { name: 'Book Session Now', exact: true })
   ).toBeVisible()
   await expect(
     nav.getByRole('link', { name: 'Explore', exact: true })

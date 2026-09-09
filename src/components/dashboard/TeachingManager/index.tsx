@@ -112,6 +112,12 @@ export function TeachingManager({ initialTeachings }: { initialTeachings: Teachi
                     View
                   </Link>
                 )}
+                <Link
+                  href={`/dashboard/admin/teachings/${teaching.id}/edit`}
+                  className="inline-flex min-h-9 items-center rounded-full border border-navy-200 px-4 text-sm font-semibold text-navy hover:bg-navy-50"
+                >
+                  Edit Media
+                </Link>
                 <Button variant="outline" size="sm" onClick={() => togglePublish(teaching)}>
                   {teaching.status === 'published' ? 'Unpublish' : 'Publish'}
                 </Button>

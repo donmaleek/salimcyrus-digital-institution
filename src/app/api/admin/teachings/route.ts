@@ -6,20 +6,19 @@ import { db } from '@/lib/db'
 import { slugify } from '@/lib/utils/slugify'
 import { teachingsStorageDir, teachingFilePath } from '@/lib/api/teachings-storage'
 import { TEACHING_CATEGORIES } from '@/lib/data/teaching-categories'
+import { saveTeachingThumbnail, saveTeachingPreview } from '@/services/teachings/teaching-assets'
 
 const ALLOWED_VIDEO_TYPES: Record<string, string> = {
   'video/mp4': 'mp4',
   'video/webm': 'webm',
   'video/quicktime': 'mov',
 }
-const ALLOWED_THUMBNAIL_TYPES = new Set(['image/webp', 'image/jpeg', 'image/png'])
 // The whole upload is buffered in memory (formData()'s only option without a
 // custom multipart streaming parser), so this cap also bounds peak memory
 // use per upload. This server has plenty of headroom (60GB+) but it's
 // shared with other unrelated sites, kept well below what would be
 // individually safe to leave margin for them.
 const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024 // 2GB
-const MAX_PREVIEW_BYTES = 100 * 1024 * 1024 // 100MB, a short teaser clip has no business being bigger
 
 const metaSchema = z.object({
   title: z.string().trim().min(1).max(200),
@@ -94,42 +93,17 @@ export async function POST(request: NextRequest) {
   let thumbnailPath: string | null = null
   const thumbnailFile = form.get('thumbnail')
   if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
-    if (!ALLOWED_THUMBNAIL_TYPES.has(thumbnailFile.type)) {
-      return NextResponse.json(
-        { error: 'Thumbnail must be WebP, JPEG, or PNG.' },
-        { status: 400 }
-      )
-    }
-    const thumbExt = thumbnailFile.type === 'image/png' ? 'png' : thumbnailFile.type === 'image/jpeg' ? 'jpg' : 'webp'
-    const thumbFileName = `${slug}-thumb.${thumbExt}`
-    // Written next to the video, under TEACHINGS_STORAGE_DIR, and served
-    // through /api/teachings/thumbnail/[fileName] rather than /public:
-    // Next.js's production server only recognizes /public files present
-    // at process start, so anything written there after boot 404s until
-    // the app is restarted. This route reads from disk on every request.
-    mkdirSync(teachingsStorageDir(), { recursive: true })
-    const thumbBuffer = Buffer.from(await thumbnailFile.arrayBuffer())
-    writeFileSync(teachingFilePath(thumbFileName), thumbBuffer)
-    thumbnailPath = `/api/teachings/thumbnail/${thumbFileName}`
+    const result = await saveTeachingThumbnail(slug, thumbnailFile)
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status })
+    thumbnailPath = result.value
   }
 
   let previewFileName: string | null = null
   const previewFile = form.get('preview')
   if (previewFile instanceof File && previewFile.size > 0) {
-    const previewExt = ALLOWED_VIDEO_TYPES[previewFile.type]
-    if (!previewExt) {
-      return NextResponse.json({ error: 'Preview clip must be MP4, WebM, or MOV.' }, { status: 400 })
-    }
-    if (previewFile.size > MAX_PREVIEW_BYTES) {
-      return NextResponse.json({ error: 'Preview clip is too large. Keep it short.' }, { status: 413 })
-    }
-    // A separate, ungated teaser file, never the paid video itself: hovering
-    // over the catalog card streams this one (see /api/teachings/preview),
-    // so the actual purchase-gated video can never leak to a non-buyer.
-    const previewName = `${slug}-preview.${previewExt}`
-    const previewBuffer = Buffer.from(await previewFile.arrayBuffer())
-    writeFileSync(teachingFilePath(previewName), previewBuffer)
-    previewFileName = previewName
+    const result = await saveTeachingPreview(slug, previewFile)
+    if (!result.ok) return NextResponse.json({ error: result.error }, { status: result.status })
+    previewFileName = result.value
   }
 
   const teaching = await db.teaching.create({

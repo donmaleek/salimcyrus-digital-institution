@@ -6,6 +6,7 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 
 const adminTeachingsRoute = read('src/app/api/admin/teachings/route.ts')
 const adminBooksRoute = read('src/app/api/admin/books/route.ts')
+const teachingAssetsService = read('src/services/teachings/teaching-assets.ts')
 const thumbnailRoute = read('src/app/api/teachings/thumbnail/[fileName]/route.ts')
 const coverRoute = read('src/app/api/books/cover/[fileName]/route.ts')
 const bookCover = read('src/components/books/BookCover/index.tsx')
@@ -15,7 +16,8 @@ const checks = [
   [
     'admin teaching uploads no longer write the thumbnail into /public (Next.js production only recognizes files present in /public at process start, so anything written there after boot 404s until a restart)',
     !adminTeachingsRoute.includes("public/images/teachings") &&
-      adminTeachingsRoute.includes('/api/teachings/thumbnail/'),
+      !teachingAssetsService.includes("public/images/teachings") &&
+      teachingAssetsService.includes('/api/teachings/thumbnail/'),
   ],
   [
     'admin book uploads no longer write the cover into /public, same reasoning',
@@ -23,7 +25,7 @@ const checks = [
   ],
   [
     'the thumbnail and cover files are written next to the video/PDF in the same private storage directory, not a new untracked location',
-    adminTeachingsRoute.includes('teachingFilePath(thumbFileName)') &&
+    teachingAssetsService.includes('teachingFilePath(fileName)') &&
       adminBooksRoute.includes('bookFilePath(coverFileName)'),
   ],
   [

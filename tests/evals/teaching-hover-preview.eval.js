@@ -8,7 +8,10 @@ const schema = read('prisma/schema.prisma')
 const previewRoute = read('src/app/api/teachings/preview/[fileName]/route.ts')
 const streamRoute = read('src/app/api/teachings/stream/[teachingId]/route.ts')
 const adminRoute = read('src/app/api/admin/teachings/route.ts')
+const assetsRoute = read('src/app/api/admin/teachings/[id]/assets/route.ts')
+const teachingAssetsService = read('src/services/teachings/teaching-assets.ts')
 const uploadForm = read('src/components/dashboard/TeachingUploadForm/index.tsx')
+const teachingManager = read('src/components/dashboard/TeachingManager/index.tsx')
 const hoverPreview = read('src/components/teachings/TeachingHoverPreview/index.tsx')
 const listingPage = read('src/app/(site)/teachings/page.tsx')
 
@@ -30,11 +33,11 @@ const checks = [
   ],
   [
     'the preview clip is written to a filename distinct from the main video, so it can never accidentally BE the main video file on disk',
-    adminRoute.includes("`${slug}-preview.${previewExt}`") && adminRoute.includes("`${slug}.${videoExt}`"),
+    teachingAssetsService.includes('`${slug}-preview.${ext}`') && adminRoute.includes("`${slug}.${videoExt}`"),
   ],
   [
     'preview clip uploads are validated by MIME type and size-capped well below the main video limit (it is a short teaser, not the full teaching)',
-    adminRoute.includes('MAX_PREVIEW_BYTES') && adminRoute.includes('ALLOWED_VIDEO_TYPES[previewFile.type]'),
+    teachingAssetsService.includes('MAX_PREVIEW_BYTES') && teachingAssetsService.includes('ALLOWED_VIDEO_TYPES[file.type]'),
   ],
   [
     'the preview clip upload is optional: a teaching can still be created with no preview at all',
@@ -65,6 +68,20 @@ const checks = [
     listingPage.includes('TeachingHoverPreview') &&
       listingPage.includes('/api/teachings/preview/${teaching.previewFileName}') &&
       !listingPage.includes('videoFileName'),
+  ],
+  [
+    'a teaching already published before this feature existed (or one whose admin skipped the thumbnail/preview at upload time) can still get one added afterward, not just at creation time',
+    assetsRoute.includes("requireCrmApi('content:write')") &&
+      assetsRoute.includes('saveTeachingThumbnail') &&
+      assetsRoute.includes('saveTeachingPreview') &&
+      teachingManager.includes('Edit Media'),
+  ],
+  [
+    'the create route and the edit-existing-teaching route share the same thumbnail/preview validation and storage logic, not two copies that could drift apart',
+    adminRoute.includes("from '@/services/teachings/teaching-assets'") &&
+      assetsRoute.includes("from '@/services/teachings/teaching-assets'") &&
+      teachingAssetsService.includes('export async function saveTeachingThumbnail') &&
+      teachingAssetsService.includes('export async function saveTeachingPreview'),
   ],
 ]
 

@@ -80,11 +80,14 @@ const checks = [
       mobileNavigation.includes('Book Session Now'),
   ],
   [
-    'booking glow is restrained and respects reduced motion',
+    'booking CTA uses a visible halo and call pulse that respect reduced motion',
     header.includes('nav-booking-glow') &&
       mobileNavigation.includes('nav-booking-glow') &&
       globalStyles.includes('@keyframes booking-cta-glow') &&
+      globalStyles.includes('@keyframes booking-cta-call') &&
       globalStyles.includes('.nav-booking-glow::before') &&
+      globalStyles.includes('.nav-booking-glow::after') &&
+      globalStyles.includes('transform: scale(1.32)') &&
       globalStyles.includes('animation: none'),
   ],
   [

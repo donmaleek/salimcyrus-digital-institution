@@ -45,28 +45,54 @@ select:focus-visible {
 @keyframes booking-cta-glow {
   0%,
   100% {
-    opacity: 0.35;
+    opacity: 0.55;
   }
   50% {
-    opacity: 0.8;
+    opacity: 1;
+  }
+}
+
+@keyframes booking-cta-call {
+  0% {
+    opacity: 0.65;
+    transform: scale(0.96);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.32);
   }
 }
 
 .nav-booking-glow {
   position: relative;
   isolation: isolate;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+  box-shadow:
+    0 0 0 1px rgb(255 222 92 / 80%),
+    0 0 22px rgb(201 162 39 / 75%),
+    0 8px 24px rgb(0 0 0 / 24%);
 }
 
 .nav-booking-glow::before {
   position: absolute;
   z-index: -1;
-  inset: -5px;
+  inset: -7px;
   border-radius: inherit;
-  background: rgb(201 162 39 / 45%);
-  filter: blur(9px);
+  background: rgb(229 190 57 / 70%);
+  filter: blur(12px);
   content: '';
-  animation: booking-cta-glow 2.8s ease-in-out infinite;
+  animation: booking-cta-glow 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.nav-booking-glow::after {
+  position: absolute;
+  z-index: -1;
+  inset: -3px;
+  border: 2px solid rgb(238 201 71 / 90%);
+  border-radius: inherit;
+  content: '';
+  animation: booking-cta-call 2.2s ease-out infinite;
   pointer-events: none;
 }
 
@@ -75,8 +101,17 @@ select:focus-visible {
     animation: none;
   }
 
-  .nav-booking-glow::before {
+  .nav-booking-glow::before,
+  .nav-booking-glow::after {
     animation: none;
+  }
+
+  .nav-booking-glow::before {
+    opacity: 0.7;
+  }
+
+  .nav-booking-glow::after {
     opacity: 0.45;
+    transform: none;
   }
 }

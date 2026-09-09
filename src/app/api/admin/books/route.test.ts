@@ -132,7 +132,7 @@ describe('POST /api/admin/books', () => {
     expect(mockMkdirSync).toHaveBeenCalled()
     expect(mockWriteFileSync).toHaveBeenCalledWith(expect.stringContaining('leading-a-family.pdf'), expect.any(Buffer))
     expect(mockWriteFileSync).toHaveBeenCalledWith(
-      expect.stringContaining('leading-a-family.webp'),
+      expect.stringContaining('leading-a-family-cover.webp'),
       expect.any(Buffer)
     )
     expect(mockCreate).toHaveBeenCalledWith({
@@ -142,7 +142,7 @@ describe('POST /api/admin/books', () => {
         priceKes: 800,
         priceUsd: 6,
         fileName: 'leading-a-family.pdf',
-        coverPath: '/images/books/leading-a-family.webp',
+        coverPath: '/api/books/cover/leading-a-family-cover.webp',
         status: 'draft',
       }),
     })

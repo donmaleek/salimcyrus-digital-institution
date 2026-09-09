@@ -23,6 +23,7 @@ export function BookCover({
         src={src}
         alt={alt}
         fill
+        unoptimized
         sizes={sizes ?? '(max-width: 640px) 60vw, (max-width: 1024px) 30vw, 280px'}
         className="object-cover"
         priority={priority}

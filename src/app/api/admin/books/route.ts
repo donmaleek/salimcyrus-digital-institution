@@ -95,12 +95,15 @@ export async function POST(request: NextRequest) {
   const pdfBuffer = Buffer.from(await pdfFile.arrayBuffer())
   writeFileSync(bookFilePath(fileName), pdfBuffer)
 
-  const coverFileName = `${slug}.${coverExt}`
-  const publicDir = `${process.cwd()}/public/images/books`
-  mkdirSync(publicDir, { recursive: true })
+  const coverFileName = `${slug}-cover.${coverExt}`
+  // Written next to the PDF, under BOOKS_STORAGE_DIR, and served through
+  // /api/books/cover/[fileName] rather than /public: Next.js's production
+  // server only recognizes /public files present at process start, so
+  // anything written there after boot 404s until the app is restarted.
+  // This route reads from disk on every request.
   const coverBuffer = Buffer.from(await coverFile.arrayBuffer())
-  writeFileSync(`${publicDir}/${coverFileName}`, coverBuffer)
-  const coverPath = `/images/books/${coverFileName}`
+  writeFileSync(bookFilePath(coverFileName), coverBuffer)
+  const coverPath = `/api/books/cover/${coverFileName}`
 
   const book = await db.book.create({
     data: {

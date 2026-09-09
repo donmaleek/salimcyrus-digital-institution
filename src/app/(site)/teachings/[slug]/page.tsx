@@ -92,6 +92,7 @@ export default async function TeachingDetailPage({ params }: PageProps) {
                     width={800}
                     height={450}
                     priority
+                    unoptimized
                     className="h-full w-full object-cover"
                   />
                 ) : (

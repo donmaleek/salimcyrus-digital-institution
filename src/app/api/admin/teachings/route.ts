@@ -100,12 +100,16 @@ export async function POST(request: NextRequest) {
       )
     }
     const thumbExt = thumbnailFile.type === 'image/png' ? 'png' : thumbnailFile.type === 'image/jpeg' ? 'jpg' : 'webp'
-    const thumbFileName = `${slug}.${thumbExt}`
-    const publicDir = `${process.cwd()}/public/images/teachings`
-    mkdirSync(publicDir, { recursive: true })
+    const thumbFileName = `${slug}-thumb.${thumbExt}`
+    // Written next to the video, under TEACHINGS_STORAGE_DIR, and served
+    // through /api/teachings/thumbnail/[fileName] rather than /public:
+    // Next.js's production server only recognizes /public files present
+    // at process start, so anything written there after boot 404s until
+    // the app is restarted. This route reads from disk on every request.
+    mkdirSync(teachingsStorageDir(), { recursive: true })
     const thumbBuffer = Buffer.from(await thumbnailFile.arrayBuffer())
-    writeFileSync(`${publicDir}/${thumbFileName}`, thumbBuffer)
-    thumbnailPath = `/images/teachings/${thumbFileName}`
+    writeFileSync(teachingFilePath(thumbFileName), thumbBuffer)
+    thumbnailPath = `/api/teachings/thumbnail/${thumbFileName}`
   }
 
   const teaching = await db.teaching.create({

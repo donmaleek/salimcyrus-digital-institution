@@ -159,11 +159,11 @@ describe('POST /api/admin/teachings', () => {
     await POST(request(buildForm({}, { thumbnail })))
 
     expect(mockWriteFileSync).toHaveBeenCalledWith(
-      expect.stringContaining('leading-a-family.webp'),
+      expect.stringContaining('leading-a-family-thumb.webp'),
       expect.any(Buffer)
     )
     expect(mockCreate).toHaveBeenCalledWith({
-      data: expect.objectContaining({ thumbnailPath: '/images/teachings/leading-a-family.webp' }),
+      data: expect.objectContaining({ thumbnailPath: '/api/teachings/thumbnail/leading-a-family-thumb.webp' }),
     })
   })
 

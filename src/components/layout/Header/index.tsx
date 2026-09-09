@@ -18,10 +18,16 @@ export function Header() {
         <Navigation />
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="hidden min-h-11 items-center border-b border-transparent px-1 font-heading text-sm tracking-[0.06em] text-cream/80 transition-colors hover:border-gold/70 hover:text-gold-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold sm:inline-flex"
+          >
+            Login
+          </Link>
           <Button
             href="/book-now"
             size="sm"
-            className="hidden border border-gold bg-gold text-navy-900 hover:bg-gold-300 sm:inline-flex"
+            className="hidden min-h-11 border border-gold bg-gold px-5 text-navy-900 shadow-[0_8px_24px_rgba(0,0,0,0.18)] hover:bg-gold-300 sm:inline-flex"
           >
             Book Now
           </Button>

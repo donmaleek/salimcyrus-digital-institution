@@ -14,7 +14,7 @@ export function MobileNav() {
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-cream"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-navy-900/30 text-cream transition-colors hover:border-gold/60 hover:text-gold-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
       >
         <span className="sr-only">Toggle navigation</span>
         {open ? (
@@ -49,7 +49,7 @@ export function MobileNav() {
         >
           <ul className="flex flex-col divide-y divide-white/10">
             {mainNav.map((item) => (
-              <li key={item.href} className="px-6 py-3">
+              <li key={item.label} className="px-6 py-3">
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
@@ -74,6 +74,15 @@ export function MobileNav() {
                 )}
               </li>
             ))}
+            <li className="px-6 py-4">
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="flex min-h-12 items-center justify-center rounded-full border border-cream/35 px-6 font-semibold text-cream transition-colors hover:border-gold hover:text-gold-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              >
+                Login
+              </Link>
+            </li>
             <li className="px-6 py-4">
               <Link
                 href="/book-now"

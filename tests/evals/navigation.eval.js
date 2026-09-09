@@ -10,6 +10,14 @@ const header = fs.readFileSync(
   path.join(root, 'src/components/layout/Header/index.tsx'),
   'utf8'
 )
+const mobileNavigation = fs.readFileSync(
+  path.join(root, 'src/components/layout/Header/MobileNav.tsx'),
+  'utf8'
+)
+const navigationData = fs.readFileSync(
+  path.join(root, 'src/lib/data/navigation.ts'),
+  'utf8'
+)
 
 const checks = [
   [
@@ -35,6 +43,26 @@ const checks = [
   [
     'header no longer switches to a solid page background',
     !header.includes('sticky top-0') && !header.includes('bg-navy'),
+  ],
+  [
+    'related editorial destinations are consolidated under Explore',
+    navigationData.includes("label: 'Explore'") &&
+      navigationData.includes("{ label: 'Books', href: '/books' }") &&
+      navigationData.includes("{ label: 'Journal', href: '/journal' }"),
+  ],
+  [
+    'desktop and mobile navigation both expose login',
+    header.includes('href="/login"') &&
+      mobileNavigation.includes('href="/login"'),
+  ],
+  [
+    'dropdowns support keyboard focus as well as pointer hover',
+    navigation.includes('group-focus-within:visible') &&
+      navigation.includes('focus-visible:outline-gold'),
+  ],
+  [
+    'all navigation controls meet the 44px minimum touch target',
+    navigation.includes('min-h-11') && mobileNavigation.includes('h-11 w-11'),
   ],
 ]
 

@@ -13,6 +13,7 @@ export const mainNav: NavItem[] = [
       { label: 'Coaching', href: '/work-with-salim/coaching' },
       { label: 'Speaking', href: '/work-with-salim/speaking' },
       { label: 'Consulting', href: '/work-with-salim/consulting' },
+      { label: 'Ask Salim', href: '/ask-salim' },
     ],
   },
   {
@@ -23,9 +24,16 @@ export const mainNav: NavItem[] = [
       { label: 'Masterclasses', href: '/academy/masterclasses' },
     ],
   },
-  { label: 'Books', href: '/books' },
-  { label: 'Teaching Library', href: '/teachings' },
-  { label: 'Knowledge Centre', href: '/knowledge-centre' },
+  {
+    label: 'Explore',
+    href: '/knowledge-centre',
+    children: [
+      { label: 'Knowledge Centre', href: '/knowledge-centre' },
+      { label: 'Books', href: '/books' },
+      { label: 'Teaching Library', href: '/teachings' },
+      { label: 'Journal', href: '/journal' },
+    ],
+  },
   {
     label: 'Halisi Hub Connect',
     href: '/halisi-hub-connect',
@@ -35,8 +43,6 @@ export const mainNav: NavItem[] = [
       { label: 'Impact', href: '/halisi-hub-connect/impact' },
     ],
   },
-  { label: 'Journal', href: '/journal' },
-  { label: 'Ask Salim', href: '/ask-salim' },
   { label: 'Contact', href: '/contact' },
 ]
 

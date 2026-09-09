@@ -75,6 +75,49 @@ test('desktop navigation has generous spacing without wrapping', async ({
   expect(second.y).toBe(first.y)
 })
 
+test('navigation consolidates related links and gives login a clear path', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+
+  const nav = page.getByRole('navigation', { name: 'Primary' })
+  await expect(
+    nav.getByRole('link', { name: 'Explore', exact: true })
+  ).toBeVisible()
+  await expect(
+    nav.getByRole('link', { name: 'Books', exact: true })
+  ).not.toBeVisible()
+  await nav.getByRole('link', { name: 'Explore', exact: true }).focus()
+  await expect(
+    nav.getByRole('link', { name: 'Books', exact: true })
+  ).toBeVisible()
+
+  const header = page.locator('header')
+  await expect(
+    header.getByRole('link', { name: 'Login', exact: true })
+  ).toHaveAttribute('href', '/login')
+})
+
+test('mobile menu includes login and keeps booking as the primary action', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Open menu' }).click()
+
+  const nav = page.getByRole('navigation', { name: 'Mobile' })
+  await expect(
+    nav.getByRole('link', { name: 'Login', exact: true })
+  ).toBeVisible()
+  await expect(
+    nav.getByRole('link', { name: 'Book Now', exact: true })
+  ).toBeVisible()
+  await expect(
+    nav.getByRole('link', { name: 'Explore', exact: true })
+  ).toBeVisible()
+})
+
 test('keynote hero keeps Salim and primary actions visible on desktop', async ({
   page,
 }) => {

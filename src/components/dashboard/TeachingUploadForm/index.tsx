@@ -17,6 +17,7 @@ export function TeachingUploadForm() {
   const [priceUsd, setPriceUsd] = useState('')
   const [video, setVideo] = useState<File | null>(null)
   const [thumbnail, setThumbnail] = useState<File | null>(null)
+  const [preview, setPreview] = useState<File | null>(null)
   const [progress, setProgress] = useState<number | null>(null)
   const [submitting, setSubmitting] = useState<'draft' | 'published' | null>(null)
   const { showToast } = useToast()
@@ -33,6 +34,7 @@ export function TeachingUploadForm() {
       form.set('publish', String(publish))
       if (video) form.set('video', video)
       if (thumbnail) form.set('thumbnail', thumbnail)
+      if (preview) form.set('preview', preview)
 
       const xhr = new XMLHttpRequest()
       xhr.open('POST', '/api/admin/teachings')
@@ -190,6 +192,23 @@ export function TeachingUploadForm() {
           type="file"
           accept="image/webp,image/jpeg,image/png"
           onChange={(e) => setThumbnail(e.target.files?.[0] ?? null)}
+          className={fieldClass}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="teaching-preview" className="block font-semibold text-navy">
+          Preview clip <span className="font-normal text-navy-400">(optional)</span>
+        </label>
+        <p className="mt-2 text-sm text-navy-500">
+          A short teaser (10-30 seconds), MP4, WebM, or MOV. Plays muted on hover in the catalog, like a YouTube
+          preview. Never the full teaching, so it&apos;s never behind the purchase gate. Up to 100MB.
+        </p>
+        <input
+          id="teaching-preview"
+          type="file"
+          accept="video/mp4,video/webm,video/quicktime"
+          onChange={(e) => setPreview(e.target.files?.[0] ?? null)}
           className={fieldClass}
         />
       </div>

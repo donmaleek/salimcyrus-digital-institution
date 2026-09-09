@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
+import { TeachingHoverPreview } from '@/components/teachings/TeachingHoverPreview'
 import { db } from '@/lib/db'
 import { formatCurrency } from '@/lib/utils/currency'
 import { TEACHING_CATEGORIES } from '@/lib/data/teaching-categories'
@@ -71,19 +71,13 @@ export default async function TeachingsPage() {
                             href={`/teachings/${teaching.slug}`}
                             className="block aspect-video w-full overflow-hidden rounded-xl bg-navy-50 transition-transform duration-300 ease-out hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                           >
-                            {teaching.thumbnailPath ? (
-                              <Image
-                                src={teaching.thumbnailPath}
-                                alt={`${teaching.title} thumbnail`}
-                                width={400}
-                                height={225}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-full items-center justify-center font-heading text-2xl font-bold text-gold-500">
-                                SC
-                              </div>
-                            )}
+                            <TeachingHoverPreview
+                              thumbnailSrc={teaching.thumbnailPath}
+                              previewSrc={
+                                teaching.previewFileName ? `/api/teachings/preview/${teaching.previewFileName}` : null
+                              }
+                              alt={`${teaching.title} thumbnail`}
+                            />
                           </Link>
                           <div className="flex flex-1 flex-col pt-4">
                             <Link href={`/teachings/${teaching.slug}`} className="hover:underline">

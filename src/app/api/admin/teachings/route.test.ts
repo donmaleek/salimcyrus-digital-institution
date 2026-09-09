@@ -38,7 +38,10 @@ function validMeta() {
   }
 }
 
-function buildForm(overrides: Record<string, unknown> = {}, opts: { video?: File | null; thumbnail?: File } = {}) {
+function buildForm(
+  overrides: Record<string, unknown> = {},
+  opts: { video?: File | null; thumbnail?: File; preview?: File } = {}
+) {
   const form = new FormData()
   const meta = { ...validMeta(), ...overrides }
   for (const [key, value] of Object.entries(meta)) {
@@ -47,6 +50,7 @@ function buildForm(overrides: Record<string, unknown> = {}, opts: { video?: File
   const video = opts.video === null ? undefined : opts.video ?? new File([Buffer.from('fake video bytes')], 'video.mp4', { type: 'video/mp4' })
   if (video) form.set('video', video)
   if (opts.thumbnail) form.set('thumbnail', opts.thumbnail)
+  if (opts.preview) form.set('preview', opts.preview)
   return form
 }
 
@@ -172,5 +176,35 @@ describe('POST /api/admin/teachings', () => {
     const response = await POST(request(buildForm({}, { thumbnail: badThumbnail })))
     expect(response.status).toBe(400)
     expect(mockCreate).not.toHaveBeenCalled()
+  })
+
+  it('writes an accompanying preview clip when one is attached, as a separate file from the main video', async () => {
+    const preview = new File([Buffer.from('fake preview bytes')], 'teaser.mp4', { type: 'video/mp4' })
+    await POST(request(buildForm({}, { preview })))
+
+    expect(mockWriteFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('leading-a-family-preview.mp4'),
+      expect.any(Buffer)
+    )
+    expect(mockCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        videoFileName: 'leading-a-family.mp4',
+        previewFileName: 'leading-a-family-preview.mp4',
+      }),
+    })
+  })
+
+  it('rejects a preview clip with a disallowed MIME type', async () => {
+    const badPreview = new File([Buffer.from('not a real video')], 'teaser.avi', { type: 'video/x-msvideo' })
+    const response = await POST(request(buildForm({}, { preview: badPreview })))
+    expect(response.status).toBe(400)
+    expect(mockCreate).not.toHaveBeenCalled()
+  })
+
+  it('creates a teaching with no preview clip when none is attached', async () => {
+    await POST(request(buildForm()))
+    expect(mockCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({ previewFileName: null }),
+    })
   })
 })

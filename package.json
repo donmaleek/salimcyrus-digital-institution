@@ -41,6 +41,7 @@
     "eval:coaching-payments": "node tests/evals/coaching-payments.eval.js",
     "eval:admin-book-upload": "node tests/evals/admin-book-upload.eval.js",
     "eval:uploaded-image-serving": "node tests/evals/uploaded-image-serving.eval.js",
+    "eval:teaching-hover-preview": "node tests/evals/teaching-hover-preview.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

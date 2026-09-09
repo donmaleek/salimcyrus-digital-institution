@@ -19,6 +19,7 @@ const ALLOWED_THUMBNAIL_TYPES = new Set(['image/webp', 'image/jpeg', 'image/png'
 // shared with other unrelated sites, kept well below what would be
 // individually safe to leave margin for them.
 const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024 // 2GB
+const MAX_PREVIEW_BYTES = 100 * 1024 * 1024 // 100MB, a short teaser clip has no business being bigger
 
 const metaSchema = z.object({
   title: z.string().trim().min(1).max(200),
@@ -112,6 +113,25 @@ export async function POST(request: NextRequest) {
     thumbnailPath = `/api/teachings/thumbnail/${thumbFileName}`
   }
 
+  let previewFileName: string | null = null
+  const previewFile = form.get('preview')
+  if (previewFile instanceof File && previewFile.size > 0) {
+    const previewExt = ALLOWED_VIDEO_TYPES[previewFile.type]
+    if (!previewExt) {
+      return NextResponse.json({ error: 'Preview clip must be MP4, WebM, or MOV.' }, { status: 400 })
+    }
+    if (previewFile.size > MAX_PREVIEW_BYTES) {
+      return NextResponse.json({ error: 'Preview clip is too large. Keep it short.' }, { status: 413 })
+    }
+    // A separate, ungated teaser file, never the paid video itself: hovering
+    // over the catalog card streams this one (see /api/teachings/preview),
+    // so the actual purchase-gated video can never leak to a non-buyer.
+    const previewName = `${slug}-preview.${previewExt}`
+    const previewBuffer = Buffer.from(await previewFile.arrayBuffer())
+    writeFileSync(teachingFilePath(previewName), previewBuffer)
+    previewFileName = previewName
+  }
+
   const teaching = await db.teaching.create({
     data: {
       slug,
@@ -122,6 +142,7 @@ export async function POST(request: NextRequest) {
       priceUsd: parsed.data.priceUsd,
       videoFileName,
       thumbnailPath,
+      previewFileName,
       status: parsed.data.publish ? 'published' : 'draft',
     },
   })

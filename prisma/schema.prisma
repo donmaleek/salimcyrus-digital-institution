@@ -205,6 +205,11 @@ model Teaching {
   priceUsd        Int
   videoFileName   String
   thumbnailPath   String?
+  /// A short, ungated teaser clip (distinct from the purchase-gated
+  /// videoFileName) that plays on hover in the catalog grid, like a
+  /// YouTube preview. Optional: hover just shows the static thumbnail
+  /// when no preview has been uploaded.
+  previewFileName String?
   durationSeconds Int?
   status          String             @default("draft")
   createdAt       DateTime           @default(now())

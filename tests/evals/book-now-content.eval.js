@@ -17,14 +17,14 @@ const checks = [
     !experience.includes('—'),
   ],
   [
-    'desktop header is renamed to Book Now',
-    header.includes('Book Now') &&
+    'desktop header provides the booking action',
+    header.includes('Book Session Now') &&
       header.includes('href="/book-now"') &&
       !header.includes('>\n            Book\n'),
   ],
   [
-    'mobile navigation provides the Book Now action',
-    mobile.includes('Book Now') && mobile.includes('href="/book-now"'),
+    'mobile navigation provides the booking action',
+    mobile.includes('Book Session Now') && mobile.includes('href="/book-now"'),
   ],
   [
     'Book Now page renders the coaching category picker, and every priced offer across all formats has a real KES price',
@@ -39,12 +39,25 @@ const checks = [
     ),
   ],
   [
-    'page provides a fit guide matching the three Standard offers',
-    (page.match(/recommendation:/g) || []).length === 3,
+    'offer rows explain fit and outcome where the decision is made',
+    picker.includes('This session helps you') &&
+      picker.includes('You leave with:'),
   ],
   [
     'page states real prices up front, not deferred to an external checkout page',
     picker.includes('formatCurrency(offer.priceKes)'),
+  ],
+  [
+    'payment details stay hidden until a visitor selects one offer',
+    picker.includes('selectedOffer') &&
+      picker.includes('aria-expanded={isSelected}') &&
+      picker.includes('isSelected && ('),
+  ],
+  [
+    'coaching formats use accessible tabs instead of a dense select menu',
+    picker.includes('role="tablist"') &&
+      picker.includes('role="tab"') &&
+      picker.includes('aria-selected={isActive}'),
   ],
   [
     'Paystack is no longer offered as a payment method on Book Now, and priced tiers use the real checkout form',
@@ -54,7 +67,8 @@ const checks = [
   ],
   [
     'request-only tiers (outside Kenya, large groups, VIP Summit) route to the quote-request form, never a fake checkout',
-    picker.includes('CoachingQuoteRequestForm') && picker.includes('coachingRequestTiers.filter'),
+    picker.includes('CoachingQuoteRequestForm') &&
+      picker.includes('coachingRequestTiers.filter'),
   ],
   [
     'page provides coaching scope boundaries',

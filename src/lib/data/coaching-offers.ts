@@ -1,4 +1,5 @@
-export type CoachingCategorySlug = 'standard' | 'individual' | 'couples' | 'group' | 'vip-summit'
+export type CoachingCategorySlug =
+  'standard' | 'individual' | 'couples' | 'group' | 'vip-summit'
 
 export interface CoachingOffer {
   name: string
@@ -59,8 +60,11 @@ export const coachingOffers: CoachingOffer[] = [
     name: "Individual Coaching, At Salim's Location",
     category: 'individual',
     duration: "At Salim's location",
-    tagline: 'One-on-one coaching, hosted at Salim\'s own location.',
-    points: ['Full one-on-one attention.', 'Structured, distraction-free setting.'],
+    tagline: "One-on-one coaching, hosted at Salim's own location.",
+    points: [
+      'Full one-on-one attention.',
+      'Structured, distraction-free setting.',
+    ],
     outcome: 'A private session built around your exact situation.',
     priceKes: 10000,
     priceUsd: 77,
@@ -89,7 +93,7 @@ export const coachingOffers: CoachingOffer[] = [
     name: "Couples Coaching, At Salim's Location",
     category: 'couples',
     duration: "At Salim's location",
-    tagline: 'One-on-one couples coaching, hosted at Salim\'s own location.',
+    tagline: "One-on-one couples coaching, hosted at Salim's own location.",
     points: ['Both partners present.', 'A structured, neutral setting.'],
     outcome: 'A shared next step you both leave agreeing on.',
     priceKes: 20000,
@@ -109,7 +113,8 @@ export const coachingOffers: CoachingOffer[] = [
     name: 'Couples Coaching, Your Location (Kenya, Outside Mombasa)',
     category: 'couples',
     duration: 'Your location, outside Mombasa',
-    tagline: 'One-on-one couples coaching at your location, elsewhere in Kenya.',
+    tagline:
+      'One-on-one couples coaching at your location, elsewhere in Kenya.',
     points: ['Salim travels to you.', 'Same depth, wherever you are.'],
     outcome: 'A shared next step you both leave agreeing on.',
     priceKes: 35000,
@@ -120,7 +125,10 @@ export const coachingOffers: CoachingOffer[] = [
     category: 'group',
     duration: '50 to 200 people',
     tagline: 'A structured coaching session for a group or team.',
-    points: ['Built around one shared theme.', 'Practical, not just inspirational.'],
+    points: [
+      'Built around one shared theme.',
+      'Practical, not just inspirational.',
+    ],
     outcome: 'A group that leaves with the same language and next step.',
     priceKes: 150000,
     priceUsd: 1159,
@@ -132,7 +140,7 @@ export const coachingOffers: CoachingOffer[] = [
  * These never enter the payment pipeline; picking one shows a request
  * form instead of a checkout, see CoachingQuoteRequestForm. */
 export interface CoachingRequestTier {
-  category: CoachingCategorySlug
+  category: Exclude<CoachingCategorySlug, 'standard'>
   label: string
   description: string
 }
@@ -141,23 +149,26 @@ export const coachingRequestTiers: CoachingRequestTier[] = [
   {
     category: 'individual',
     label: 'Your Location, Outside Kenya',
-    description: 'International one-on-one coaching. Submit a request to discuss timing and rates.',
+    description:
+      'International one-on-one coaching. Submit a request to discuss timing and rates.',
   },
   {
     category: 'couples',
     label: 'Your Location, Outside Kenya',
-    description: 'International couples coaching. Submit a request to discuss timing and rates.',
+    description:
+      'International couples coaching. Submit a request to discuss timing and rates.',
   },
   {
     category: 'group',
     label: '200 to 1,000 People',
-    description: 'Larger group engagements. Submit a request to discuss scope and rates.',
+    description:
+      'Larger group engagements. Submit a request to discuss scope and rates.',
   },
   {
     category: 'vip-summit',
     label: 'Speaking Engagement',
     description:
-      'Conference keynotes, men\'s conferences, and summit speaking. Submit a request with your event details.',
+      "Conference keynotes, men's conferences, and summit speaking. Submit a request with your event details.",
   },
 ]
 
@@ -171,7 +182,8 @@ export const coachingCategories: CoachingCategory[] = [
   {
     slug: 'standard',
     name: 'Standard Sessions',
-    description: 'Focused, single sessions built around one question or decision.',
+    description:
+      'Focused, single sessions built around one question or decision.',
   },
   {
     slug: 'individual',

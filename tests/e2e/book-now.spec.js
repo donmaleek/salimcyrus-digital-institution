@@ -1,18 +1,21 @@
 const { test, expect } = require('@playwright/test')
 
-test('desktop header uses Book Now and opens the booking route', async ({
-  page,
-}) => {
+test('desktop header opens the booking route', async ({ page }) => {
   await page.goto('/')
 
-  const action = page.getByRole('link', { name: 'Book Now', exact: true })
+  const action = page.getByRole('link', {
+    name: 'Book Session Now',
+    exact: true,
+  })
   await expect(action).toBeVisible()
   await expect(action).toHaveAttribute('href', '/book-now')
   await action.click()
   await expect(page).toHaveURL(/\/book-now$/)
 })
 
-test('Book Now presents four selectable coaching offers', async ({ page }) => {
+test('Book Now presents an organised, progressive coaching selection flow', async ({
+  page,
+}) => {
   await page.goto('/book-now')
 
   await expect(
@@ -21,18 +24,31 @@ test('Book Now presents four selectable coaching offers', async ({ page }) => {
     })
   ).toBeVisible()
   await expect(
-    page.getByTestId('booking-offers').locator(':scope > article')
-  ).toHaveCount(4)
+    page.getByRole('tab', { name: 'Standard Sessions' })
+  ).toHaveAttribute('aria-selected', 'true')
   await expect(
-    page.getByTestId('fit-guide').locator(':scope > li')
-  ).toHaveCount(4)
+    page.getByTestId('booking-offers').locator(':scope > article')
+  ).toHaveCount(3)
   await expect(
     page.getByTestId('booking-process').locator(':scope > li')
   ).toHaveCount(4)
-  await expect(page.getByRole('link', { name: 'Book 30 min' })).toHaveAttribute(
-    'href',
-    /paystack\.com/
-  )
+  await expect(page.getByTestId('coaching-checkout-form')).toHaveCount(0)
+
+  const starter = page.getByRole('button', { name: 'Select Starter Session' })
+  await starter.click()
+  await expect(
+    page.getByRole('button', { name: 'Close payment options' })
+  ).toHaveAttribute('aria-expanded', 'true')
+  await expect(page.getByTestId('coaching-checkout-form')).toHaveCount(1)
+
+  await page.getByRole('tab', { name: 'Individual Coaching' }).click()
+  await expect(
+    page.getByRole('tab', { name: 'Individual Coaching' })
+  ).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByTestId('coaching-checkout-form')).toHaveCount(0)
+  await expect(
+    page.getByTestId('booking-offers').locator(':scope > article')
+  ).toHaveCount(4)
 })
 
 test('mobile navigation exposes Book Now', async ({ page }) => {
@@ -42,7 +58,7 @@ test('mobile navigation exposes Book Now', async ({ page }) => {
 
   const action = page
     .getByRole('navigation', { name: 'Mobile' })
-    .getByRole('link', { name: 'Book Now' })
+    .getByRole('link', { name: 'Book Session Now' })
   await expect(action).toBeVisible()
   await expect(action).toHaveAttribute('href', '/book-now')
 })

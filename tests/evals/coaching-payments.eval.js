@@ -6,6 +6,7 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 
 const offers = read('src/lib/data/coaching-offers.ts')
 const bookNowPage = read('src/app/(site)/book-now/page.tsx')
+const picker = read('src/components/payments/CoachingCategoryPicker/index.tsx')
 const confirmRoute = read('src/app/api/booking/confirm/route.ts')
 const checkoutPaypal = read('src/app/api/coaching/checkout-paypal/route.ts')
 const verifyPaypal = read('src/app/api/coaching/verify-paypal/route.ts')
@@ -24,14 +25,16 @@ const coachingSurface = [
 
 const checks = [
   [
-    'Private Coaching was removed as instructed, and every remaining offer has a real KES and USD price',
+    'Private Coaching (the old 4-8 week option) was removed as instructed and never came back, and every priced offer across every format has a real KES and USD price',
     !offers.includes("name: 'Private Coaching'") &&
-      (offers.match(/priceKes: \d+/g) || []).length === 3 &&
-      (offers.match(/priceUsd: \d+/g) || []).length === 3,
+      (offers.match(/priceKes: \d+/g) || []).length === 10 &&
+      (offers.match(/priceUsd: \d+/g) || []).length === 10,
   ],
   [
     'Book Now shows real prices directly and offers PayPal + Paybill, not a Paystack link',
-    bookNowPage.includes('CoachingCheckoutForm') && !bookNowPage.includes('offer.paystackUrl'),
+    bookNowPage.includes('CoachingCategoryPicker') &&
+      picker.includes('CoachingCheckoutForm') &&
+      !picker.includes('offer.paystackUrl'),
   ],
   [
     'coaching is not account-gated (matches donations, not books/teachings): no session required for PayPal checkout',

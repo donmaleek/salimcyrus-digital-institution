@@ -7,6 +7,8 @@ import { programs } from '@/lib/data/programs'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
 import { formatCurrency } from '@/lib/utils/currency'
 
+const standardCoachingOffers = coachingOffers.filter((offer) => offer.category === 'standard')
+
 export const metadata: Metadata = {
   title: 'Work With Salim',
   description:
@@ -227,7 +229,7 @@ export default function WorkWithSalimPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {coachingOffers.map((offer) => (
+                  {standardCoachingOffers.map((offer) => (
                     <tr
                       key={offer.name}
                       className="border-b border-navy-200 align-top"
@@ -249,6 +251,13 @@ export default function WorkWithSalimPage() {
                 </tbody>
               </table>
             </div>
+            <p className="mt-6 text-navy-600">
+              Also available: individual and couples coaching by location, group coaching, and VIP Summit speaking.{' '}
+              <Link href="/book-now#choose-session" className="font-semibold text-navy underline">
+                See all coaching formats
+              </Link>
+              .
+            </p>
 
             <div className="mt-12 grid gap-8 border-t border-navy-200 pt-10 md:grid-cols-3">
               {coachingAreas.map((area) => (

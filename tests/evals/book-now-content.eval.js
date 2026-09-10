@@ -7,8 +7,9 @@ const page = read('src/app/(site)/book-now/page.tsx')
 const header = read('src/components/layout/Header/index.tsx')
 const mobile = read('src/components/layout/Header/MobileNav.tsx')
 const offers = read('src/lib/data/coaching-offers.ts')
+const picker = read('src/components/payments/CoachingCategoryPicker/index.tsx')
 const sitemap = read('src/app/sitemap.ts')
-const experience = [page, header, mobile, offers].join('\n')
+const experience = [page, header, mobile, offers, picker].join('\n')
 
 const checks = [
   [
@@ -26,9 +27,10 @@ const checks = [
     mobile.includes('Book Now') && mobile.includes('href="/book-now"'),
   ],
   [
-    'Book Now page renders all three real-priced coaching offers, each with a real KES price',
-    page.includes('coachingOffers.map') &&
-      (offers.match(/priceKes: \d+/g) || []).length === 3,
+    'Book Now page renders the coaching category picker, and every priced offer across all formats has a real KES price',
+    page.includes('CoachingCategoryPicker') &&
+      picker.includes('coachingOffers.filter') &&
+      (offers.match(/priceKes: \d+/g) || []).length === 10,
   ],
   [
     'page explains the four-stage booking process',
@@ -37,16 +39,22 @@ const checks = [
     ),
   ],
   [
-    'page provides a fit guide matching the three real offers',
+    'page provides a fit guide matching the three Standard offers',
     (page.match(/recommendation:/g) || []).length === 3,
   ],
   [
     'page states real prices up front, not deferred to an external checkout page',
-    page.includes('formatCurrency(offer.priceKes)') && page.includes('Prices are shown below'),
+    picker.includes('formatCurrency(offer.priceKes)'),
   ],
   [
-    'Paystack is no longer offered as a payment method on Book Now',
-    !page.includes('offer.paystackUrl') && page.includes('CoachingCheckoutForm'),
+    'Paystack is no longer offered as a payment method on Book Now, and priced tiers use the real checkout form',
+    !page.includes('offer.paystackUrl') &&
+      !picker.includes('offer.paystackUrl') &&
+      picker.includes('CoachingCheckoutForm'),
+  ],
+  [
+    'request-only tiers (outside Kenya, large groups, VIP Summit) route to the quote-request form, never a fake checkout',
+    picker.includes('CoachingQuoteRequestForm') && picker.includes('coachingRequestTiers.filter'),
   ],
   [
     'page provides coaching scope boundaries',

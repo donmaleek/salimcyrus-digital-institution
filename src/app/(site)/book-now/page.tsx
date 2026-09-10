@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
-import { coachingOffers } from '@/lib/data/coaching-offers'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
-import { formatCurrency } from '@/lib/utils/currency'
-import { CoachingCheckoutForm } from '@/components/payments/CoachingCheckoutForm'
+import { CoachingCategoryPicker } from '@/components/payments/CoachingCategoryPicker'
 
 export const metadata: Metadata = {
   title: 'Book Now | Private Coaching with Salim Cyrus',
@@ -122,59 +120,15 @@ export default function BookNowPage() {
                 id="sessions-heading"
                 className="mt-3 font-heading text-3xl font-bold text-navy sm:text-4xl"
               >
-                Three ways to begin the work
+                Five ways to work with Salim
               </h2>
               <p className="mt-5 text-lg leading-8 text-navy-600">
-                Prices are shown below. Pay with PayPal, or M-Pesa Paybill with a quick review.
+                Standard sessions, one-on-one individual or couples coaching, group engagements, and speaking. Choose
+                a format below to see pricing.
               </p>
             </div>
-            <div
-              className="mt-12 grid gap-px overflow-hidden border border-navy-200 bg-navy-200 sm:grid-cols-2 lg:grid-cols-3"
-              data-testid="booking-offers"
-            >
-              {coachingOffers.map((offer, index) => (
-                <article
-                  key={offer.name}
-                  className="flex min-h-[470px] flex-col bg-white p-7 sm:p-8"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="font-heading text-sm font-bold text-gold-500">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <span className="text-xs font-bold uppercase tracking-[0.14em] text-navy-400">
-                      {offer.duration}
-                    </span>
-                  </div>
-                  <h3 className="mt-8 font-heading text-2xl font-bold text-navy">
-                    {offer.name}
-                  </h3>
-                  <p className="mt-3 leading-7 text-navy-600">
-                    {offer.tagline}
-                  </p>
-                  <ul className="mt-7 space-y-3 border-t border-navy-200 pt-6">
-                    {offer.points.map((point) => (
-                      <li
-                        key={point}
-                        className="grid grid-cols-[18px_1fr] gap-2 text-sm leading-6 text-navy-600"
-                      >
-                        <span className="text-gold-500" aria-hidden>
-                          +
-                        </span>
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-auto pt-8">
-                    <p className="mb-5 text-xs font-bold uppercase leading-5 tracking-[0.12em] text-navy-500">
-                      Outcome: {offer.outcome}
-                    </p>
-                    <p className="mb-4 font-heading text-2xl font-bold text-navy">
-                      {formatCurrency(offer.priceKes)}
-                    </p>
-                    <CoachingCheckoutForm offerName={offer.name} priceKes={offer.priceKes} priceUsd={offer.priceUsd} />
-                  </div>
-                </article>
-              ))}
+            <div className="mt-12">
+              <CoachingCategoryPicker />
             </div>
           </div>
         </section>

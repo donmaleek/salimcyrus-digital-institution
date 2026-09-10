@@ -1,7 +1,7 @@
 import { books, BOOK_MIN_PRICE_KES, BOOK_MAX_PRICE_KES } from './books'
 import { programs } from './programs'
 import { knowledgeCategories } from './knowledge-categories'
-import { coachingOffers } from './coaching-offers'
+import { coachingOffers, coachingCategories, coachingRequestTiers } from './coaching-offers'
 import { SOCIAL_LINKS } from '@/lib/utils/constants'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
@@ -83,10 +83,22 @@ describe('coaching offers data', () => {
     expect(new Set(names).size).toBe(names.length)
   })
 
-  it('every coaching offer has a checkout link', () => {
+  it('every coaching offer has a valid positive price in both KES and USD (checkout is PayPal/Paybill now, not a Paystack link)', () => {
     const broken = coachingOffers
-      .filter((offer) => !offer.paystackUrl)
+      .filter((offer) => !(offer.priceKes > 0) || !(offer.priceUsd > 0))
       .map((offer) => offer.name)
+    expect(broken).toEqual([])
+  })
+
+  it('every coaching offer belongs to one of the five published categories', () => {
+    const validSlugs = new Set(coachingCategories.map((c) => c.slug))
+    const broken = coachingOffers.filter((offer) => !validSlugs.has(offer.category)).map((offer) => offer.name)
+    expect(broken).toEqual([])
+  })
+
+  it('every request-only tier belongs to one of the five published categories', () => {
+    const validSlugs = new Set(coachingCategories.map((c) => c.slug))
+    const broken = coachingRequestTiers.filter((tier) => !validSlugs.has(tier.category)).map((tier) => tier.label)
     expect(broken).toEqual([])
   })
 })

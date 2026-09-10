@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
-import { coachingOffers } from '@/lib/data/coaching-offers'
+import { coachingOffers, coachingCategories } from '@/lib/data/coaching-offers'
 
 interface Slot {
   id: string
@@ -176,10 +176,16 @@ export function BookingConfirmForm({ prefill }: { prefill?: BookingConfirmPrefil
           disabled={Boolean(prefill)}
           className="mt-3 min-h-12 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30 disabled:bg-navy-50 disabled:text-navy-500"
         >
-          {coachingOffers.map((offer) => (
-            <option key={offer.name} value={offer.name}>
-              {offer.name}
-            </option>
+          {coachingCategories.map((category) => (
+            <optgroup key={category.slug} label={category.name}>
+              {coachingOffers
+                .filter((offer) => offer.category === category.slug)
+                .map((offer) => (
+                  <option key={offer.name} value={offer.name}>
+                    {offer.name}
+                  </option>
+                ))}
+            </optgroup>
           ))}
         </select>
         {slotsError && (

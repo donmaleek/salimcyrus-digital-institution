@@ -38,7 +38,10 @@ const checks = [
     page.includes("formatCurrency(program.priceKes, 'KES')") &&
       page.includes("formatCurrency(program.priceUsd, 'USD')"),
   ],
-  ['all coaching formats are rendered', page.includes('coachingOffers.map')],
+  [
+    'Standard coaching formats are rendered, with a link out to the full category picker for Individual/Couples/Group/VIP Summit',
+    page.includes('standardCoachingOffers.map') && page.includes('/book-now#choose-session'),
+  ],
   ['five-step method is rendered', page.includes('coachingProcess.map')],
   [
     'page has clear contact routes',

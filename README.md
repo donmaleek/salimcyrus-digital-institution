@@ -95,6 +95,19 @@ Mission support at `/support-the-mission` offers three routes:
 - PayPal displays the confirmed recipient email. Replace this instruction with a tested
   PayPal Business payment link when one has been created in the account dashboard.
 
+### Private alignment sessions
+
+The coaching catalog includes two focused, confidential pathways:
+
+- `/work-with-salim/coaching/identity-life-alignment`
+- `/work-with-salim/coaching/single-motherhood-life-alignment`
+
+Their shared editorial content lives in `src/lib/data/alignment-sessions.ts`. Both pages
+lead into the existing private-session booking flow and provide WhatsApp as a lower-pressure
+way to ask a confidential question before booking. They are coaching and structured
+reflection services, not clinical treatment; keep the scope-of-support statement intact
+when editing either pathway.
+
 The public contact, booking, newsletter, Ask Salim, and Paystack webhook routes now
 feed the native Business CRM. Resend and WhatsApp sending remain disabled until the
 official credentials, consent rules, and approved templates are configured.

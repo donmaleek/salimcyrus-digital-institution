@@ -12,6 +12,8 @@ const staticRoutes = [
   '/book-now',
   '/work-with-salim',
   '/work-with-salim/coaching',
+  '/work-with-salim/coaching/identity-life-alignment',
+  '/work-with-salim/coaching/single-motherhood-life-alignment',
   '/work-with-salim/speaking',
   '/work-with-salim/consulting',
   '/academy',

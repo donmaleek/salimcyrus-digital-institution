@@ -7,6 +7,7 @@ import { CoachingPackageCard } from '@/components/sections/coaching/CoachingPack
 import { PricingTable } from '@/components/sections/coaching/PricingTable'
 import { coachingProcess, coachingStats, coachingFaqs } from '@/lib/data/coaching-offers'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
+import { alignmentSessions } from '@/lib/data/alignment-sessions'
 
 export const metadata: Metadata = {
   title: 'Coaching',
@@ -87,6 +88,42 @@ export default function CoachingPage() {
           <div className="grid gap-6 sm:grid-cols-3">
             {packages.map((pkg) => (
               <CoachingPackageCard key={pkg.title} title={pkg.title} topics={pkg.topics} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white" aria-labelledby="alignment-heading">
+        <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
+          <div className="grid gap-8 border-b border-navy-200 pb-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-gold-600">
+                Private Alignment Sessions
+              </p>
+              <h2 id="alignment-heading" className="mt-4 text-balance font-heading text-3xl font-bold text-navy sm:text-4xl">
+                Some conversations need a more specific door.
+              </h2>
+            </div>
+            <p className="max-w-2xl text-lg leading-8 text-navy-600 lg:pt-8">
+              Two focused one-on-one pathways for personal questions that deserve privacy, dignity, and careful attention.
+            </p>
+          </div>
+          <div className="grid lg:grid-cols-2">
+            {alignmentSessions.map((session, index) => (
+              <article
+                key={session.slug}
+                className={`py-10 lg:py-12 ${index === 0 ? 'border-b border-navy-200 lg:border-b-0 lg:border-r lg:pr-12' : 'lg:pl-12'}`}
+              >
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-gold-600">Confidential · One-on-one</p>
+                <h3 className="mt-4 text-balance font-heading text-3xl font-bold text-navy">{session.shortTitle}</h3>
+                <p className="mt-5 max-w-xl leading-7 text-navy-600">{session.description}</p>
+                <a
+                  href={`/work-with-salim/coaching/${session.slug}`}
+                  className="mt-7 inline-flex min-h-11 items-center border-b border-gold-500 font-bold text-navy transition-colors hover:text-gold-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                >
+                  Explore this private pathway <span className="ml-2" aria-hidden>→</span>
+                </a>
+              </article>
             ))}
           </div>
         </div>

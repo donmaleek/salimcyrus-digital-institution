@@ -27,6 +27,10 @@ const HERO_VISUALS: Record<string, string> = {
   'Ask Salim': '/images/salim/coaching-hero.webp',
   Contact: '/images/salim/coaching-hero.webp',
   'Private Coaching': '/images/salim/coaching-hero.webp',
+  'Identity & Life Alignment':
+    '/images/alignment/identity-life-alignment-hero.webp',
+  'Single Motherhood & Life Alignment':
+    '/images/alignment/single-motherhood-life-alignment-hero.webp',
   FAQ: '/images/salim/coaching-hero.webp',
   Legal: '/images/salim/knowledge-hero.webp',
   Media: '/images/salim/media-hero.webp',

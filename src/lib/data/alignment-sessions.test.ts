@@ -33,4 +33,10 @@ describe('alignment sessions', () => {
   it('does not resolve an unknown public route', () => {
     expect(getAlignmentSession('unknown')).toBeUndefined()
   })
+
+  it('gives each route a unique hero lookup key', () => {
+    expect(new Set(alignmentSessions.map(({ eyebrow }) => eyebrow)).size).toBe(
+      alignmentSessions.length
+    )
+  })
 })

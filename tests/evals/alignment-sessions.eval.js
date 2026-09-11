@@ -8,6 +8,7 @@ const catalog = read('src/lib/data/alignment-sessions.ts')
 const detail = read('src/app/(site)/work-with-salim/coaching/[slug]/page.tsx')
 const coaching = read('src/app/(site)/work-with-salim/coaching/page.tsx')
 const sitemap = read('src/app/sitemap.ts')
+const heroVisuals = read('src/lib/data/hero-visuals.ts')
 const sessionSlugs = [
   'identity-life-alignment',
   'single-motherhood-life-alignment',
@@ -29,6 +30,39 @@ const checks = [
     ['Who this is for', 'What we explore', 'The Salim Cyrus approach', 'A defining principle', 'Book a Private Session'].every((text) =>
       detail.includes(text)
     ),
+  ],
+  [
+    'both detail pages use the shared full-bleed hero with distinct content-specific images',
+    detail.includes('<PageHero') &&
+      heroVisuals.includes('identity-life-alignment-hero.webp') &&
+      heroVisuals.includes('single-motherhood-life-alignment-hero.webp') &&
+      fs.existsSync(
+        path.join(
+          root,
+          'public/images/alignment/identity-life-alignment-hero.webp'
+        )
+      ) &&
+      fs.existsSync(
+        path.join(
+          root,
+          'public/images/alignment/single-motherhood-life-alignment-hero.webp'
+        )
+      ),
+  ],
+  [
+    'each alignment hero has a mobile-specific crop',
+    fs.existsSync(
+      path.join(
+        root,
+        'public/images/alignment/identity-life-alignment-hero-mobile.webp'
+      )
+    ) &&
+      fs.existsSync(
+        path.join(
+          root,
+          'public/images/alignment/single-motherhood-life-alignment-hero-mobile.webp'
+        )
+      ),
   ],
   [
     'the identity pathway expressly rejects coercion and points serious mental-health needs to licensed care',

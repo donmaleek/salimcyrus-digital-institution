@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
+import { PageHero } from '@/components/layout/PageHero'
 import { JsonLd } from '@/components/sections/shared/SEO'
 import {
   alignmentProcess,
@@ -44,43 +45,25 @@ export default function AlignmentSessionPage({ params }: AlignmentSessionPagePro
     <main id="main-content">
       <JsonLd data={serviceJsonLd} />
 
-      <section className="relative overflow-hidden bg-navy text-cream">
-        <div className="absolute inset-y-0 right-0 hidden w-[38%] border-l border-white/10 lg:block" aria-hidden />
-        <div className="absolute right-[12%] top-20 hidden h-52 w-px bg-gold/60 lg:block" aria-hidden />
-        <div className="mx-auto grid min-h-[620px] max-w-content items-end gap-14 px-6 pb-16 pt-32 sm:pb-20 lg:grid-cols-[1.35fr_0.65fr] lg:pb-24">
-          <div>
-            <a
-              href="/work-with-salim/coaching"
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-cream/70 underline decoration-gold/70 underline-offset-4 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-            >
-              Private Coaching
-            </a>
-            <p className="mt-14 text-sm font-bold uppercase tracking-[0.22em] text-gold">
-              {session.eyebrow}
-            </p>
-            <h1 className="mt-5 max-w-4xl text-balance font-heading text-5xl font-bold leading-[1.06] sm:text-6xl lg:text-7xl">
-              {session.title}
-            </h1>
-            <p className="mt-7 max-w-3xl text-pretty text-lg leading-8 text-cream/75 sm:text-xl">
-              {session.description}
-            </p>
-            <div className="mt-9 flex flex-wrap gap-4">
-              <Button href="/book-now#choose-session" size="lg">
-                Book a Private Session
-              </Button>
-              <Button href={WHATSAPP_URL} variant="outline-inverse" size="lg">
-                Ask Confidentially
-              </Button>
-            </div>
-          </div>
-          <aside className="border-t border-gold/60 pt-7 lg:mb-2" aria-label="Session assurance">
-            <p className="font-heading text-2xl leading-9 text-white">Private. Respectful. Personal.</p>
-            <p className="mt-4 max-w-sm leading-7 text-cream/65">
-              You do not need to arrive with every answer. Begin with the question you are carrying.
-            </p>
-          </aside>
-        </div>
-      </section>
+      <PageHero
+        eyebrow={session.eyebrow}
+        title={session.title}
+        description={session.description}
+        actions={
+          <>
+            <Button href="/book-now#choose-session" size="lg">
+              Book a Private Session
+            </Button>
+            <Button href={WHATSAPP_URL} variant="outline-inverse" size="lg">
+              Ask Confidentially
+            </Button>
+          </>
+        }
+      >
+        <p className="mt-7 border-t border-gold/60 pt-5 font-heading text-xl text-white">
+          Private. Respectful. Personal.
+        </p>
+      </PageHero>
 
       <section className="bg-white" aria-labelledby="who-heading">
         <div className="mx-auto grid max-w-content gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">

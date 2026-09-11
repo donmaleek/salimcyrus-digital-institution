@@ -108,6 +108,10 @@ way to ask a confidential question before booking. They are coaching and structu
 reflection services, not clinical treatment; keep the scope-of-support statement intact
 when editing either pathway.
 
+Each pathway has a distinct desktop and mobile hero under `public/images/alignment/`.
+Those generated WebP assets are tracked with Git LFS and resolved through the shared
+`PageHero` image registry in `src/lib/data/hero-visuals.ts`.
+
 The public contact, booking, newsletter, Ask Salim, and Paystack webhook routes now
 feed the native Business CRM. Resend and WhatsApp sending remain disabled until the
 official credentials, consent rules, and approved templates are configured.

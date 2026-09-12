@@ -51,6 +51,27 @@ test('Book Now presents an organised, progressive coaching selection flow', asyn
   ).toHaveCount(4)
 })
 
+test('Identity & Life Alignment opens its KES 18,000 checkout directly', async ({
+  page,
+}) => {
+  await page.goto('/work-with-salim/coaching/identity-life-alignment')
+  await page.getByRole('link', { name: 'Book a Private Session' }).first().click()
+
+  await expect(page).toHaveURL(
+    /\/book-now\?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session$/
+  )
+  await expect(
+    page.getByRole('tab', { name: 'Individual Coaching' })
+  ).toHaveAttribute('aria-selected', 'true')
+
+  const offer = page
+    .getByTestId('booking-offers')
+    .getByRole('heading', { name: 'Identity & Life Alignment Session' })
+    .locator('xpath=ancestor::article')
+  await expect(offer).toContainText('KES 18,000')
+  await expect(offer.getByTestId('coaching-checkout-form')).toHaveCount(1)
+})
+
 test('mobile navigation exposes Book Now', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/book-now')

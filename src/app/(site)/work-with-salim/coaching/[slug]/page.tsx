@@ -32,6 +32,11 @@ export default function AlignmentSessionPage({ params }: AlignmentSessionPagePro
   const session = getAlignmentSession(params.slug)
   if (!session) notFound()
 
+  const bookingHref =
+    session.slug === 'identity-life-alignment'
+      ? '/book-now?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session'
+      : '/book-now#choose-session'
+
   const serviceJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -51,7 +56,7 @@ export default function AlignmentSessionPage({ params }: AlignmentSessionPagePro
         description={session.description}
         actions={
           <>
-            <Button href="/book-now#choose-session" size="lg">
+            <Button href={bookingHref} size="lg">
               Book a Private Session
             </Button>
             <Button href={WHATSAPP_URL} variant="outline-inverse" size="lg">
@@ -144,7 +149,7 @@ export default function AlignmentSessionPage({ params }: AlignmentSessionPagePro
             <h2 id="private-session-heading" className="mt-4 max-w-3xl text-balance font-heading text-4xl font-bold text-navy sm:text-5xl">You do not have to have everything figured out before you begin.</h2>
           </div>
           <div className="flex flex-wrap gap-3 lg:justify-end">
-            <Button href="/book-now#choose-session" variant="primary" size="lg">Book a Private Session</Button>
+            <Button href={bookingHref} variant="primary" size="lg">Book a Private Session</Button>
             <Button href={WHATSAPP_URL} variant="outline" size="lg">Ask a Question</Button>
           </div>
         </div>

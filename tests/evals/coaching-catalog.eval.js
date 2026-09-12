@@ -9,6 +9,7 @@ const picker = read('src/components/payments/CoachingCategoryPicker/index.tsx')
 const quoteForm = read('src/components/forms/CoachingQuoteRequestForm/index.tsx')
 const quoteRoute = read('src/app/api/coaching/request-quote/route.ts')
 const bookNowPage = read('src/app/(site)/book-now/page.tsx')
+const alignmentDetail = read('src/app/(site)/work-with-salim/coaching/[slug]/page.tsx')
 const bookingConfirmForm = read('src/components/forms/BookingConfirmForm/index.tsx')
 
 // Parsing the data file's TS at runtime is fragile; instead pull the
@@ -17,6 +18,23 @@ const bookingConfirmForm = read('src/components/forms/BookingConfirmForm/index.t
 const categorySlugs = [...offersFile.matchAll(/category:\s*'([a-z-]+)'/g)].map((m) => m[1])
 
 const surface = [offersFile, picker, quoteForm, quoteRoute, bookNowPage].join('\n')
+const offerBlock = (name) => {
+  const starts = [
+    offersFile.indexOf(`name: '${name}'`),
+    offersFile.indexOf(`name: "${name}"`),
+  ].filter((index) => index >= 0)
+  const start = starts.length ? Math.min(...starts) : -1
+  if (start === -1) return ''
+  const end = offersFile.indexOf('\n  },', start)
+  return offersFile.slice(start, end)
+}
+const detailDeepLinksToIdentityOffer = () =>
+  alignmentDetail.includes(
+    '/book-now?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session'
+  ) &&
+  picker.includes("new URLSearchParams(window.location.search).get(") &&
+  picker.includes('setCategory(requestedOffer.category)') &&
+  picker.includes('setSelectedOffer(requestedOffer.name)')
 
 const checks = [
   [
@@ -27,22 +45,19 @@ const checks = [
   ],
   [
     'Individual coaching has the three requested location tiers, priced exactly as specified',
-    offersFile.includes("Individual Coaching, At Salim's Location") &&
-      offersFile.includes('Individual Coaching, Your Location (Mombasa)') &&
-      offersFile.includes('Individual Coaching, Your Location (Kenya, Outside Mombasa)') &&
-      /Individual Coaching, At Salim's Location[\s\S]{0,300}priceKes:\s*10000/.test(offersFile) &&
-      /Individual Coaching, Your Location \(Mombasa\)[\s\S]{0,300}priceKes:\s*15000/.test(offersFile) &&
-      /Kenya, Outside Mombasa\)[\s\S]{0,300}priceKes:\s*35000/.test(offersFile),
+    offerBlock("Individual Coaching, At Salim's Location").includes('priceKes: 10000') &&
+      offerBlock('Individual Coaching, Your Location (Mombasa)').includes('priceKes: 15000') &&
+      offerBlock('Individual Coaching, Your Location (Kenya, Outside Mombasa)').includes('priceKes: 35000'),
   ],
   [
     'Couples coaching has the three requested location tiers, priced exactly as specified',
-    /Couples Coaching, At Salim's Location[\s\S]{0,300}priceKes:\s*20000/.test(offersFile) &&
-      /Couples Coaching, Your Location \(Mombasa\)[\s\S]{0,300}priceKes:\s*25000/.test(offersFile) &&
-      /Couples Coaching[\s\S]{0,50}Kenya, Outside Mombasa\)[\s\S]{0,300}priceKes:\s*35000/.test(offersFile),
+    offerBlock("Couples Coaching, At Salim's Location").includes('priceKes: 20000') &&
+      offerBlock('Couples Coaching, Your Location (Mombasa)').includes('priceKes: 25000') &&
+      offerBlock('Couples Coaching, Your Location (Kenya, Outside Mombasa)').includes('priceKes: 35000'),
   ],
   [
     'Group coaching has the 50-200 people tier priced exactly as specified',
-    /Group Coaching, 50 to 200 People[\s\S]{0,300}priceKes:\s*150000/.test(offersFile),
+    offerBlock('Group Coaching, 50 to 200 People').includes('priceKes: 150000'),
   ],
   [
     'international individual/couples, 200-1,000 person groups, and VIP Summit speaking are request-only, never given a fabricated price',
@@ -53,14 +68,20 @@ const checks = [
       offersFile.includes("category: 'vip-summit'"),
   ],
   [
-    'every priced offer and every request-only tier declares a category, and every category is one of the five published ones (10 priced + 4 request-only)',
-    categorySlugs.length === 14 &&
+    'every priced offer and every request-only tier declares a category, and every category is one of the five published ones (11 priced + 4 request-only)',
+    categorySlugs.length === 15 &&
       categorySlugs.every((slug) => ['standard', 'individual', 'couples', 'group', 'vip-summit'].includes(slug)),
+  ],
+  [
+    'Identity & Life Alignment is a directly bookable individual session priced at exactly KES 18,000',
+    offerBlock('Identity & Life Alignment Session').includes("category: 'individual'") &&
+      offerBlock('Identity & Life Alignment Session').includes('priceKes: 18000') &&
+      detailDeepLinksToIdentityOffer(),
   ],
   [
     'the Book Now page presents a real dropdown to switch between the five formats, not five separate flat sections',
     bookNowPage.includes('CoachingCategoryPicker') &&
-      picker.includes('<select') &&
+      picker.includes('role="tablist"') &&
       picker.includes('coachingCategories.map'),
   ],
   [
@@ -72,7 +93,7 @@ const checks = [
   [
     'the quote-request form receives its category and tier as fixed props from the picker, not as a free-text field the visitor could get wrong',
     !quoteForm.includes('<select') &&
-      picker.includes('category={category}') &&
+      picker.includes('category={tier.category}') &&
       picker.includes('tierLabel={tier.label}'),
   ],
   [

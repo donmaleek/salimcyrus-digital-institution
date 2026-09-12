@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   coachingCategories,
   coachingOffers,
@@ -14,6 +14,19 @@ import { CoachingQuoteRequestForm } from '@/components/forms/CoachingQuoteReques
 export function CoachingCategoryPicker() {
   const [category, setCategory] = useState<CoachingCategorySlug>('standard')
   const [selectedOffer, setSelectedOffer] = useState<string | null>(null)
+
+  useEffect(() => {
+    const requestedOfferName = new URLSearchParams(window.location.search).get(
+      'offer'
+    )
+    const requestedOffer = coachingOffers.find(
+      (offer) => offer.name === requestedOfferName
+    )
+    if (!requestedOffer) return
+
+    setCategory(requestedOffer.category)
+    setSelectedOffer(requestedOffer.name)
+  }, [])
 
   const activeCategory = coachingCategories.find(
     (item) => item.slug === category

@@ -90,6 +90,20 @@ export const coachingOffers: CoachingOffer[] = [
     priceUsd: 270,
   },
   {
+    name: 'Identity & Life Alignment Session',
+    category: 'individual',
+    duration: 'Private one-on-one session',
+    tagline:
+      'A confidential conversation for clarity around identity, relationships, values, faith, and personal direction.',
+    points: [
+      'Explore the question you are carrying without shame or pressure.',
+      'Identify a clear, values-aligned next step.',
+    ],
+    outcome: 'Greater clarity, conviction, and direction for what comes next.',
+    priceKes: 18000,
+    priceUsd: 139,
+  },
+  {
     name: "Couples Coaching, At Salim's Location",
     category: 'couples',
     duration: "At Salim's location",

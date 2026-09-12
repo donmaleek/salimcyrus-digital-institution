@@ -65,7 +65,9 @@ const checks = [
   ],
   [
     'dropdowns support keyboard focus as well as pointer hover',
-    navigation.includes('group-focus-within:visible') &&
+    navigation.includes('onFocus={() =>') &&
+      navigation.includes("event.key === 'Escape'") &&
+      navigation.includes('tabIndex={isOpen ? 0 : -1}') &&
       navigation.includes('focus-visible:outline-gold'),
   ],
   [

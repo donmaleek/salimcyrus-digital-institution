@@ -68,9 +68,9 @@ export default function BookNowPage() {
                 </h2>
               </div>
               <p className="max-w-2xl text-lg leading-8 text-navy-600 lg:pt-8">
-                Start with the kind of support you need. Compare the available
-                options, select one, then choose how to pay. Only the payment
-                details for your choice will open.
+                Three simple steps: choose the kind of help you need, choose a
+                session, then choose how to pay. Every price is shown before
+                payment.
               </p>
             </div>
             <div className="mt-8">

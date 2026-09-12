@@ -1,5 +1,10 @@
 export type CoachingCategorySlug =
-  'standard' | 'individual' | 'couples' | 'group' | 'vip-summit'
+  | 'standard'
+  | 'identity-alignment'
+  | 'individual'
+  | 'couples'
+  | 'group'
+  | 'vip-summit'
 
 export interface CoachingOffer {
   name: string
@@ -91,7 +96,7 @@ export const coachingOffers: CoachingOffer[] = [
   },
   {
     name: 'Identity & Life Alignment Session',
-    category: 'individual',
+    category: 'identity-alignment',
     duration: 'Private one-on-one session',
     tagline:
       'A confidential conversation for clarity around identity, relationships, values, faith, and personal direction.',
@@ -198,6 +203,12 @@ export const coachingCategories: CoachingCategory[] = [
     name: 'Standard Sessions',
     description:
       'Focused, single sessions built around one question or decision.',
+  },
+  {
+    slug: 'identity-alignment',
+    name: 'Identity & Life Alignment',
+    description:
+      'A confidential one-on-one session for identity, relationships, values, faith, and personal direction.',
   },
   {
     slug: 'individual',

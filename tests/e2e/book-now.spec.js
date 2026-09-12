@@ -61,7 +61,7 @@ test('Identity & Life Alignment opens its KES 18,000 checkout directly', async (
     /\/book-now\?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session$/
   )
   await expect(
-    page.getByRole('tab', { name: 'Individual Coaching' })
+    page.getByRole('tab', { name: 'Identity & Life Alignment' })
   ).toHaveAttribute('aria-selected', 'true')
 
   const offer = page

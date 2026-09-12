@@ -38,8 +38,8 @@ const detailDeepLinksToIdentityOffer = () =>
 
 const checks = [
   [
-    'all five categories from the request are represented: Standard, Individual, Couples, Group, VIP Summit',
-    ['standard', 'individual', 'couples', 'group', 'vip-summit'].every((slug) =>
+    'all six booking categories are represented: Standard, Identity & Life Alignment, Individual, Couples, Group, VIP Summit',
+    ['standard', 'identity-alignment', 'individual', 'couples', 'group', 'vip-summit'].every((slug) =>
       offersFile.includes(`slug: '${slug}'`)
     ),
   ],
@@ -68,18 +68,19 @@ const checks = [
       offersFile.includes("category: 'vip-summit'"),
   ],
   [
-    'every priced offer and every request-only tier declares a category, and every category is one of the five published ones (11 priced + 4 request-only)',
+    'every priced offer and every request-only tier declares a category, and every category is one of the six published ones (11 priced + 4 request-only)',
     categorySlugs.length === 15 &&
-      categorySlugs.every((slug) => ['standard', 'individual', 'couples', 'group', 'vip-summit'].includes(slug)),
+      categorySlugs.every((slug) => ['standard', 'identity-alignment', 'individual', 'couples', 'group', 'vip-summit'].includes(slug)),
   ],
   [
-    'Identity & Life Alignment is a directly bookable individual session priced at exactly KES 18,000',
-    offerBlock('Identity & Life Alignment Session').includes("category: 'individual'") &&
+    'Identity & Life Alignment has its own booking category and is priced at exactly KES 18,000',
+    offersFile.includes("slug: 'identity-alignment'") &&
+      offerBlock('Identity & Life Alignment Session').includes("category: 'identity-alignment'") &&
       offerBlock('Identity & Life Alignment Session').includes('priceKes: 18000') &&
       detailDeepLinksToIdentityOffer(),
   ],
   [
-    'the Book Now page presents a real dropdown to switch between the five formats, not five separate flat sections',
+    'the Book Now page presents tabs to switch between the six formats, not six separate flat sections',
     bookNowPage.includes('CoachingCategoryPicker') &&
       picker.includes('role="tablist"') &&
       picker.includes('coachingCategories.map'),

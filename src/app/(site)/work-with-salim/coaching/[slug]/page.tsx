@@ -32,10 +32,12 @@ export default function AlignmentSessionPage({ params }: AlignmentSessionPagePro
   const session = getAlignmentSession(params.slug)
   if (!session) notFound()
 
-  const bookingHref =
-    session.slug === 'identity-life-alignment'
-      ? '/book-now?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session'
-      : '/book-now#choose-session'
+  const bookingHref = {
+    'identity-life-alignment':
+      '/book-now?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session',
+    'single-motherhood-life-alignment':
+      '/book-now?offer=Single%20Motherhood%20%26%20Life%20Alignment%20Session#choose-session',
+  }[session.slug]
 
   const serviceJsonLd = {
     '@context': 'https://schema.org',

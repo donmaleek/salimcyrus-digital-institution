@@ -9,6 +9,8 @@ const MESSAGE_PLACEHOLDER: Record<CoachingCategorySlug, string> = {
   standard: 'Tell us what you are planning and how we can help.',
   'identity-alignment':
     'Tell us what you would like clarity and direction on before booking.',
+  'single-motherhood-alignment':
+    'Tell us what you would like support and direction on before booking.',
   individual: 'Tell us your country and city, and the dates that work for you.',
   couples: 'Tell us your country and city, and the dates that work for both of you.',
   group: 'Tell us the group size, the occasion, and your preferred dates.',

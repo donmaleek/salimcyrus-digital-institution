@@ -77,8 +77,9 @@ const checks = [
     ),
   ],
   [
-    'the pages provide both direct booking and a lower-pressure confidential enquiry route',
-    detail.includes('/book-now#choose-session') &&
+    'both pages deep-link to their exact booking offer and retain a lower-pressure confidential enquiry route',
+    detail.includes('/book-now?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session') &&
+      detail.includes('/book-now?offer=Single%20Motherhood%20%26%20Life%20Alignment%20Session#choose-session') &&
       detail.includes('Ask Confidentially') &&
       detail.includes('WHATSAPP_URL'),
   ],

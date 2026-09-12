@@ -1,6 +1,7 @@
 export type CoachingCategorySlug =
   | 'standard'
   | 'identity-alignment'
+  | 'single-motherhood-alignment'
   | 'individual'
   | 'couples'
   | 'group'
@@ -109,6 +110,20 @@ export const coachingOffers: CoachingOffer[] = [
     priceUsd: 139,
   },
   {
+    name: 'Single Motherhood & Life Alignment Session',
+    category: 'single-motherhood-alignment',
+    duration: 'Private one-on-one session',
+    tagline:
+      'A confidential space for healing, relationships, boundaries, motherhood, purpose, and a thoughtful future.',
+    points: [
+      'Work through the realities you are carrying without losing sight of yourself.',
+      'Choose practical next steps for your wellbeing, relationships, children, and future.',
+    ],
+    outcome: 'A clearer, healthier direction for the woman and mother you are becoming.',
+    priceKes: 25000,
+    priceUsd: 193,
+  },
+  {
     name: "Couples Coaching, At Salim's Location",
     category: 'couples',
     duration: "At Salim's location",
@@ -209,6 +224,12 @@ export const coachingCategories: CoachingCategory[] = [
     name: 'Identity & Life Alignment',
     description:
       'A confidential one-on-one session for identity, relationships, values, faith, and personal direction.',
+  },
+  {
+    slug: 'single-motherhood-alignment',
+    name: 'Single Motherhood & Life Alignment',
+    description:
+      'A confidential one-on-one session for healing, boundaries, relationships, motherhood, purpose, and the future.',
   },
   {
     slug: 'individual',

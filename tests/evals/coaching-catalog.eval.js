@@ -38,8 +38,8 @@ const detailDeepLinksToIdentityOffer = () =>
 
 const checks = [
   [
-    'all six booking categories are represented: Standard, Identity & Life Alignment, Individual, Couples, Group, VIP Summit',
-    ['standard', 'identity-alignment', 'individual', 'couples', 'group', 'vip-summit'].every((slug) =>
+    'all seven booking categories are represented, including both Life Alignment pathways',
+    ['standard', 'identity-alignment', 'single-motherhood-alignment', 'individual', 'couples', 'group', 'vip-summit'].every((slug) =>
       offersFile.includes(`slug: '${slug}'`)
     ),
   ],
@@ -68,9 +68,9 @@ const checks = [
       offersFile.includes("category: 'vip-summit'"),
   ],
   [
-    'every priced offer and every request-only tier declares a category, and every category is one of the six published ones (11 priced + 4 request-only)',
-    categorySlugs.length === 15 &&
-      categorySlugs.every((slug) => ['standard', 'identity-alignment', 'individual', 'couples', 'group', 'vip-summit'].includes(slug)),
+    'every priced offer and every request-only tier declares a category, and every category is one of the seven published ones (12 priced + 4 request-only)',
+    categorySlugs.length === 16 &&
+      categorySlugs.every((slug) => ['standard', 'identity-alignment', 'single-motherhood-alignment', 'individual', 'couples', 'group', 'vip-summit'].includes(slug)),
   ],
   [
     'Identity & Life Alignment has its own booking category and is priced at exactly KES 18,000',
@@ -80,7 +80,14 @@ const checks = [
       detailDeepLinksToIdentityOffer(),
   ],
   [
-    'the Book Now page presents tabs to switch between the six formats, not six separate flat sections',
+    'Single Motherhood & Life Alignment has its own booking category and is priced at exactly KES 25,000',
+    offersFile.includes("slug: 'single-motherhood-alignment'") &&
+      offerBlock('Single Motherhood & Life Alignment Session').includes("category: 'single-motherhood-alignment'") &&
+      offerBlock('Single Motherhood & Life Alignment Session').includes('priceKes: 25000') &&
+      alignmentDetail.includes('/book-now?offer=Single%20Motherhood%20%26%20Life%20Alignment%20Session#choose-session'),
+  ],
+  [
+    'the Book Now page presents tabs to switch between the seven formats, not seven separate flat sections',
     bookNowPage.includes('CoachingCategoryPicker') &&
       picker.includes('role="tablist"') &&
       picker.includes('coachingCategories.map'),

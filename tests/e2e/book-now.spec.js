@@ -72,6 +72,29 @@ test('Identity & Life Alignment opens its KES 18,000 checkout directly', async (
   await expect(offer.getByTestId('coaching-checkout-form')).toHaveCount(1)
 })
 
+test('Single Motherhood & Life Alignment opens its KES 25,000 checkout directly', async ({
+  page,
+}) => {
+  await page.goto('/work-with-salim/coaching/single-motherhood-life-alignment')
+  await page.getByRole('link', { name: 'Book a Private Session' }).first().click()
+
+  await expect(page).toHaveURL(
+    /\/book-now\?offer=Single%20Motherhood%20%26%20Life%20Alignment%20Session#choose-session$/
+  )
+  await expect(
+    page.getByRole('tab', { name: 'Single Motherhood & Life Alignment' })
+  ).toHaveAttribute('aria-selected', 'true')
+
+  const offer = page
+    .getByTestId('booking-offers')
+    .getByRole('heading', {
+      name: 'Single Motherhood & Life Alignment Session',
+    })
+    .locator('xpath=ancestor::article')
+  await expect(offer).toContainText('KES 25,000')
+  await expect(offer.getByTestId('coaching-checkout-form')).toHaveCount(1)
+})
+
 test('mobile navigation exposes Book Now', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/book-now')

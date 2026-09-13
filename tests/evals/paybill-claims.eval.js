@@ -15,6 +15,8 @@ const claimForm = read('src/components/payments/PaybillClaimForm/index.tsx')
 const bookCheckout = read('src/components/payments/BookCheckoutForm/index.tsx')
 const teachingCheckout = read('src/components/payments/TeachingCheckoutForm/index.tsx')
 const donationOptions = read('src/components/payments/DonationPaymentOptions/index.tsx')
+const webhookRoute = read('src/app/api/payments/webhook/route.ts')
+const myBooksDownloadRoute = read('src/app/api/books/my-purchases/[purchaseId]/download/route.ts')
 
 const paybillSurface = [
   schema.slice(schema.indexOf('model PaymentClaim')),
@@ -104,6 +106,36 @@ const checks = [
   [
     'the Paybill claim surface contains no em dash characters',
     !paybillSurface.includes('—'),
+  ],
+  [
+    'approving a Paybill book claim mints a download grant and emails the link, exactly like the Paystack webhook does for the same purchase type (regression: an admin-approved Paybill book purchase used to leave the buyer with a recorded purchase but no way to download it)',
+    (() => {
+      const bookBranch = service.slice(
+        service.indexOf("if (claim.offerType === 'book')"),
+        service.indexOf("} else if (claim.offerType === 'teaching')")
+      )
+      return (
+        bookBranch.includes('createDownloadGrant(') &&
+        bookBranch.includes('sendEmail(') &&
+        bookBranch.includes('bookDownloadEmailHtml(') &&
+        bookBranch.includes('emailSentAt')
+      )
+    })(),
+  ],
+  [
+    'the book download grant/email step only fires for a newly recorded purchase, never re-minted on a re-approval no-op, matching the Paystack webhook idempotency guard',
+    (() => {
+      const bookBranch = service.slice(
+        service.indexOf("if (claim.offerType === 'book')"),
+        service.indexOf("} else if (claim.offerType === 'teaching')")
+      )
+      return bookBranch.includes('result.isNew') && webhookRoute.includes('if (!result.isNew) return')
+    })(),
+  ],
+  [
+    'even if the Paybill approval email fails to send, the buyer still has a working self-serve path: My Books mints a fresh grant for any purchase they own, regardless of which provider recorded it',
+    myBooksDownloadRoute.includes('createDownloadGrant(') &&
+      myBooksDownloadRoute.includes('purchase.userId !== userId'),
   ],
 ]
 

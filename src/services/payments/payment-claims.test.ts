@@ -1,12 +1,18 @@
 jest.mock('../../lib/db', () => ({
   db: {
     paymentClaim: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
+    bookPurchase: { update: jest.fn() },
   },
 }))
-jest.mock('./book-purchases', () => ({ recordBookPurchase: jest.fn() }))
+jest.mock('./book-purchases', () => ({
+  recordBookPurchase: jest.fn(),
+  createDownloadGrant: jest.fn(),
+  downloadUrlFor: jest.fn(),
+}))
 jest.mock('./teaching-purchases', () => ({ recordTeachingPurchase: jest.fn() }))
 jest.mock('./donations', () => ({ recordDonation: jest.fn() }))
 jest.mock('./coaching-bookings', () => ({ recordCoachingPayment: jest.fn() }))
+jest.mock('../../lib/api/email', () => ({ sendEmail: jest.fn(), bookDownloadEmailHtml: jest.fn(() => '<html></html>') }))
 
 import { Prisma } from '@prisma/client'
 import {
@@ -15,18 +21,23 @@ import {
   rejectPaymentClaim,
 } from './payment-claims'
 import { db } from '@/lib/db'
-import { recordBookPurchase } from './book-purchases'
+import { recordBookPurchase, createDownloadGrant, downloadUrlFor } from './book-purchases'
 import { recordTeachingPurchase } from './teaching-purchases'
 import { recordDonation } from './donations'
 import { recordCoachingPayment } from './coaching-bookings'
+import { sendEmail } from '@/lib/api/email'
 
 const mockCreate = db.paymentClaim.create as jest.Mock
 const mockFindUnique = db.paymentClaim.findUnique as jest.Mock
 const mockUpdate = db.paymentClaim.update as jest.Mock
+const mockBookPurchaseUpdate = db.bookPurchase.update as jest.Mock
 const mockRecordBook = recordBookPurchase as jest.Mock
+const mockCreateDownloadGrant = createDownloadGrant as jest.Mock
+const mockDownloadUrlFor = downloadUrlFor as jest.Mock
 const mockRecordTeaching = recordTeachingPurchase as jest.Mock
 const mockRecordDonation = recordDonation as jest.Mock
 const mockRecordCoachingPayment = recordCoachingPayment as jest.Mock
+const mockSendEmail = sendEmail as jest.Mock
 
 describe('submitPaymentClaim', () => {
   beforeEach(() => jest.clearAllMocks())
@@ -99,7 +110,14 @@ describe('approvePaymentClaim', () => {
       amountKes: 800,
       mpesaCode: 'QGH7XXXXX1',
     })
-    mockRecordBook.mockResolvedValue({ purchaseId: 'p1', isNew: true })
+    mockRecordBook.mockResolvedValue({
+      purchaseId: 'p1',
+      isNew: true,
+      book: { title: 'The Cost of Infidelity' },
+    })
+    mockCreateDownloadGrant.mockResolvedValue({ rawToken: 'raw-token', expiresAt: new Date() })
+    mockDownloadUrlFor.mockReturnValue('https://salimcyrus.com/api/books/download/raw-token')
+    mockSendEmail.mockResolvedValue({ sent: true })
 
     const result = await approvePaymentClaim('claim-1', 'admin@example.com')
 
@@ -117,6 +135,95 @@ describe('approvePaymentClaim', () => {
       where: { id: 'claim-1' },
       data: { status: 'approved', reviewedAt: expect.any(Date), reviewedByEmail: 'admin@example.com' },
     })
+  })
+
+  it('mints a download grant and emails the buyer once a Paybill book claim is approved, exactly like Paystack/PayPal do', async () => {
+    mockFindUnique.mockResolvedValue({
+      id: 'claim-1',
+      status: 'pending',
+      offerType: 'book',
+      bookSlug: 'marriage-and-knowing-the-right-partner',
+      userId: 'user-1',
+      email: 'buyer@example.com',
+      name: 'Buyer',
+      amountKes: 540,
+      mpesaCode: 'UID3J7OVG7',
+    })
+    mockRecordBook.mockResolvedValue({
+      purchaseId: 'purchase-1',
+      isNew: true,
+      book: { title: 'Marriage and Knowing the Right Partner' },
+    })
+    mockCreateDownloadGrant.mockResolvedValue({ rawToken: 'raw-token', expiresAt: new Date('2026-10-13') })
+    mockDownloadUrlFor.mockReturnValue('https://salimcyrus.com/api/books/download/raw-token')
+    mockSendEmail.mockResolvedValue({ sent: true })
+
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+
+    expect(result).toEqual({ status: 'approved' })
+    expect(mockCreateDownloadGrant).toHaveBeenCalledWith('purchase-1')
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'buyer@example.com',
+        subject: expect.stringContaining('Marriage and Knowing the Right Partner'),
+      })
+    )
+    expect(mockBookPurchaseUpdate).toHaveBeenCalledWith({
+      where: { id: 'purchase-1' },
+      data: { emailSentAt: expect.any(Date) },
+    })
+  })
+
+  it('never mints a second download grant when the same Paybill claim is re-approved on an already-recorded purchase', async () => {
+    mockFindUnique.mockResolvedValue({
+      id: 'claim-1',
+      status: 'pending',
+      offerType: 'book',
+      bookSlug: 'the-cost-of-infidelity',
+      userId: 'user-1',
+      email: 'buyer@example.com',
+      name: 'Buyer',
+      amountKes: 800,
+      mpesaCode: 'QGH7XXXXX1',
+    })
+    mockRecordBook.mockResolvedValue({
+      purchaseId: 'p1',
+      isNew: false,
+      book: { title: 'The Cost of Infidelity' },
+    })
+
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+
+    expect(result).toEqual({ status: 'approved' })
+    expect(mockCreateDownloadGrant).not.toHaveBeenCalled()
+    expect(mockSendEmail).not.toHaveBeenCalled()
+  })
+
+  it('still approves the claim when the download email fails to send, since the buyer can still use My Books', async () => {
+    mockFindUnique.mockResolvedValue({
+      id: 'claim-1',
+      status: 'pending',
+      offerType: 'book',
+      bookSlug: 'the-cost-of-infidelity',
+      userId: 'user-1',
+      email: 'buyer@example.com',
+      name: 'Buyer',
+      amountKes: 800,
+      mpesaCode: 'QGH7XXXXX1',
+    })
+    mockRecordBook.mockResolvedValue({
+      purchaseId: 'p1',
+      isNew: true,
+      book: { title: 'The Cost of Infidelity' },
+    })
+    mockCreateDownloadGrant.mockResolvedValue({ rawToken: 'raw-token', expiresAt: new Date() })
+    mockDownloadUrlFor.mockReturnValue('https://salimcyrus.com/api/books/download/raw-token')
+    mockSendEmail.mockResolvedValue({ sent: false, reason: 'RESEND_API_KEY missing' })
+
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+
+    expect(result).toEqual({ status: 'approved' })
+    expect(mockBookPurchaseUpdate).not.toHaveBeenCalled()
   })
 
   it('returns offer_missing when the book no longer exists', async () => {

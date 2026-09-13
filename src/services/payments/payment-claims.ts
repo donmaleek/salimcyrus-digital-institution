@@ -1,9 +1,10 @@
 import { db } from '@/lib/db'
 import { Prisma } from '@prisma/client'
-import { recordBookPurchase } from '@/services/payments/book-purchases'
+import { recordBookPurchase, createDownloadGrant, downloadUrlFor } from '@/services/payments/book-purchases'
 import { recordTeachingPurchase } from '@/services/payments/teaching-purchases'
 import { recordDonation } from '@/services/payments/donations'
 import { recordCoachingPayment } from '@/services/payments/coaching-bookings'
+import { sendEmail, bookDownloadEmailHtml } from '@/lib/api/email'
 
 export type PaymentClaimOfferType = 'book' | 'teaching' | 'donation' | 'coaching'
 
@@ -89,6 +90,29 @@ export async function approvePaymentClaim(
       name: claim.name,
     })
     if (!result) return { status: 'offer_missing' }
+
+    if (result.isNew) {
+      const { rawToken, expiresAt } = await createDownloadGrant(result.purchaseId)
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+      const downloadUrl = downloadUrlFor(rawToken, siteUrl)
+
+      const emailResult = await sendEmail({
+        to: claim.email,
+        subject: `Your download: ${result.book.title}`,
+        html: bookDownloadEmailHtml({ bookTitle: result.book.title, downloadUrl, expiresAt }),
+      })
+      if (emailResult.sent) {
+        await db.bookPurchase.update({
+          where: { id: result.purchaseId },
+          data: { emailSentAt: new Date() },
+        })
+      } else {
+        console.warn('Paybill book approval: email not sent (buyer can still use My Books to download)', {
+          reference: claim.mpesaCode,
+          reason: emailResult.reason,
+        })
+      }
+    }
   } else if (claim.offerType === 'teaching') {
     if (!claim.teachingId || !claim.userId) return { status: 'offer_missing' }
     const result = await recordTeachingPurchase({

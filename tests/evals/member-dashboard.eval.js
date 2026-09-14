@@ -43,8 +43,14 @@ const checks = [
     overview.includes('!ownedSlugs.has(book.slug)') && myBooks.includes('!ownedSlugs.has(book.slug)'),
   ],
   [
-    'mobile clients retain direct navigation to every member destination',
-    navLayout.includes('Dashboard mobile navigation') && navLayout.includes('grid-cols-6'),
+    'mobile clients retain direct navigation to every member destination (the bottom nav grid always has one column per memberNav entry, so it never silently clips a destination when the list grows)',
+    (() => {
+      const memberNavBlock = navLayout.slice(navLayout.indexOf('const memberNav'), navLayout.indexOf(']', navLayout.indexOf('const memberNav')))
+      const memberNavCount = (memberNavBlock.match(/shortLabel:/g) || []).length
+      const gridColumnsMatch = navLayout.match(/grid grid-cols-(\d+) border-t.*?Dashboard mobile navigation/)
+      const gridColumns = gridColumnsMatch ? Number(gridColumnsMatch[1]) : null
+      return navLayout.includes('Dashboard mobile navigation') && memberNavCount > 0 && gridColumns === memberNavCount
+    })(),
   ],
   [
     'account page provides profile photo and password management',

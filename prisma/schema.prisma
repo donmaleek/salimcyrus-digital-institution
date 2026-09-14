@@ -11,50 +11,51 @@ datasource db {
 }
 
 model User {
-  id                  String               @id @default(cuid())
-  name                String
-  email               String               @unique
-  passwordHash        String
-  profileImageData    Bytes?
-  profileImageMime    String?
-  isAdmin             Boolean              @default(false)
-  crmRole             String               @default("customer")
-  createdAt           DateTime             @default(now())
-  bookings            Booking[]
-  bookPurchases       BookPurchase[]
-  teachingPurchases   TeachingPurchase[]
-  courseEnrollments   CourseEnrollment[]
-  paymentClaims       PaymentClaim[]
-  journalEntries      JournalEntry[]
-  passwordResetTokens PasswordResetToken[]
-  ownedContacts       CrmContact[]         @relation("ContactOwner")
-  ownedOpportunities  CrmOpportunity[]     @relation("OpportunityOwner")
-  assignedTasks       CrmTask[]            @relation("TaskAssignee")
-  assignedCases       CrmCase[]            @relation("CaseAssignee")
-  auditEvents         CrmAuditEvent[]      @relation("AuditActor")
-  notifications       CrmNotification[]
+  id                   String                @id @default(cuid())
+  name                 String
+  email                String                @unique
+  passwordHash         String
+  profileImageData     Bytes?
+  profileImageMime     String?
+  isAdmin              Boolean               @default(false)
+  crmRole              String                @default("customer")
+  createdAt            DateTime              @default(now())
+  bookings             Booking[]
+  bookPurchases        BookPurchase[]
+  teachingPurchases    TeachingPurchase[]
+  courseEnrollments    CourseEnrollment[]
+  paymentClaims        PaymentClaim[]
+  journalEntries       JournalEntry[]
+  journalSubscriptions JournalSubscription[]
+  passwordResetTokens  PasswordResetToken[]
+  ownedContacts        CrmContact[]          @relation("ContactOwner")
+  ownedOpportunities   CrmOpportunity[]      @relation("OpportunityOwner")
+  assignedTasks        CrmTask[]             @relation("TaskAssignee")
+  assignedCases        CrmCase[]             @relation("CaseAssignee")
+  auditEvents          CrmAuditEvent[]       @relation("AuditActor")
+  notifications        CrmNotification[]
 }
 
 model Course {
-  id              String             @id @default(cuid())
-  slug            String             @unique
-  title           String
-  subtitle        String?
-  description     String
-  kind            String             @default("course")
-  category        String
-  level           String             @default("all-levels")
-  priceKes        Int
-  priceUsd        Int
-  thumbnailUrl    String?
-  trailerUrl      String?
-  outcomes        String[]
-  status          String             @default("draft")
-  featured        Boolean            @default(false)
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  sections        CourseSection[]
-  enrollments     CourseEnrollment[]
+  id           String             @id @default(cuid())
+  slug         String             @unique
+  title        String
+  subtitle     String?
+  description  String
+  kind         String             @default("course")
+  category     String
+  level        String             @default("all-levels")
+  priceKes     Int
+  priceUsd     Int
+  thumbnailUrl String?
+  trailerUrl   String?
+  outcomes     String[]
+  status       String             @default("draft")
+  featured     Boolean            @default(false)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  sections     CourseSection[]
+  enrollments  CourseEnrollment[]
 
   @@index([status, kind, category])
 }
@@ -156,6 +157,29 @@ model JournalEntry {
   updatedAt         DateTime  @updatedAt
 
   @@index([status, publishedAt])
+}
+
+/// A single paid month of Journal access. A subscriber accumulates one row
+/// per successful payment (PayPal or an admin-approved Paybill claim); access
+/// is "does this user have any row whose expiresAt is still in the future",
+/// not a single mutable subscription record. Renewing while still active
+/// stacks the new 30 days onto the existing expiresAt rather than today, so
+/// paying early (or an admin taking a day to approve a Paybill claim) never
+/// costs the subscriber time they already paid for.
+model JournalSubscription {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  provider          String
+  externalReference String
+  amountMinor       Int
+  currency          String
+  startsAt          DateTime @default(now())
+  expiresAt         DateTime
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, externalReference])
+  @@index([userId, expiresAt])
 }
 
 model Booking {

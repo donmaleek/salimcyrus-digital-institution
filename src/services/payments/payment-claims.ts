@@ -5,9 +5,10 @@ import { recordTeachingPurchase } from '@/services/payments/teaching-purchases'
 import { recordDonation } from '@/services/payments/donations'
 import { recordCoachingPayment } from '@/services/payments/coaching-bookings'
 import { enrollUser } from '@/services/courses/course-service'
+import { recordJournalSubscription } from '@/services/payments/journal-subscriptions'
 import { sendEmail, bookDownloadEmailHtml } from '@/lib/api/email'
 
-export type PaymentClaimOfferType = 'book' | 'teaching' | 'course' | 'donation' | 'coaching'
+export type PaymentClaimOfferType = 'book' | 'teaching' | 'course' | 'journal' | 'donation' | 'coaching'
 
 export interface SubmitPaymentClaimInput {
   offerType: PaymentClaimOfferType
@@ -134,6 +135,15 @@ export async function approvePaymentClaim(
     const course = await db.course.findUnique({ where: { id: claim.courseId } })
     if (!course) return { status: 'offer_missing' }
     await enrollUser(course.id, claim.userId, claim.mpesaCode, 'paybill', amountKobo, 'KES')
+  } else if (claim.offerType === 'journal') {
+    if (!claim.userId) return { status: 'offer_missing' }
+    await recordJournalSubscription({
+      userId: claim.userId,
+      reference: claim.mpesaCode,
+      provider: 'paybill',
+      amountMinor: amountKobo,
+      currency: 'KES',
+    })
   } else if (claim.offerType === 'coaching') {
     if (!claim.coachingOfferName) return { status: 'offer_missing' }
     await recordCoachingPayment({

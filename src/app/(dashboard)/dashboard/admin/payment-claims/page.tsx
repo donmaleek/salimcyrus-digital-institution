@@ -37,7 +37,9 @@ export default async function AdminPaymentClaimsPage() {
               ? courseTitleById.get(claim.courseId ?? '') ?? claim.courseId ?? 'Unknown course'
             : claim.offerType === 'coaching'
               ? claim.coachingOfferName ?? 'Unknown session'
-              : 'Support the Mission',
+              : claim.offerType === 'journal'
+                ? 'Journal Subscription (1 month)'
+                : 'Support the Mission',
       email: claim.email,
       name: claim.name,
       amountKes: claim.amountKes,

@@ -1,10 +1,15 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { db } from '@/lib/db'
 import { formatDate } from '@/lib/utils/formatting'
+import { hasActiveJournalSubscription } from '@/services/payments/journal-subscriptions'
+import { JournalSubscribeForm } from '@/components/payments/JournalSubscribeForm'
+import { JournalSubscriptionReturn } from '@/components/payments/JournalSubscriptionReturn'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,10 +36,17 @@ export default async function JournalEntryPage({ params }: PageProps) {
   const entry = await getEntry(params.slug)
   if (!entry) notFound()
 
+  const session = await getServerSession(authOptions)
+  const userId = (session?.user as { id?: string } | undefined)?.id
+  const subscribed = userId ? await hasActiveJournalSubscription(userId) : false
+
   const paragraphs = entry.body
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
+
+  const visibleParagraphs = subscribed ? paragraphs : paragraphs.slice(0, 1)
+  const lockedParagraphCount = paragraphs.length - visibleParagraphs.length
 
   return (
     <>
@@ -92,10 +104,43 @@ export default async function JournalEntryPage({ params }: PageProps) {
               Full essay
             </h2>
             <div className="space-y-6 text-lg leading-9 text-navy-700" data-testid="essay-body">
-              {paragraphs.map((paragraph, index) => (
+              {visibleParagraphs.map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
               ))}
             </div>
+
+            {lockedParagraphCount > 0 && (
+              <div
+                className="mt-10 rounded-2xl border border-navy-200 bg-cream p-6 sm:p-10"
+                data-testid="journal-paywall"
+              >
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-gold-700">
+                  Journal Membership
+                </p>
+                <h3 className="mt-3 font-heading text-2xl font-bold text-navy sm:text-3xl">
+                  Keep reading with a Journal Membership.
+                </h3>
+                <p className="mt-3 max-w-xl leading-7 text-navy-600">
+                  {lockedParagraphCount} more paragraph{lockedParagraphCount === 1 ? '' : 's'} of this essay,
+                  plus every other essay in the Journal, for KES 500 a month.
+                </p>
+                {session?.user?.email ? (
+                  <div className="mt-6 max-w-sm">
+                    <JournalSubscribeForm email={session.user.email} />
+                    <JournalSubscriptionReturn />
+                  </div>
+                ) : (
+                  <div className="mt-6 flex flex-wrap gap-4">
+                    <Button href={`/login?callbackUrl=${encodeURIComponent(`/journal/${entry.slug}`)}`}>
+                      Sign In to Subscribe
+                    </Button>
+                    <Button href={`/register?callbackUrl=${encodeURIComponent(`/journal/${entry.slug}`)}`} variant="outline">
+                      Create an Account
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </section>
 

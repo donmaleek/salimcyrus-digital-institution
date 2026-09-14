@@ -9,6 +9,7 @@ import { CrmGlobalSearch } from '@/components/dashboard/crm/GlobalSearch'
 const memberNav = [
   { label: 'Overview', shortLabel: 'Home', href: '/dashboard', icon: 'home' },
   { label: 'My Books', shortLabel: 'Books', href: '/dashboard/my-books', icon: 'book' },
+  { label: 'My Journal', shortLabel: 'Journal', href: '/dashboard/my-journal', icon: 'journal' },
   { label: 'My Learning', shortLabel: 'Learn', href: '/dashboard/my-learning', icon: 'play' },
   { label: 'My Community', shortLabel: 'Circle', href: '/dashboard/my-community', icon: 'people' },
   { label: 'My Bookings', shortLabel: 'Sessions', href: '/dashboard/my-bookings', icon: 'calendar' },
@@ -36,6 +37,7 @@ function NavIcon({ name }: { name?: string }) {
     people: <><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.3a3 3 0 0 1 0 5.4M17 14c2.3.7 4 2.8 4 5.3"/></>,
     calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/></>,
     user: <><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6"/></>,
+    journal: <><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></>,
   }
   return <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{paths[name ?? 'home']}</svg>
 }
@@ -99,7 +101,7 @@ export function DashboardLayout({ children, userName, userEmail, hasProfileImage
         <main className="mx-auto w-full max-w-[92rem] px-5 py-7 pb-28 sm:px-8 sm:py-10 lg:px-10 lg:pb-12 xl:px-14">{children}</main>
       </div>
 
-      {!isAdmin && <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-navy/10 bg-white/95 px-1 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(15,30,48,0.08)] backdrop-blur lg:hidden" aria-label="Dashboard mobile navigation">
+      {!isAdmin && <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-7 border-t border-navy/10 bg-white/95 px-1 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(15,30,48,0.08)] backdrop-blur lg:hidden" aria-label="Dashboard mobile navigation">
         {memberNav.map((item) => <Link key={item.href} href={item.href} aria-current={active(item.href) ? 'page' : undefined} className={`flex min-h-[3.5rem] flex-col items-center justify-center gap-1 rounded-lg text-[10px] font-semibold transition-colors ${active(item.href) ? 'text-gold-700' : 'text-navy-400'}`}><NavIcon name={item.icon} /><span>{item.shortLabel}</span></Link>)}
       </nav>}
     </div>

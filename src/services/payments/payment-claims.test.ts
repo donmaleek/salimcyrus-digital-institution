@@ -14,6 +14,7 @@ jest.mock('./teaching-purchases', () => ({ recordTeachingPurchase: jest.fn() }))
 jest.mock('./donations', () => ({ recordDonation: jest.fn() }))
 jest.mock('./coaching-bookings', () => ({ recordCoachingPayment: jest.fn() }))
 jest.mock('../courses/course-service', () => ({ enrollUser: jest.fn() }))
+jest.mock('./journal-subscriptions', () => ({ recordJournalSubscription: jest.fn() }))
 jest.mock('../../lib/api/email', () => ({ sendEmail: jest.fn(), bookDownloadEmailHtml: jest.fn(() => '<html></html>') }))
 
 import { Prisma } from '@prisma/client'
@@ -29,6 +30,7 @@ import { recordDonation } from './donations'
 import { recordCoachingPayment } from './coaching-bookings'
 import { sendEmail } from '@/lib/api/email'
 import { enrollUser } from '@/services/courses/course-service'
+import { recordJournalSubscription } from './journal-subscriptions'
 
 const mockCreate = db.paymentClaim.create as jest.Mock
 const mockFindUnique = db.paymentClaim.findUnique as jest.Mock
@@ -43,6 +45,7 @@ const mockRecordCoachingPayment = recordCoachingPayment as jest.Mock
 const mockSendEmail = sendEmail as jest.Mock
 const mockEnrollUser = enrollUser as jest.Mock
 const mockCourseFindUnique = db.course.findUnique as jest.Mock
+const mockRecordJournalSubscription = recordJournalSubscription as jest.Mock
 
 describe('submitPaymentClaim', () => {
   beforeEach(() => jest.clearAllMocks())
@@ -310,6 +313,49 @@ describe('approvePaymentClaim', () => {
     const result = await approvePaymentClaim('claim-1', 'admin@example.com')
     expect(result).toEqual({ status: 'approved' })
     expect(mockEnrollUser).toHaveBeenCalledWith('course-1', 'user-1', 'QGH7COURSE1', 'paybill', 250000, 'KES')
+  })
+
+  it('grants a month of Journal access when an admin approves a journal subscription claim', async () => {
+    mockFindUnique.mockResolvedValue({
+      id: 'claim-1',
+      status: 'pending',
+      offerType: 'journal',
+      userId: 'user-1',
+      email: 'reader@example.com',
+      name: 'Reader',
+      amountKes: 500,
+      mpesaCode: 'QGH7JOURNAL1',
+    })
+    mockRecordJournalSubscription.mockResolvedValue({ subscriptionId: 'sub-1', expiresAt: new Date(), isNew: true })
+
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+
+    expect(result).toEqual({ status: 'approved' })
+    expect(mockRecordJournalSubscription).toHaveBeenCalledWith({
+      userId: 'user-1',
+      reference: 'QGH7JOURNAL1',
+      provider: 'paybill',
+      amountMinor: 50000,
+      currency: 'KES',
+    })
+  })
+
+  it('returns offer_missing for a journal claim with no signed-in account (a subscription always belongs to a login)', async () => {
+    mockFindUnique.mockResolvedValue({
+      id: 'claim-1',
+      status: 'pending',
+      offerType: 'journal',
+      userId: null,
+      email: 'reader@example.com',
+      name: 'Reader',
+      amountKes: 500,
+      mpesaCode: 'QGH7JOURNAL2',
+    })
+
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+
+    expect(result).toEqual({ status: 'offer_missing' })
+    expect(mockRecordJournalSubscription).not.toHaveBeenCalled()
   })
 
   it('records a coaching payment on approval, without requiring an account', async () => {

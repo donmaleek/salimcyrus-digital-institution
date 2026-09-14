@@ -128,6 +128,27 @@ describe('POST /api/payments/paybill/claim', () => {
     expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ offerType: 'course', courseId: 'course-1', amountKes: 2500, userId: 'user-1' }))
   })
 
+  it('returns 401 for a journal claim when signed out', async () => {
+    mockGetServerSession.mockResolvedValue(null)
+    const form = new FormData()
+    form.set('offerType', 'journal')
+    form.set('mpesaCode', 'QGH7XXXXX1')
+    const response = await POST(request(form))
+    expect(response.status).toBe(401)
+  })
+
+  it('submits a journal subscription claim at the fixed 500 KES price, ignoring any client-submitted amount', async () => {
+    const form = new FormData()
+    form.set('offerType', 'journal')
+    form.set('amountKes', '1')
+    form.set('mpesaCode', 'QGH7XXXXX1')
+    const response = await POST(request(form))
+    expect(response.status).toBe(200)
+    expect(mockSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ offerType: 'journal', amountKes: 500, userId: 'user-1', email: 'buyer@example.com' })
+    )
+  })
+
   it('does not require a session for a donation claim', async () => {
     mockGetServerSession.mockResolvedValue(null)
     const form = new FormData()

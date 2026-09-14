@@ -29,7 +29,7 @@ function CopyValue({ value, label }: { value: string; label: string }) {
 }
 
 interface PaybillClaimFormProps {
-  offerType: 'book' | 'teaching' | 'course' | 'donation' | 'coaching'
+  offerType: 'book' | 'teaching' | 'course' | 'journal' | 'donation' | 'coaching'
   bookSlug?: string
   teachingId?: string
   courseId?: string

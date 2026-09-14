@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { editorialDesk, journalThemes } from '@/lib/data/journal'
@@ -35,6 +37,10 @@ const readingMethod = [
 ]
 
 export default async function JournalPage() {
+  const session = await getServerSession(authOptions)
+  const membershipHref = session?.user
+    ? '/dashboard/my-journal'
+    : '/login?callbackUrl=%2Fdashboard%2Fmy-journal'
   const entries = await db.journalEntry.findMany({
     where: { status: 'published' },
     orderBy: { publishedAt: 'desc' },
@@ -136,6 +142,26 @@ export default async function JournalPage() {
                 ))}
               </ol>
             )}
+          </div>
+        </section>
+
+        <section className="bg-navy text-cream" aria-labelledby="membership-heading">
+          <div className="mx-auto grid max-w-content gap-10 px-6 py-14 sm:py-16 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+                Journal Membership
+              </p>
+              <h2 id="membership-heading" className="mt-3 font-heading text-2xl font-bold sm:text-3xl">
+                Read every essay in full for KES 500 a month.
+              </h2>
+              <p className="mt-3 text-base leading-7 text-cream/70">
+                Titles and summaries stay open to everyone. Members read the full argument, on every essay,
+                as soon as it publishes.
+              </p>
+            </div>
+            <Button href={membershipHref} size="lg">
+              Become a Member
+            </Button>
           </div>
         </section>
 

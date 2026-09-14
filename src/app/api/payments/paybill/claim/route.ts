@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getBookBySlug } from '@/lib/data/book-catalog'
 import { coachingOffers } from '@/lib/data/coaching-offers'
+import { JOURNAL_SUBSCRIPTION_PRICE_KES } from '@/services/payments/journal-subscriptions'
 import { submitPaymentClaim } from '@/services/payments/payment-claims'
 import { evidenceStorageDir, evidenceFilePath } from '@/lib/api/payment-evidence-storage'
 
@@ -17,7 +18,7 @@ const ALLOWED_EVIDENCE_TYPES: Record<string, string> = {
 const MAX_EVIDENCE_BYTES = 8 * 1024 * 1024 // 8MB, a phone screenshot easily fits
 
 const metaSchema = z.object({
-  offerType: z.enum(['book', 'teaching', 'course', 'donation', 'coaching']),
+  offerType: z.enum(['book', 'teaching', 'course', 'journal', 'donation', 'coaching']),
   bookSlug: z.string().trim().max(200).optional(),
   teachingId: z.string().trim().max(200).optional(),
   courseId: z.string().trim().max(200).optional(),
@@ -111,6 +112,9 @@ export async function POST(request: NextRequest) {
     const course = await db.course.findUnique({ where: { id: data.courseId } })
     if (!course || course.status !== 'published') return NextResponse.json({ error: 'This course is not available for purchase.' }, { status: 404 })
     email = sessionEmail; name = sessionName ?? sessionEmail; userId = sessionUserId; amountKes = course.priceKes; courseId = course.id
+  } else if (data.offerType === 'journal') {
+    if (!sessionUserId || !sessionEmail) return NextResponse.json({ error: 'Sign in to subscribe to the Journal.' }, { status: 401 })
+    email = sessionEmail; name = sessionName ?? sessionEmail; userId = sessionUserId; amountKes = JOURNAL_SUBSCRIPTION_PRICE_KES
   } else if (data.offerType === 'coaching') {
     if (!data.coachingOfferName) {
       return NextResponse.json({ error: 'Missing session.' }, { status: 400 })

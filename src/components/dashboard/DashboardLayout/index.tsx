@@ -56,7 +56,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children, userName, userEmail, hasProfileImage, isAdmin, crmRole }: DashboardLayoutProps) {
   const pathname = usePathname()
   const items = isAdmin
-    ? [{ label: 'My Dashboard', href: '/dashboard' }, ...crmNav, { label: 'Journal', href: '/dashboard/admin/journal' }, { label: 'Books', href: '/dashboard/admin/books' }, { label: 'Teaching Library', href: '/dashboard/admin/teachings' }, { label: 'Payment Claims', href: '/dashboard/admin/payment-claims' }, { label: 'Ask Salim', href: '/dashboard/admin/ask-salim' }, { label: 'Availability', href: '/dashboard/admin/availability' }]
+    ? [{ label: 'My Dashboard', href: '/dashboard' }, ...crmNav, { label: 'Courses', href: '/dashboard/admin/courses' }, { label: 'Journal', href: '/dashboard/admin/journal' }, { label: 'Books', href: '/dashboard/admin/books' }, { label: 'Teaching Library', href: '/dashboard/admin/teachings' }, { label: 'Payment Claims', href: '/dashboard/admin/payment-claims' }, { label: 'Ask Salim', href: '/dashboard/admin/ask-salim' }, { label: 'Availability', href: '/dashboard/admin/availability' }]
     : memberNav
   const active = (href: string) => pathname === href || (href !== '/dashboard' && pathname.startsWith(`${href}/`))
 

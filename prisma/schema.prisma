@@ -23,6 +23,7 @@ model User {
   bookings            Booking[]
   bookPurchases       BookPurchase[]
   teachingPurchases   TeachingPurchase[]
+  courseEnrollments   CourseEnrollment[]
   paymentClaims       PaymentClaim[]
   journalEntries      JournalEntry[]
   passwordResetTokens PasswordResetToken[]
@@ -32,6 +33,93 @@ model User {
   assignedCases       CrmCase[]            @relation("CaseAssignee")
   auditEvents         CrmAuditEvent[]      @relation("AuditActor")
   notifications       CrmNotification[]
+}
+
+model Course {
+  id              String             @id @default(cuid())
+  slug            String             @unique
+  title           String
+  subtitle        String?
+  description     String
+  kind            String             @default("course")
+  category        String
+  level           String             @default("all-levels")
+  priceKes        Int
+  priceUsd        Int
+  thumbnailUrl    String?
+  trailerUrl      String?
+  outcomes        String[]
+  status          String             @default("draft")
+  featured        Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  sections        CourseSection[]
+  enrollments     CourseEnrollment[]
+
+  @@index([status, kind, category])
+}
+
+model CourseSection {
+  id          String         @id @default(cuid())
+  courseId    String
+  course      Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  position    Int
+  lessons     CourseLesson[]
+
+  @@unique([courseId, position])
+}
+
+model CourseLesson {
+  id              String                 @id @default(cuid())
+  sectionId       String
+  section         CourseSection          @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?
+  content         String?
+  videoUrl        String?
+  durationSeconds Int?
+  position        Int
+  isPreview       Boolean                @default(false)
+  status          String                 @default("published")
+  progress        CourseLessonProgress[]
+
+  @@unique([sectionId, position])
+}
+
+model CourseEnrollment {
+  id                String                 @id @default(cuid())
+  courseId          String
+  course            Course                 @relation(fields: [courseId], references: [id])
+  userId            String
+  user              User                   @relation(fields: [userId], references: [id])
+  provider          String                 @default("admin")
+  externalReference String
+  amountMinor       Int                    @default(0)
+  currency          String                 @default("KES")
+  enrolledAt        DateTime               @default(now())
+  completedAt       DateTime?
+  lastLessonId      String?
+  progress          CourseLessonProgress[]
+
+  @@unique([courseId, userId])
+  @@unique([provider, externalReference])
+  @@index([userId, enrolledAt])
+}
+
+model CourseLessonProgress {
+  id                  String           @id @default(cuid())
+  enrollmentId        String
+  enrollment          CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lessonId            String
+  lesson              CourseLesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lastPositionSeconds Int              @default(0)
+  completedAt         DateTime?
+  updatedAt           DateTime         @updatedAt
+
+  @@unique([enrollmentId, lessonId])
+  @@index([lessonId])
 }
 
 model PasswordResetToken {
@@ -251,6 +339,7 @@ model PaymentClaim {
   offerType         String
   bookSlug          String?
   teachingId        String?
+  courseId          String?
   coachingOfferName String?
   userId            String?
   user              User?     @relation(fields: [userId], references: [id])

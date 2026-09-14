@@ -1,50 +1,7 @@
 import type { Metadata } from 'next'
-import { Button } from '@/components/ui/Button'
+import { db } from '@/lib/db'
 import { PageHero } from '@/components/layout/PageHero'
-
-export const metadata: Metadata = {
-  title: 'Courses',
-  description: 'Self-paced recorded courses are in development.',
-}
-
-const planned = [
-  'Relationship Mastery',
-  'Defining Manhood',
-  'Kingdom Mentality',
-  'Purpose Discovery',
-  'Marriage Intelligence',
-  'Emotional Maturity',
-]
-
-export default function CoursesPage() {
-  return (
-    <>
-      <PageHero
-        eyebrow="Courses"
-        title="Self-Paced Courses"
-        description="Recorded courses are in development. In the meantime, the live programs and masterclasses cover most of this ground with direct access to Salim."
-      />
-      <section className="bg-cream">
-        <div className="mx-auto max-w-content px-6 py-20">
-          <div className="flex flex-wrap gap-2">
-            {planned.map((title) => (
-              <span
-                key={title}
-                className="rounded-full border border-dashed border-navy-200 bg-white px-4 py-2 text-sm text-navy-500"
-              >
-                {title}: Planned
-              </span>
-            ))}
-          </div>
-
-          <div className="mt-12 flex flex-wrap gap-4">
-            <Button href="/academy/masterclasses">Explore Live Programs</Button>
-            <Button href="/contact" variant="outline">
-              Get Notified When Courses Launch
-            </Button>
-          </div>
-        </div>
-      </section>
-    </>
-  )
-}
+import { CourseCatalog } from '@/components/courses/CourseCatalog'
+export const dynamic = 'force-dynamic'
+export const metadata: Metadata = { title: 'Online Courses', description: 'Self-paced courses with structured lessons, saved progress, and lifetime access.' }
+export default async function CoursesPage() { const courses = await db.course.findMany({ where: { status: 'published', kind: 'course' }, include: { sections: { include: { lessons: { where: { status: 'published' } } } } }, orderBy: [{ featured: 'desc' }, { createdAt: 'desc' }] }); return <><PageHero eyebrow="Courses" title="Learn at Your Pace. Finish with Clarity." description="Choose a structured course, follow every lesson in order, and pick up exactly where you left off." /><section className="bg-cream"><div className="mx-auto max-w-content px-6 py-16"><CourseCatalog kind="course" courses={courses.map((c) => ({ ...c, lessonCount: c.sections.reduce((n, s) => n + s.lessons.length, 0), durationMinutes: Math.round(c.sections.flatMap((s) => s.lessons).reduce((n, l) => n + (l.durationSeconds ?? 0), 0) / 60) }))} /></div></section></> }

@@ -1,43 +1,7 @@
 import type { Metadata } from 'next'
-import { Button } from '@/components/ui/Button'
+import { db } from '@/lib/db'
 import { PageHero } from '@/components/layout/PageHero'
-import { MasterclassCard } from '@/components/sections/academy/MasterclassCard'
-import { programs } from '@/lib/data/programs'
-import { WHATSAPP_URL } from '@/lib/utils/constants'
-
-export const metadata: Metadata = {
-  title: 'Programs & Masterclasses',
-  description: 'System-first programs that move people from information to formation to transformation.',
-}
-
-export default function MasterclassesPage() {
-  return (
-    <>
-      <PageHero
-        eyebrow="Programs"
-        title="Programs Built for Transformation"
-        description="A session inspires, but a system transforms. These programs move people from information to formation to transformation."
-        actions={
-          <>
-            <Button href="/contact" size="lg">
-              Contact Me
-            </Button>
-            <Button href={WHATSAPP_URL} variant="outline-inverse" size="lg">
-              WhatsApp
-            </Button>
-          </>
-        }
-      />
-
-      <section className="bg-navy-50">
-        <div className="mx-auto max-w-content px-6 py-20">
-          <div className="grid gap-6 sm:grid-cols-2">
-            {programs.map((program) => (
-              <MasterclassCard key={program.name} program={program} />
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  )
-}
+import { CourseCatalog } from '@/components/courses/CourseCatalog'
+export const dynamic = 'force-dynamic'
+export const metadata: Metadata = { title: 'Masterclasses', description: 'Focused Salim Cyrus masterclasses with clear outcomes and saved progress.' }
+export default async function MasterclassesPage() { const courses = await db.course.findMany({ where: { status: 'published', kind: 'masterclass' }, include: { sections: { include: { lessons: { where: { status: 'published' } } } } }, orderBy: [{ featured: 'desc' }, { createdAt: 'desc' }] }); return <><PageHero eyebrow="Masterclasses" title="Focused Learning. Practical Change." description="Find the right masterclass by topic, see the complete curriculum before buying, and follow your progress to completion." /><section className="bg-navy-50"><div className="mx-auto max-w-content px-6 py-16"><CourseCatalog kind="masterclass" courses={courses.map((c) => ({ ...c, lessonCount: c.sections.reduce((n, s) => n + s.lessons.length, 0), durationMinutes: Math.round(c.sections.flatMap((s) => s.lessons).reduce((n, l) => n + (l.durationSeconds ?? 0), 0) / 60) }))} /></div></section></> }

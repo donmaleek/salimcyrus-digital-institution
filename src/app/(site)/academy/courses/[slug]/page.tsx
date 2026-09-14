@@ -1,22 +1,6 @@
-import type { Metadata } from 'next'
-import { NotPublished } from '@/components/sections/shared/NotPublished'
-
-interface PageProps {
-  params: { slug: string }
-}
-
-export const metadata: Metadata = {
-  title: 'Course',
-  robots: { index: false, follow: false },
-}
-
-export default function CourseDetailPage({ params }: PageProps) {
-  return (
-    <NotPublished
-      label="Course"
-      slug={params.slug}
-      backHref="/academy/courses"
-      backLabel="Back to Courses"
-    />
-  )
-}
+import { notFound } from 'next/navigation'
+import { db } from '@/lib/db'
+import { CourseSalesPage } from '@/components/courses/CourseSalesPage'
+export const dynamic = 'force-dynamic'
+export async function generateMetadata({ params }: { params: { slug: string } }) { const course = await db.course.findFirst({ where: { slug: params.slug, kind: 'course', status: 'published' } }); return course ? { title: course.title, description: course.subtitle ?? course.description } : { title: 'Course' } }
+export default async function CoursePage({ params }: { params: { slug: string } }) { const page = await CourseSalesPage({ slug: params.slug, kind: 'course' }); if (!page) notFound(); return page }

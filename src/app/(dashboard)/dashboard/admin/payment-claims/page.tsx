@@ -20,6 +20,9 @@ export default async function AdminPaymentClaimsPage() {
     ? await db.teaching.findMany({ where: { id: { in: teachingIds } }, select: { id: true, title: true } })
     : []
   const teachingTitleById = new Map(teachings.map((t) => [t.id, t.title]))
+  const courseIds = claims.map((c) => c.courseId).filter((id): id is string => Boolean(id))
+  const courses = courseIds.length ? await db.course.findMany({ where: { id: { in: courseIds } }, select: { id: true, title: true } }) : []
+  const courseTitleById = new Map(courses.map((c) => [c.id, c.title]))
 
   const initialClaims = await Promise.all(
     claims.map(async (claim) => ({
@@ -30,6 +33,8 @@ export default async function AdminPaymentClaimsPage() {
           ? (claim.bookSlug ? (await getBookBySlug(claim.bookSlug))?.title : undefined) ?? claim.bookSlug ?? 'Unknown book'
           : claim.offerType === 'teaching'
             ? teachingTitleById.get(claim.teachingId ?? '') ?? claim.teachingId ?? 'Unknown teaching'
+            : claim.offerType === 'course'
+              ? courseTitleById.get(claim.courseId ?? '') ?? claim.courseId ?? 'Unknown course'
             : claim.offerType === 'coaching'
               ? claim.coachingOfferName ?? 'Unknown session'
               : 'Support the Mission',

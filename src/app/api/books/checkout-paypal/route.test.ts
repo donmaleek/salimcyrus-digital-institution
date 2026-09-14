@@ -3,6 +3,8 @@
  */
 import { NextRequest } from 'next/server'
 
+jest.mock('../../../../lib/db', () => ({ db: { book: { findUnique: jest.fn().mockResolvedValue(null) } } }))
+
 jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
 jest.mock('../../../../lib/auth', () => ({ authOptions: {} }))
 jest.mock('../../../../lib/api/paypal', () => ({

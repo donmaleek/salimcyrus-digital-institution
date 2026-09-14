@@ -3,6 +3,8 @@
  */
 import { NextRequest } from 'next/server'
 
+jest.mock('../../../../lib/db', () => ({ db: { book: { findUnique: jest.fn().mockResolvedValue(null) } } }))
+
 jest.mock('../../../../lib/api/paystack', () => ({
   verifyPaystackTransaction: jest.fn(),
 }))

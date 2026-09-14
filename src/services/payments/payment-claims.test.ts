@@ -2,6 +2,7 @@ jest.mock('../../lib/db', () => ({
   db: {
     paymentClaim: { create: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
     bookPurchase: { update: jest.fn() },
+    course: { findUnique: jest.fn() },
   },
 }))
 jest.mock('./book-purchases', () => ({
@@ -12,6 +13,7 @@ jest.mock('./book-purchases', () => ({
 jest.mock('./teaching-purchases', () => ({ recordTeachingPurchase: jest.fn() }))
 jest.mock('./donations', () => ({ recordDonation: jest.fn() }))
 jest.mock('./coaching-bookings', () => ({ recordCoachingPayment: jest.fn() }))
+jest.mock('../courses/course-service', () => ({ enrollUser: jest.fn() }))
 jest.mock('../../lib/api/email', () => ({ sendEmail: jest.fn(), bookDownloadEmailHtml: jest.fn(() => '<html></html>') }))
 
 import { Prisma } from '@prisma/client'
@@ -26,6 +28,7 @@ import { recordTeachingPurchase } from './teaching-purchases'
 import { recordDonation } from './donations'
 import { recordCoachingPayment } from './coaching-bookings'
 import { sendEmail } from '@/lib/api/email'
+import { enrollUser } from '@/services/courses/course-service'
 
 const mockCreate = db.paymentClaim.create as jest.Mock
 const mockFindUnique = db.paymentClaim.findUnique as jest.Mock
@@ -38,6 +41,8 @@ const mockRecordTeaching = recordTeachingPurchase as jest.Mock
 const mockRecordDonation = recordDonation as jest.Mock
 const mockRecordCoachingPayment = recordCoachingPayment as jest.Mock
 const mockSendEmail = sendEmail as jest.Mock
+const mockEnrollUser = enrollUser as jest.Mock
+const mockCourseFindUnique = db.course.findUnique as jest.Mock
 
 describe('submitPaymentClaim', () => {
   beforeEach(() => jest.clearAllMocks())
@@ -297,6 +302,14 @@ describe('approvePaymentClaim', () => {
       email: 'donor@example.com',
       name: 'Donor',
     })
+  })
+
+  it('enrolls the signed-in learner when an admin approves a course claim', async () => {
+    mockFindUnique.mockResolvedValue({ id: 'claim-1', status: 'pending', offerType: 'course', courseId: 'course-1', userId: 'user-1', amountKes: 2500, mpesaCode: 'QGH7COURSE1' })
+    mockCourseFindUnique.mockResolvedValue({ id: 'course-1' }); mockEnrollUser.mockResolvedValue({ id: 'enrollment-1' })
+    const result = await approvePaymentClaim('claim-1', 'admin@example.com')
+    expect(result).toEqual({ status: 'approved' })
+    expect(mockEnrollUser).toHaveBeenCalledWith('course-1', 'user-1', 'QGH7COURSE1', 'paybill', 250000, 'KES')
   })
 
   it('records a coaching payment on approval, without requiring an account', async () => {

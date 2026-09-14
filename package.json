@@ -44,6 +44,7 @@
     "eval:coaching-catalog": "node tests/evals/coaching-catalog.eval.js",
     "eval:alignment-sessions": "node tests/evals/alignment-sessions.eval.js",
     "eval:teaching-hover-preview": "node tests/evals/teaching-hover-preview.eval.js",
+    "eval:courses": "node tests/evals/course-journey.eval.js",
     "prepare": "husky install",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",

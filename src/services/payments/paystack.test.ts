@@ -3,6 +3,8 @@ import {
   initializePaystackDonation,
   bookCheckoutRequestSchema,
   initializePaystackBookCheckout,
+  courseCheckoutRequestSchema,
+  initializePaystackCourseCheckout,
 } from './paystack'
 
 describe('Paystack donation checkout', () => {
@@ -79,6 +81,20 @@ describe('Paystack donation checkout', () => {
         fetcher,
       })
     ).rejects.toThrow('Invalid key')
+  })
+})
+
+describe('Paystack course checkout', () => {
+  it('validates a course identifier', () => {
+    expect(courseCheckoutRequestSchema.safeParse({ courseId: 'course-1' }).success).toBe(true)
+    expect(courseCheckoutRequestSchema.safeParse({ courseId: '' }).success).toBe(false)
+  })
+
+  it('charges the server price and binds the payment to the course and learner', async () => {
+    const fetcher = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ status: true, data: { authorization_url: 'https://checkout.paystack.com/course', reference: 'course-ref' } }) }) as unknown as typeof fetch
+    await initializePaystackCourseCheckout({ email: 'learner@example.com', courseId: 'course-1', userId: 'user-1', slug: 'purpose', title: 'Purpose', priceKes: 2500, secretKey: 'secret', callbackUrl: 'https://salimcyrus.com/academy/courses/purpose', fetcher })
+    const body = JSON.parse((fetcher as jest.Mock).mock.calls[0][1].body)
+    expect(body).toMatchObject({ amount: 250000, currency: 'KES', metadata: { offer_name: 'course:purpose', course_id: 'course-1', user_id: 'user-1' } })
   })
 })
 

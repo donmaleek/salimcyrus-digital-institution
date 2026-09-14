@@ -10,7 +10,7 @@ jest.mock('fs', () => ({
 jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
 jest.mock('../../../../../lib/auth', () => ({ authOptions: {} }))
 jest.mock('../../../../../lib/db', () => ({
-  db: { teaching: { findUnique: jest.fn() }, book: { findUnique: jest.fn() } },
+  db: { teaching: { findUnique: jest.fn() }, book: { findUnique: jest.fn() }, course: { findUnique: jest.fn() } },
 }))
 jest.mock('../../../../../services/payments/payment-claims', () => ({
   submitPaymentClaim: jest.fn(),
@@ -25,6 +25,7 @@ import { coachingOffers } from '@/lib/data/coaching-offers'
 
 const mockGetServerSession = getServerSession as jest.Mock
 const mockTeachingFindUnique = db.teaching.findUnique as jest.Mock
+const mockCourseFindUnique = db.course.findUnique as jest.Mock
 const mockSubmit = submitPaymentClaim as jest.Mock
 
 function request(form: FormData) {
@@ -117,6 +118,14 @@ describe('POST /api/payments/paybill/claim', () => {
     expect(mockSubmit).toHaveBeenCalledWith(
       expect.objectContaining({ offerType: 'teaching', teachingId: 'teaching-1', amountKes: 900, userId: 'user-1' })
     )
+  })
+
+  it('submits a course claim using the published course price and signed-in learner', async () => {
+    mockCourseFindUnique.mockResolvedValue({ id: 'course-1', status: 'published', priceKes: 2500 })
+    const form = new FormData(); form.set('offerType', 'course'); form.set('courseId', 'course-1'); form.set('amountKes', '1'); form.set('mpesaCode', 'QGH7XXXXX1')
+    const response = await POST(request(form))
+    expect(response.status).toBe(200)
+    expect(mockSubmit).toHaveBeenCalledWith(expect.objectContaining({ offerType: 'course', courseId: 'course-1', amountKes: 2500, userId: 'user-1' }))
   })
 
   it('does not require a session for a donation claim', async () => {

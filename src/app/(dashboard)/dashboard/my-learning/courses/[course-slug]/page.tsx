@@ -1,0 +1,7 @@
+import { notFound, redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { CoursePlayer } from '@/components/courses/CoursePlayer'
+export const dynamic = 'force-dynamic'
+export default async function CourseLearningPage({ params }: { params: { 'course-slug': string } }) { const session = await getServerSession(authOptions); const userId = (session?.user as { id?: string } | undefined)?.id; if (!userId) redirect('/login'); const course = await db.course.findUnique({ where: { slug: params['course-slug'] }, include: { sections: { include: { lessons: { where: { status: 'published' }, orderBy: { position: 'asc' } } }, orderBy: { position: 'asc' } } } }); if (!course) notFound(); const enrollment = await db.courseEnrollment.findUnique({ where: { courseId_userId: { courseId: course.id, userId } }, include: { progress: true } }); if (!enrollment) redirect(`/${course.kind === 'masterclass' ? 'academy/masterclasses' : 'academy/courses'}/${course.slug}`); const lessons = course.sections.flatMap((section) => section.lessons.map((lesson) => ({ ...lesson, sectionTitle: section.title }))); return <CoursePlayer courseId={course.id} courseTitle={course.title} lessons={lessons} initiallyCompleted={enrollment.progress.filter((p) => p.completedAt).map((p) => p.lessonId)} initialLessonId={enrollment.lastLessonId} /> }

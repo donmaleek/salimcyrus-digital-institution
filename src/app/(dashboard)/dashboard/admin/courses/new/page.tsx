@@ -1,0 +1,3 @@
+import { requireCrmPage } from '@/services/crm/access'
+import { CourseEditor } from '@/components/dashboard/CourseEditor'
+export default async function NewCoursePage() { await requireCrmPage('content:write'); return <div className="mx-auto max-w-5xl"><p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-700">Learning studio</p><h1 className="mt-2 font-heading text-3xl font-bold text-navy">Create a course</h1><p className="mt-2 text-navy-500">Start as a draft. Publish only when the sales page and every visible lesson are ready.</p><div className="mt-8"><CourseEditor /></div></div> }

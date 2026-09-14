@@ -18,7 +18,7 @@ export default async function MyLearningPage() {
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
 
-  const [bookings, teachingPurchases] = userId
+  const [bookings, teachingPurchases, courseEnrollments] = userId
     ? await Promise.all([
         db.booking.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } }),
         db.teachingPurchase.findMany({
@@ -26,8 +26,13 @@ export default async function MyLearningPage() {
           include: { teaching: true },
           orderBy: { createdAt: 'desc' },
         }),
+        db.courseEnrollment.findMany({
+          where: { userId },
+          include: { course: { include: { sections: { include: { lessons: { where: { status: 'published' } } } } } }, progress: true },
+          orderBy: { enrolledAt: 'desc' },
+        }),
       ])
-    : [[], []]
+    : [[], [], []]
 
   const programNames = new Set(programs.map((program) => program.name))
   const programBookings = bookings.filter((booking) => programNames.has(booking.offerName))
@@ -40,6 +45,13 @@ export default async function MyLearningPage() {
         Live programs and masterclasses you&apos;ve enrolled in, plus every video teaching you&apos;ve bought
         from the Teaching Library.
       </p>
+
+      <h2 className="mt-10 font-heading text-lg font-bold text-navy">Courses &amp; Masterclasses</h2>
+      {courseEnrollments.length === 0 ? (
+        <div className="mt-4 border border-dashed border-navy-200 bg-white p-8 sm:p-10"><p className="font-semibold text-navy">Your course shelf is ready.</p><p className="mt-2 text-sm text-navy-500">Choose a structured course and your progress will appear here.</p><Button href="/academy/courses" className="mt-6">Browse Courses</Button></div>
+      ) : (
+        <div className="mt-4 grid gap-4 md:grid-cols-2">{courseEnrollments.map((enrollment) => { const total = enrollment.course.sections.reduce((n, s) => n + s.lessons.length, 0); const completed = enrollment.progress.filter((p) => p.completedAt).length; const percent = total ? Math.round(completed / total * 100) : 0; return <Link key={enrollment.id} href={`/dashboard/my-learning/courses/${enrollment.course.slug}`} className="rounded-2xl border border-navy-100 bg-white p-6 shadow-sm hover:border-gold-300"><p className="text-xs font-bold uppercase tracking-wide text-gold-700">{enrollment.course.kind}</p><h3 className="mt-2 font-heading text-xl font-bold text-navy">{enrollment.course.title}</h3><div className="mt-5 h-2 overflow-hidden rounded-full bg-navy-50"><div className="h-full bg-gold" style={{ width: `${percent}%` }} /></div><p className="mt-2 text-sm text-navy-400">{percent}% complete · {completed} of {total} lessons</p><p className="mt-5 text-sm font-bold text-gold-700">{percent ? 'Continue learning' : 'Start course'} →</p></Link> })}</div>
+      )}
 
       <h2 className="mt-10 font-heading text-lg font-bold text-navy">Live Programs</h2>
       {programBookings.length === 0 ? (

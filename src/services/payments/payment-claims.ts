@@ -4,14 +4,16 @@ import { recordBookPurchase, createDownloadGrant, downloadUrlFor } from '@/servi
 import { recordTeachingPurchase } from '@/services/payments/teaching-purchases'
 import { recordDonation } from '@/services/payments/donations'
 import { recordCoachingPayment } from '@/services/payments/coaching-bookings'
+import { enrollUser } from '@/services/courses/course-service'
 import { sendEmail, bookDownloadEmailHtml } from '@/lib/api/email'
 
-export type PaymentClaimOfferType = 'book' | 'teaching' | 'donation' | 'coaching'
+export type PaymentClaimOfferType = 'book' | 'teaching' | 'course' | 'donation' | 'coaching'
 
 export interface SubmitPaymentClaimInput {
   offerType: PaymentClaimOfferType
   bookSlug?: string
   teachingId?: string
+  courseId?: string
   coachingOfferName?: string
   userId?: string
   email: string
@@ -43,6 +45,7 @@ export async function submitPaymentClaim(
         offerType: input.offerType,
         bookSlug: input.bookSlug,
         teachingId: input.teachingId,
+        courseId: input.courseId,
         coachingOfferName: input.coachingOfferName,
         userId: input.userId,
         email: input.email,
@@ -126,6 +129,11 @@ export async function approvePaymentClaim(
       name: claim.name,
     })
     if (!result) return { status: 'offer_missing' }
+  } else if (claim.offerType === 'course') {
+    if (!claim.courseId || !claim.userId) return { status: 'offer_missing' }
+    const course = await db.course.findUnique({ where: { id: claim.courseId } })
+    if (!course) return { status: 'offer_missing' }
+    await enrollUser(course.id, claim.userId, claim.mpesaCode, 'paybill', amountKobo, 'KES')
   } else if (claim.offerType === 'coaching') {
     if (!claim.coachingOfferName) return { status: 'offer_missing' }
     await recordCoachingPayment({

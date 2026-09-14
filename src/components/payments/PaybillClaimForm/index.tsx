@@ -29,9 +29,10 @@ function CopyValue({ value, label }: { value: string; label: string }) {
 }
 
 interface PaybillClaimFormProps {
-  offerType: 'book' | 'teaching' | 'donation' | 'coaching'
+  offerType: 'book' | 'teaching' | 'course' | 'donation' | 'coaching'
   bookSlug?: string
   teachingId?: string
+  courseId?: string
   coachingOfferName?: string
   /** Fixed price for book/teaching/coaching; for donations this is left
    * undefined and the buyer enters their own amount instead. */
@@ -42,6 +43,7 @@ export function PaybillClaimForm({
   offerType,
   bookSlug,
   teachingId,
+  courseId,
   coachingOfferName,
   amountKes,
 }: PaybillClaimFormProps) {
@@ -67,6 +69,7 @@ export function PaybillClaimForm({
     form.set('offerType', offerType)
     if (bookSlug) form.set('bookSlug', bookSlug)
     if (teachingId) form.set('teachingId', teachingId)
+    if (courseId) form.set('courseId', courseId)
     if (coachingOfferName) form.set('coachingOfferName', coachingOfferName)
     form.set('mpesaCode', mpesaCode)
     if (offerType === 'donation') {

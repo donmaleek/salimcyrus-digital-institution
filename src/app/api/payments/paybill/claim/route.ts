@@ -17,9 +17,10 @@ const ALLOWED_EVIDENCE_TYPES: Record<string, string> = {
 const MAX_EVIDENCE_BYTES = 8 * 1024 * 1024 // 8MB, a phone screenshot easily fits
 
 const metaSchema = z.object({
-  offerType: z.enum(['book', 'teaching', 'donation', 'coaching']),
+  offerType: z.enum(['book', 'teaching', 'course', 'donation', 'coaching']),
   bookSlug: z.string().trim().max(200).optional(),
   teachingId: z.string().trim().max(200).optional(),
+  courseId: z.string().trim().max(200).optional(),
   coachingOfferName: z.string().trim().max(200).optional(),
   mpesaCode: z
     .string()
@@ -47,6 +48,7 @@ export async function POST(request: NextRequest) {
     offerType: form.get('offerType'),
     bookSlug: form.get('bookSlug') ?? undefined,
     teachingId: form.get('teachingId') ?? undefined,
+    courseId: form.get('courseId') ?? undefined,
     coachingOfferName: form.get('coachingOfferName') ?? undefined,
     mpesaCode: form.get('mpesaCode'),
     amountKes: form.get('amountKes') ?? undefined,
@@ -68,6 +70,7 @@ export async function POST(request: NextRequest) {
   let amountKes: number
   let bookSlug: string | undefined
   let teachingId: string | undefined
+  let courseId: string | undefined
   let coachingOfferName: string | undefined
 
   if (data.offerType === 'book') {
@@ -102,6 +105,12 @@ export async function POST(request: NextRequest) {
     userId = sessionUserId
     amountKes = teaching.priceKes
     teachingId = teaching.id
+  } else if (data.offerType === 'course') {
+    if (!sessionUserId || !sessionEmail) return NextResponse.json({ error: 'Sign in to buy this course.' }, { status: 401 })
+    if (!data.courseId) return NextResponse.json({ error: 'Missing course.' }, { status: 400 })
+    const course = await db.course.findUnique({ where: { id: data.courseId } })
+    if (!course || course.status !== 'published') return NextResponse.json({ error: 'This course is not available for purchase.' }, { status: 404 })
+    email = sessionEmail; name = sessionName ?? sessionEmail; userId = sessionUserId; amountKes = course.priceKes; courseId = course.id
   } else if (data.offerType === 'coaching') {
     if (!data.coachingOfferName) {
       return NextResponse.json({ error: 'Missing session.' }, { status: 400 })
@@ -151,6 +160,7 @@ export async function POST(request: NextRequest) {
     offerType: data.offerType,
     bookSlug,
     teachingId,
+    courseId,
     coachingOfferName,
     userId,
     email,

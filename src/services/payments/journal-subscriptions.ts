@@ -9,7 +9,7 @@ export const JOURNAL_SUBSCRIPTION_PERIOD_DAYS = 30
 export interface RecordJournalSubscriptionInput {
   userId: string
   reference: string
-  provider: 'paypal' | 'paybill'
+  provider: 'paystack' | 'paypal' | 'paybill'
   amountMinor: number
   currency: 'KES' | 'USD'
 }

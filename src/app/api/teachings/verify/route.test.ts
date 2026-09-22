@@ -37,7 +37,7 @@ describe('GET /api/teachings/verify', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1', email: 'reader@example.com' } })
-    mockFindUnique.mockResolvedValue({ id: 'teaching-1', slug: 'leading-a-family', title: 'Leading a Family' })
+    mockFindUnique.mockResolvedValue({ id: 'teaching-1', slug: 'leading-a-family', title: 'Leading a Family', priceKes: 800 })
     mockRecord.mockResolvedValue({ purchaseId: 'purchase-1', isNew: true })
   })
 
@@ -97,6 +97,20 @@ describe('GET /api/teachings/verify', () => {
         status: 'success',
         amount: 80000,
         metadata: { offer_name: 'teaching:leading-a-family', user_id: 'a-different-user' },
+      },
+    })
+    const response = await GET(request({ reference: 'ref-1', teachingId: 'teaching-1' }))
+    expect(response.status).toBe(403)
+    expect(mockRecord).not.toHaveBeenCalled()
+  })
+
+  it('returns 403 when the verified amount is lower than the teaching price', async () => {
+    process.env.PAYSTACK_SECRET_KEY = 'sk_test'
+    mockVerify.mockResolvedValue({
+      status: true,
+      data: {
+        status: 'success', amount: 100,
+        metadata: { offer_name: 'teaching:leading-a-family', user_id: 'user-1' },
       },
     })
     const response = await GET(request({ reference: 'ref-1', teachingId: 'teaching-1' }))

@@ -177,7 +177,7 @@ export default async function TeachingDetailPage({ params }: PageProps) {
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden="true">✓</span>
-                  Pay with PayPal, or M-Pesa Paybill with a quick review
+                  Pay with Paystack, PayPal, or M-Pesa Paybill with a quick review
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden="true">✓</span>

@@ -28,6 +28,7 @@
     "eval:book-now": "node tests/evals/book-now-content.eval.js",
     "eval:booking-integrity": "node tests/evals/booking-integrity.eval.js",
     "eval:payments": "node tests/evals/payment-options.eval.js",
+    "eval:paystack-full": "node tests/evals/paystack-full-integration.eval.js",
     "eval:mobile-editorial-pages": "node tests/evals/mobile-editorial-pages.eval.js",
     "eval:home-premium": "node tests/evals/home-premium.eval.js",
     "eval:book-purchase-download": "node tests/evals/book-purchase-download.eval.js",

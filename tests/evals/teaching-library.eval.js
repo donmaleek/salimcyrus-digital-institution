@@ -39,8 +39,12 @@ const checks = [
   ],
   [
     'teaching purchases are unique per provider + externalReference, same idempotency shape as books',
-    schema.includes('@@unique([provider, externalReference])') &&
-      (schema.match(/@@unique\(\[provider, externalReference\]\)/g) || []).length === 2,
+    schema
+      .slice(schema.indexOf('model BookPurchase {'), schema.indexOf('model BookReview {'))
+      .includes('@@unique([provider, externalReference])') &&
+      schema
+        .slice(schema.indexOf('model TeachingPurchase {'), schema.indexOf('model PaymentClaim {'))
+        .includes('@@unique([provider, externalReference])'),
   ],
   [
     'video streaming requires a signed-in session (no anonymous access to purchased content)',

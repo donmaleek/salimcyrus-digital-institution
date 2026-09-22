@@ -39,6 +39,9 @@ export async function GET(request: NextRequest) {
   if (data.metadata?.user_id !== userId) {
     return NextResponse.json({ error: 'This payment does not match this account.' }, { status: 403 })
   }
+  if (data.amount !== teaching.priceKes * 100) {
+    return NextResponse.json({ error: 'The payment amount does not match this teaching.' }, { status: 403 })
+  }
 
   const result = await recordTeachingPurchase({
     teachingId: teaching.id,

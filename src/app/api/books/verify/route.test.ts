@@ -82,6 +82,21 @@ describe('GET /api/books/verify', () => {
     expect(mockRecord).not.toHaveBeenCalled()
   })
 
+  it('returns 403 when the verified amount is lower than the book price', async () => {
+    process.env.PAYSTACK_SECRET_KEY = 'sk_test'
+    mockVerify.mockResolvedValue({
+      status: true,
+      data: {
+        status: 'success', reference: 'r1', amount: 100,
+        customer: { email: 'reader@example.com' },
+        metadata: { offer_name: bookOfferName(readyBook.slug) },
+      },
+    })
+    const response = await GET(request(`reference=r1&slug=${readyBook.slug}`))
+    expect(response.status).toBe(403)
+    expect(mockRecord).not.toHaveBeenCalled()
+  })
+
   it('records the purchase and returns a working download link on a verified match', async () => {
     process.env.PAYSTACK_SECRET_KEY = 'sk_test'
     mockVerify.mockResolvedValue({

@@ -13,16 +13,21 @@ type VerifyState =
 export function CoachingPurchaseReturn() {
   const searchParams = useSearchParams()
   const orderId = searchParams.get('token')
+  const paystackReference = searchParams.get('reference') ?? searchParams.get('trxref')
+  const paymentKey = paystackReference ?? orderId
   const offerName = searchParams.get('offerName')
   const [state, setState] = useState<VerifyState>({ status: 'idle' })
   const verifiedRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!orderId || !offerName || verifiedRef.current === orderId) return
-    verifiedRef.current = orderId
+    if (!paymentKey || !offerName || verifiedRef.current === paymentKey) return
+    verifiedRef.current = paymentKey
     setState({ status: 'verifying' })
 
-    fetch(`/api/coaching/verify-paypal?token=${encodeURIComponent(orderId)}&offerName=${encodeURIComponent(offerName)}`)
+    const endpoint = paystackReference
+      ? `/api/coaching/verify?reference=${encodeURIComponent(paystackReference)}&offerName=${encodeURIComponent(offerName)}`
+      : `/api/coaching/verify-paypal?token=${encodeURIComponent(orderId!)}&offerName=${encodeURIComponent(offerName)}`
+    fetch(endpoint)
       .then(async (response) => {
         const payload = (await response.json()) as {
           offerName?: string
@@ -46,14 +51,14 @@ export function CoachingPurchaseReturn() {
         })
       })
       .catch(() => setState({ status: 'error', message: 'Could not verify payment. Please contact support.' }))
-  }, [orderId, offerName])
+  }, [paymentKey, paystackReference, orderId, offerName])
 
   if (state.status === 'idle') return <BookingConfirmForm />
 
   if (state.status === 'verifying') {
     return (
       <div className="rounded-2xl border border-navy-100 bg-white p-8 text-center" role="status">
-        <p className="text-navy-700">Confirming your PayPal payment…</p>
+        <p className="text-navy-700">Confirming your payment…</p>
       </div>
     )
   }
@@ -63,7 +68,7 @@ export function CoachingPurchaseReturn() {
       <div className="rounded-2xl border border-red-100 bg-red-50 p-6" role="alert">
         <p className="font-semibold text-red-800">{state.message}</p>
         <p className="mt-2 text-sm text-red-700">
-          If you were charged, contact support with your PayPal receipt and we will confirm manually.
+          If you were charged, contact support with your payment receipt and we will confirm manually.
         </p>
       </div>
     )

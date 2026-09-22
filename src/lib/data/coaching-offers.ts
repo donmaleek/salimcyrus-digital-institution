@@ -19,10 +19,9 @@ export interface CoachingOffer {
    * (~129.4 KES/USD), matching that existing convention rather than a
    * live exchange rate lookup. */
   priceUsd: number
-  /** Only the original 3 Standard sessions have a real link, kept for
-   * reference though unused in the UI (Paystack was removed from every
-   * checkout surface in favor of PayPal + Paybill). New offers never get
-   * one, since there is nothing to point it at. */
+  /** Legacy hosted Paystack links for the original Standard sessions.
+   * First-party checkout now initializes every priced coaching offer through
+   * /api/coaching/checkout, so new offers do not need individual hosted links. */
   paystackUrl?: string
 }
 

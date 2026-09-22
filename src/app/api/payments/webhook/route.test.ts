@@ -13,10 +13,15 @@ jest.mock('../../../../services/payments/book-purchases', () => ({
   createDownloadGrant: jest.fn(),
   downloadUrlFor: jest.fn(() => 'https://salimcyrus.com/download/token'),
 }))
+jest.mock('../../../../lib/data/book-catalog', () => ({ getBookBySlug: jest.fn() }))
 jest.mock('../../../../services/payments/teaching-purchases', () => ({
   slugFromTeachingOfferName: jest.requireActual('../../../../services/payments/teaching-purchases')
     .slugFromTeachingOfferName,
   recordTeachingPurchase: jest.fn(),
+}))
+jest.mock('../../../../services/payments/journal-subscriptions', () => ({
+  JOURNAL_SUBSCRIPTION_PRICE_KES: 500,
+  recordJournalSubscription: jest.fn(),
 }))
 jest.mock('../../../../lib/api/email', () => ({
   sendEmail: jest.fn().mockResolvedValue({ sent: true }),
@@ -26,7 +31,7 @@ jest.mock('../../../../lib/db', () => ({
   db: {
     teaching: { findUnique: jest.fn() },
     bookPurchase: { update: jest.fn() },
-    user: { findFirst: jest.fn() },
+    user: { findFirst: jest.fn(), findUnique: jest.fn() },
     $transaction: jest.fn(),
   },
 }))
@@ -34,12 +39,17 @@ jest.mock('../../../../lib/db', () => ({
 import { POST } from './route'
 import { recordBookPurchase, createDownloadGrant } from '@/services/payments/book-purchases'
 import { recordTeachingPurchase } from '@/services/payments/teaching-purchases'
+import { recordJournalSubscription } from '@/services/payments/journal-subscriptions'
 import { db } from '@/lib/db'
+import { getBookBySlug } from '@/lib/data/book-catalog'
 
 const mockRecordBookPurchase = recordBookPurchase as jest.Mock
 const mockCreateDownloadGrant = createDownloadGrant as jest.Mock
 const mockRecordTeachingPurchase = recordTeachingPurchase as jest.Mock
 const mockTeachingFindUnique = db.teaching.findUnique as jest.Mock
+const mockRecordJournalSubscription = recordJournalSubscription as jest.Mock
+const mockUserFindUnique = db.user.findUnique as jest.Mock
+const mockGetBookBySlug = getBookBySlug as jest.Mock
 
 function webhookRequest(body: unknown) {
   return new NextRequest('https://salimcyrus.com/api/payments/webhook', {
@@ -65,6 +75,7 @@ function chargeSuccessEvent(overrides: Record<string, unknown> = {}) {
 describe('POST /api/payments/webhook', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockGetBookBySlug.mockResolvedValue({ slug: 'some-book', title: 'A Book', priceKes: 800 })
   })
 
   it('ignores non charge.success events', async () => {
@@ -92,7 +103,7 @@ describe('POST /api/payments/webhook', () => {
   })
 
   it('routes a teaching: offer to the teaching purchase handler using the user_id metadata', async () => {
-    mockTeachingFindUnique.mockResolvedValue({ id: 'teaching-1', slug: 'leading-a-family' })
+    mockTeachingFindUnique.mockResolvedValue({ id: 'teaching-1', slug: 'leading-a-family', priceKes: 800 })
     mockRecordTeachingPurchase.mockResolvedValue({ purchaseId: 'p1', isNew: true })
 
     const response = await POST(
@@ -147,6 +158,62 @@ describe('POST /api/payments/webhook', () => {
 
     expect(response.status).toBe(200)
     expect(mockRecordTeachingPurchase).not.toHaveBeenCalled()
+  })
+
+  it('does not fulfill an underpaid book charge', async () => {
+    const response = await POST(
+      webhookRequest(chargeSuccessEvent({ amount: 100, metadata: { offer_name: 'book:some-book' } }))
+    )
+    expect(response.status).toBe(200)
+    expect(mockRecordBookPurchase).not.toHaveBeenCalled()
+  })
+
+  it('does not fulfill an underpaid teaching charge', async () => {
+    mockTeachingFindUnique.mockResolvedValue({ id: 'teaching-1', slug: 'leading-a-family', priceKes: 800 })
+    const response = await POST(
+      webhookRequest(chargeSuccessEvent({
+        amount: 100,
+        metadata: { offer_name: 'teaching:leading-a-family', user_id: 'user-1' },
+      }))
+    )
+    expect(response.status).toBe(200)
+    expect(mockRecordTeachingPurchase).not.toHaveBeenCalled()
+  })
+
+  it('grants a matching Journal membership from the signed webhook', async () => {
+    mockUserFindUnique.mockResolvedValue({ id: 'user-1', email: 'buyer@example.com' })
+
+    const response = await POST(
+      webhookRequest(
+        chargeSuccessEvent({
+          amount: 50000,
+          metadata: { offer_name: 'journal:user-1', user_id: 'user-1' },
+        })
+      )
+    )
+
+    expect(response.status).toBe(200)
+    expect(mockRecordJournalSubscription).toHaveBeenCalledWith({
+      userId: 'user-1',
+      reference: 'ref-1',
+      provider: 'paystack',
+      amountMinor: 50000,
+      currency: 'KES',
+    })
+  })
+
+  it('does not grant Journal access when the paid amount is wrong', async () => {
+    const response = await POST(
+      webhookRequest(
+        chargeSuccessEvent({
+          amount: 100,
+          metadata: { offer_name: 'journal:user-1', user_id: 'user-1' },
+        })
+      )
+    )
+
+    expect(response.status).toBe(200)
+    expect(mockRecordJournalSubscription).not.toHaveBeenCalled()
   })
 
   it('returns 401 when the Paystack signature is invalid', async () => {

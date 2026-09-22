@@ -42,6 +42,9 @@ export async function GET(request: NextRequest) {
   if (data.metadata?.offer_name !== bookOfferName(slug)) {
     return NextResponse.json({ error: 'This payment does not match this book.' }, { status: 403 })
   }
+  if (data.amount !== book.priceKes * 100) {
+    return NextResponse.json({ error: 'The payment amount does not match this book.' }, { status: 403 })
+  }
 
   const result = await recordBookPurchase({
     slug,

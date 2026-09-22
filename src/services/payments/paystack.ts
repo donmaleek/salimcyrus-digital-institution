@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { bookOfferName } from '@/services/payments/book-purchases'
 import { teachingOfferName } from '@/services/payments/teaching-purchases'
+import { coachingOffers } from '@/lib/data/coaching-offers'
+import { JOURNAL_SUBSCRIPTION_PRICE_KES } from '@/services/payments/journal-subscriptions'
 
 export const donationRequestSchema = z.object({
   email: z.string().trim().email(),
@@ -141,8 +143,56 @@ export const courseCheckoutRequestSchema = z.object({
   courseId: z.string().trim().min(1).max(200),
 })
 
+export const coachingCheckoutRequestSchema = z.object({
+  email: z.string().trim().email().max(254),
+  offerName: z.string().trim().min(1).max(200),
+})
+
 export function courseOfferName(slug: string) {
   return `course:${slug}`
+}
+
+export function journalOfferName(userId: string) {
+  return `journal:${userId}`
+}
+
+export async function initializePaystackJournalCheckout({
+  email,
+  userId,
+  secretKey,
+  callbackUrl,
+  fetcher = fetch,
+}: {
+  email: string
+  userId: string
+  secretKey: string
+  callbackUrl: string
+  fetcher?: typeof fetch
+}): Promise<DonationCheckout> {
+  const response = await fetcher('https://api.paystack.co/transaction/initialize', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      amount: JOURNAL_SUBSCRIPTION_PRICE_KES * 100,
+      currency: 'KES',
+      callback_url: callbackUrl,
+      metadata: {
+        purpose: 'Journal Membership (1 month)',
+        offer_name: journalOfferName(userId),
+        user_id: userId,
+      },
+    }),
+  })
+
+  const payload = (await response.json()) as PaystackInitializeResponse
+  if (!response.ok || !payload.status || !payload.data?.authorization_url) {
+    throw new Error(payload.message || 'Paystack checkout could not be initialized')
+  }
+  return { authorizationUrl: payload.data.authorization_url, reference: payload.data.reference }
 }
 
 export async function initializePaystackCourseCheckout({
@@ -164,6 +214,51 @@ export async function initializePaystackCourseCheckout({
     throw new Error(payload.message || 'Paystack checkout could not be initialized')
   }
   return { authorizationUrl: payload.data.authorization_url, reference: payload.data.reference }
+}
+
+export async function initializePaystackCoachingCheckout({
+  email,
+  offerName,
+  secretKey,
+  callbackUrl,
+  fetcher = fetch,
+}: {
+  email: string
+  offerName: string
+  secretKey: string
+  callbackUrl: string
+  fetcher?: typeof fetch
+}): Promise<DonationCheckout> {
+  const offer = coachingOffers.find((candidate) => candidate.name === offerName)
+  if (!offer) throw new Error('Unknown coaching offer')
+
+  const response = await fetcher('https://api.paystack.co/transaction/initialize', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      amount: offer.priceKes * 100,
+      currency: 'KES',
+      callback_url: callbackUrl,
+      metadata: {
+        purpose: 'Coaching booking',
+        offer_name: offer.name,
+      },
+    }),
+  })
+
+  const payload = (await response.json()) as PaystackInitializeResponse
+  if (!response.ok || !payload.status || !payload.data?.authorization_url) {
+    throw new Error(payload.message || 'Paystack checkout could not be initialized')
+  }
+
+  return {
+    authorizationUrl: payload.data.authorization_url,
+    reference: payload.data.reference,
+  }
 }
 
 export async function initializePaystackTeachingCheckout({

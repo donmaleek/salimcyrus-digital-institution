@@ -226,7 +226,7 @@ export function CoachingCategoryPicker() {
                     {formatCurrency(offer.priceKes)}
                   </p>
                   <p className="mt-1 text-sm text-navy-500">
-                    or ${offer.priceUsd} via PayPal
+                    via Paystack, or ${offer.priceUsd} via PayPal
                   </p>
                   <button
                     type="button"
@@ -261,8 +261,8 @@ export function CoachingCategoryPicker() {
                     </div>
                   </div>
                   <p className="mt-4 text-base leading-7 text-navy-600">
-                    Choose PayPal for immediate checkout or M-Pesa Paybill for
-                    manual confirmation.
+                    Choose Paystack or PayPal for immediate checkout, or M-Pesa
+                    Paybill for manual confirmation.
                   </p>
                   <div className="mt-5">
                     <CoachingCheckoutForm

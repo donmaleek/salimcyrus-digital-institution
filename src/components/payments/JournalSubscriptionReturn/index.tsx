@@ -7,16 +7,21 @@ import { formatDate } from '@/lib/utils/formatting'
 export function JournalSubscriptionReturn() {
   const params = useSearchParams()
   const token = params.get('token')
+  const paystackReference = params.get('reference') ?? params.get('trxref')
+  const paymentKey = paystackReference ?? token
   const seen = useRef<string | null>(null)
   const [state, setState] = useState<{ status: 'idle' | 'verifying' | 'error' | 'ready'; message?: string; expiresAt?: string }>({
     status: 'idle',
   })
 
   useEffect(() => {
-    if (!token || seen.current === token) return
-    seen.current = token
+    if (!paymentKey || seen.current === paymentKey) return
+    seen.current = paymentKey
     setState({ status: 'verifying' })
-    fetch(`/api/journal/verify-paypal?token=${encodeURIComponent(token)}`)
+    const endpoint = paystackReference
+      ? `/api/journal/verify?reference=${encodeURIComponent(paystackReference)}`
+      : `/api/journal/verify-paypal?token=${encodeURIComponent(token!)}`
+    fetch(endpoint)
       .then(async (response) => {
         const body = (await response.json()) as { error?: string; expiresAt?: string }
         setState(
@@ -26,7 +31,7 @@ export function JournalSubscriptionReturn() {
         )
       })
       .catch(() => setState({ status: 'error', message: 'Could not verify payment. Please contact support.' }))
-  }, [token])
+  }, [paymentKey, paystackReference, token])
 
   if (state.status === 'idle') return null
 

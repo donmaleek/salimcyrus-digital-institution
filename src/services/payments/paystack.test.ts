@@ -5,7 +5,32 @@ import {
   initializePaystackBookCheckout,
   courseCheckoutRequestSchema,
   initializePaystackCourseCheckout,
+  initializePaystackJournalCheckout,
 } from './paystack'
+
+describe('Paystack Journal checkout', () => {
+  it('charges the fixed one-month price and binds it to the authenticated account', async () => {
+    const fetcher = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: true,
+        data: { authorization_url: 'https://checkout.paystack.com/journal', reference: 'journal-ref' },
+      }),
+    }) as unknown as typeof fetch
+
+    await initializePaystackJournalCheckout({
+      email: 'reader@example.com', userId: 'user-1', secretKey: 'secret',
+      callbackUrl: 'https://salimcyrus.com/journal', fetcher,
+    })
+
+    const body = JSON.parse((fetcher as jest.Mock).mock.calls[0][1].body)
+    expect(body).toMatchObject({
+      amount: 50000,
+      currency: 'KES',
+      metadata: { offer_name: 'journal:user-1', user_id: 'user-1' },
+    })
+  })
+})
 
 describe('Paystack donation checkout', () => {
   it('validates email and KES donation boundaries', () => {

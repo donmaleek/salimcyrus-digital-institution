@@ -15,7 +15,7 @@ export default function ConfirmBookingPage() {
       <PageHero
         eyebrow="Confirm Your Booking"
         title="Already Paid? Let's Get You Scheduled"
-        description="If you paid with PayPal, we confirm automatically below. If you paid another way, enter your email and payment reference, then choose an available time."
+        description="If you paid with Paystack or PayPal, we confirm automatically below. If you used Paybill, enter your email and payment reference, then choose an available time."
       />
       <section className="bg-cream">
         <div className="mx-auto max-w-content px-6 py-20">

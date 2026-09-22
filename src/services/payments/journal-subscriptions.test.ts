@@ -37,6 +37,25 @@ describe('recordJournalSubscription', () => {
     expect(mockCreate).not.toHaveBeenCalled()
   })
 
+  it('accepts Paystack as a Journal payment provider', async () => {
+    mockFindUnique.mockResolvedValue(null)
+    mockFindFirst.mockResolvedValue(null)
+    mockCreate.mockImplementation(({ data }) => Promise.resolve({ id: 'sub-paystack', ...data }))
+
+    const result = await recordJournalSubscription({
+      userId: 'user-1',
+      reference: 'paystack-ref-1',
+      provider: 'paystack',
+      amountMinor: 50000,
+      currency: 'KES',
+    })
+
+    expect(result.isNew).toBe(true)
+    expect(mockCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({ provider: 'paystack', amountMinor: 50000, currency: 'KES' }),
+    })
+  })
+
   it('grants 30 days from now for a first-time subscriber with no active row', async () => {
     mockFindUnique.mockResolvedValue(null)
     mockFindFirst.mockResolvedValue(null)

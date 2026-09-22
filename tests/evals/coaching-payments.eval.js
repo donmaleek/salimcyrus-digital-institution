@@ -9,6 +9,7 @@ const bookNowPage = read('src/app/(site)/book-now/page.tsx')
 const picker = read('src/components/payments/CoachingCategoryPicker/index.tsx')
 const confirmRoute = read('src/app/api/booking/confirm/route.ts')
 const checkoutPaypal = read('src/app/api/coaching/checkout-paypal/route.ts')
+const checkoutPaystack = read('src/app/api/coaching/checkout/route.ts')
 const verifyPaypal = read('src/app/api/coaching/verify-paypal/route.ts')
 const coachingBookings = read('src/services/payments/coaching-bookings.ts')
 const claimForm = read('src/components/payments/PaybillClaimForm/index.tsx')
@@ -19,6 +20,7 @@ const coachingSurface = [
   bookNowPage,
   confirmRoute,
   checkoutPaypal,
+  checkoutPaystack,
   verifyPaypal,
   coachingBookings,
 ].join('\n')
@@ -27,18 +29,25 @@ const checks = [
   [
     'Private Coaching (the old 4-8 week option) was removed as instructed and never came back, and every priced offer across every format has a real KES and USD price',
     !offers.includes("name: 'Private Coaching'") &&
-      (offers.match(/priceKes: \d+/g) || []).length === 10 &&
-      (offers.match(/priceUsd: \d+/g) || []).length === 10,
+      (offers.match(/priceKes: \d+/g) || []).length === 12 &&
+      (offers.match(/priceUsd: \d+/g) || []).length === 12,
   ],
   [
-    'Book Now shows real prices directly and offers PayPal + Paybill, not a Paystack link',
+    'Book Now shows real prices and offers first-party Paystack, PayPal, and Paybill checkout',
     bookNowPage.includes('CoachingCategoryPicker') &&
       picker.includes('CoachingCheckoutForm') &&
-      !picker.includes('offer.paystackUrl'),
+      !picker.includes('offer.paystackUrl') &&
+      checkoutPaystack.includes('initializePaystackCoachingCheckout'),
   ],
   [
     'coaching is not account-gated (matches donations, not books/teachings): no session required for PayPal checkout',
-    !checkoutPaypal.includes('getServerSession'),
+    !checkoutPaypal.includes('getServerSession') && !checkoutPaystack.includes('getServerSession'),
+  ],
+  [
+    'Paystack coaching checkout validates the selected server-owned offer and returns to booking confirmation',
+    checkoutPaystack.includes('coachingOffers.find') &&
+      checkoutPaystack.includes('/book-now/confirm?offerName=') &&
+      checkoutPaystack.includes('PAYSTACK_SECRET_KEY'),
   ],
   [
     'PayPal coaching checkout prices in USD and embeds a tamper-checkable reference to the specific offer',

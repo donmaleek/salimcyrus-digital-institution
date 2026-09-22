@@ -12,8 +12,9 @@ const service = read('src/services/payments/paystack.ts')
 
 const checks = [
   [
-    'support page presents both live payment methods and does not claim Paystack is offered',
-    ['M-Pesa', 'PayPal'].every((method) => page.includes(method)) && !page.includes('Paystack, M-Pesa'),
+    'support page presents Paystack, M-Pesa, and PayPal as live payment methods',
+    ['Paystack', 'M-Pesa', 'PayPal'].every((method) => page.includes(method)) &&
+      options.includes("fetch('/api/payments/initiate'"),
   ],
   [
     'Paybill details match the supplied artwork',
@@ -53,9 +54,10 @@ const checks = [
     })(),
   ],
   [
-    'Paystack backend is kept intact (not deleted) even though the UI no longer offers it, so it can be re-enabled',
+    'Paystack donation UI calls the server-side initializer',
     route.includes('PAYSTACK_SECRET_KEY') &&
-      service.includes('transaction/initialize'),
+      service.includes('transaction/initialize') &&
+      options.includes('Continue to Paystack'),
   ],
   [
     'Paystack amount is converted to the smallest currency unit',

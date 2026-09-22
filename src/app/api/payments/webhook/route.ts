@@ -11,6 +11,12 @@ import {
 } from '@/services/payments/book-purchases'
 import { slugFromTeachingOfferName, recordTeachingPurchase } from '@/services/payments/teaching-purchases'
 import { sendEmail, bookDownloadEmailHtml } from '@/lib/api/email'
+import { getBookBySlug } from '@/lib/data/book-catalog'
+import { journalOfferName } from '@/services/payments/paystack'
+import {
+  JOURNAL_SUBSCRIPTION_PRICE_KES,
+  recordJournalSubscription,
+} from '@/services/payments/journal-subscriptions'
 
 async function handleBookPurchase({
   slug,
@@ -25,6 +31,11 @@ async function handleBookPurchase({
   customer: { email: string }
   name: string
 }) {
+  const book = await getBookBySlug(slug)
+  if (!book || amount !== book.priceKes * 100) {
+    console.error('Paystack webhook: book purchase amount does not match', { slug, reference, amount })
+    return
+  }
   const result = await recordBookPurchase({
     slug,
     reference,
@@ -84,6 +95,10 @@ async function handleTeachingPurchase({
   const teaching = await db.teaching.findUnique({ where: { slug } })
   if (!teaching) {
     console.error('Paystack webhook: teaching purchase for unknown slug', { slug, reference })
+    return
+  }
+  if (amount !== teaching.priceKes * 100) {
+    console.error('Paystack webhook: teaching purchase amount does not match', { slug, reference, amount })
     return
   }
   const result = await recordTeachingPurchase({
@@ -159,6 +174,30 @@ export async function POST(request: NextRequest) {
   const teachingSlug = rawOfferName ? slugFromTeachingOfferName(rawOfferName) : null
   if (teachingSlug) {
     await handleTeachingPurchase({ slug: teachingSlug, reference, amount, customer, name, userId: metadata?.user_id })
+    return NextResponse.json({ status: 'ok' })
+  }
+
+  const journalUserId = metadata?.user_id
+  if (journalUserId && rawOfferName === journalOfferName(journalUserId)) {
+    if (amount !== JOURNAL_SUBSCRIPTION_PRICE_KES * 100) {
+      console.error('Paystack webhook: journal payment amount does not match', { reference, amount })
+      return NextResponse.json({ status: 'ignored' })
+    }
+    const user = await db.user.findUnique({ where: { id: journalUserId } })
+    if (!user || normalizeEmail(user.email) !== normalizeEmail(customer.email)) {
+      console.error('Paystack webhook: journal payment account does not match customer', {
+        reference,
+        journalUserId,
+      })
+      return NextResponse.json({ status: 'ignored' })
+    }
+    await recordJournalSubscription({
+      userId: journalUserId,
+      reference,
+      provider: 'paystack',
+      amountMinor: amount,
+      currency: 'KES',
+    })
     return NextResponse.json({ status: 'ok' })
   }
 

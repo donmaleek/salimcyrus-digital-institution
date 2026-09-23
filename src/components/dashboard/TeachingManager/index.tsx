@@ -13,6 +13,7 @@ interface TeachingSummary {
   title: string
   category: string
   status: string
+  processingStatus: string
   priceKes: number
   thumbnailPath: string | null
   updatedAt: string
@@ -96,6 +97,19 @@ export function TeachingManager({ initialTeachings }: { initialTeachings: Teachi
                   >
                     {teaching.status}
                   </span>
+                  {teaching.processingStatus === 'processing' && (
+                    <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-blue-600">
+                      Compressing…
+                    </span>
+                  )}
+                  {teaching.processingStatus === 'failed' && (
+                    <span
+                      className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-red-600"
+                      title="Compression failed; the original uploaded file is still playable as-is."
+                    >
+                      Compression failed
+                    </span>
+                  )}
                 </div>
                 <p className="mt-1 text-sm text-navy-400">
                   {teaching.category} &middot; {formatCurrency(teaching.priceKes)} &middot; updated{' '}

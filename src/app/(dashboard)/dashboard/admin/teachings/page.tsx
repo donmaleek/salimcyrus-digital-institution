@@ -33,6 +33,7 @@ export default async function AdminTeachingsPage() {
             title: teaching.title,
             category: teaching.category,
             status: teaching.status,
+            processingStatus: teaching.processingStatus,
             priceKes: teaching.priceKes,
             thumbnailPath: teaching.thumbnailPath,
             updatedAt: teaching.updatedAt.toISOString(),

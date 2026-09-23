@@ -105,8 +105,8 @@ export const coachingOffers: CoachingOffer[] = [
       'Identify a clear, values-aligned next step.',
     ],
     outcome: 'Greater clarity, conviction, and direction for what comes next.',
-    priceKes: 18000,
-    priceUsd: 139,
+    priceKes: 25000,
+    priceUsd: 193,
   },
   {
     name: 'Single Motherhood & Life Alignment Session',
@@ -119,8 +119,8 @@ export const coachingOffers: CoachingOffer[] = [
       'Choose practical next steps for your wellbeing, relationships, children, and future.',
     ],
     outcome: 'A clearer, healthier direction for the woman and mother you are becoming.',
-    priceKes: 25000,
-    priceUsd: 193,
+    priceKes: 10000,
+    priceUsd: 77,
   },
   {
     name: "Couples Coaching, At Salim's Location",

@@ -73,17 +73,17 @@ const checks = [
       categorySlugs.every((slug) => ['standard', 'identity-alignment', 'single-motherhood-alignment', 'individual', 'couples', 'group', 'vip-summit'].includes(slug)),
   ],
   [
-    'Identity & Life Alignment has its own booking category and is priced at exactly KES 18,000',
+    'Identity & Life Alignment has its own booking category and is priced at exactly KES 25,000',
     offersFile.includes("slug: 'identity-alignment'") &&
       offerBlock('Identity & Life Alignment Session').includes("category: 'identity-alignment'") &&
-      offerBlock('Identity & Life Alignment Session').includes('priceKes: 18000') &&
+      offerBlock('Identity & Life Alignment Session').includes('priceKes: 25000') &&
       detailDeepLinksToIdentityOffer(),
   ],
   [
-    'Single Motherhood & Life Alignment has its own booking category and is priced at exactly KES 25,000',
+    'Single Motherhood & Life Alignment has its own booking category and is priced at exactly KES 10,000',
     offersFile.includes("slug: 'single-motherhood-alignment'") &&
       offerBlock('Single Motherhood & Life Alignment Session').includes("category: 'single-motherhood-alignment'") &&
-      offerBlock('Single Motherhood & Life Alignment Session').includes('priceKes: 25000') &&
+      offerBlock('Single Motherhood & Life Alignment Session').includes('priceKes: 10000') &&
       alignmentDetail.includes('/book-now?offer=Single%20Motherhood%20%26%20Life%20Alignment%20Session#choose-session'),
   ],
   [

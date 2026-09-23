@@ -32,8 +32,10 @@ const checks = [
     !previewRoute.includes('teaching.videoFileName') && !previewRoute.includes('db.teaching'),
   ],
   [
-    'the preview clip is written to a filename distinct from the main video, so it can never accidentally BE the main video file on disk',
-    teachingAssetsService.includes('`${slug}-preview.${ext}`') && adminRoute.includes("`${slug}.${videoExt}`"),
+    'the preview clip is written to a filename distinct from both the raw upload and the final compressed video, so it can never accidentally collide with the main video file on disk (the raw upload and the ffmpeg-compressed output must also stay distinct from each other, or ffmpeg would read and write the same path)',
+    teachingAssetsService.includes('`${slug}-preview.${ext}`') &&
+      adminRoute.includes('`${slug}.upload.${video.ext}`') &&
+      !adminRoute.includes('`${slug}.${video.ext}`'),
   ],
   [
     'preview clip uploads are validated by MIME type and size-capped well below the main video limit (it is a short teaser, not the full teaching)',

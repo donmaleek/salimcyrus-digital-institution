@@ -308,25 +308,32 @@ model BookDownloadGrant {
  * see src/lib/api/books-storage.ts.
  */
 model Teaching {
-  id              String             @id @default(cuid())
-  slug            String             @unique
-  title           String
-  description     String
-  category        String
-  priceKes        Int
-  priceUsd        Int
-  videoFileName   String
-  thumbnailPath   String?
+  id               String             @id @default(cuid())
+  slug             String             @unique
+  title            String
+  description      String
+  category         String
+  priceKes         Int
+  priceUsd         Int
+  videoFileName    String
+  thumbnailPath    String?
   /// A short, ungated teaser clip (distinct from the purchase-gated
   /// videoFileName) that plays on hover in the catalog grid, like a
   /// YouTube preview. Optional: hover just shows the static thumbnail
   /// when no preview has been uploaded.
-  previewFileName String?
-  durationSeconds Int?
-  status          String             @default("draft")
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  purchases       TeachingPurchase[]
+  previewFileName  String?
+  durationSeconds  Int?
+  /// 'processing' while the background ffmpeg compression pass runs on a
+  /// freshly uploaded video, 'ready' once it succeeds, 'failed' if it
+  /// errors (videoFileName then stays pointed at the original, uncompressed
+  /// upload rather than blocking on a retry, so the teaching is never
+  /// unplayable). Independent of `status` (draft/published): compression
+  /// runs in the background regardless of publish state.
+  processingStatus String             @default("ready")
+  status           String             @default("draft")
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  purchases        TeachingPurchase[]
 
   @@index([status, category])
 }

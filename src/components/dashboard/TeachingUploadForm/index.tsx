@@ -78,7 +78,9 @@ export function TeachingUploadForm() {
       return
     }
 
-    showToast(publish ? 'Published.' : 'Draft saved.')
+    showToast(
+      `${publish ? 'Published.' : 'Draft saved.'} Compressing the video in the background, ready shortly.`
+    )
     router.push('/dashboard/admin/teachings')
     router.refresh()
   }
@@ -171,7 +173,10 @@ export function TeachingUploadForm() {
         <label htmlFor="teaching-video" className="block font-semibold text-navy">
           Video file
         </label>
-        <p className="mt-2 text-sm text-navy-500">MP4, WebM, or MOV. Up to 2GB.</p>
+        <p className="mt-2 text-sm text-navy-500">
+          MP4, WebM, or MOV. Up to 2GB. Automatically compressed in the background after upload, so it&apos;s ready
+          to stream shortly after you save.
+        </p>
         <input
           id="teaching-video"
           type="file"

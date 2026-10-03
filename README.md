@@ -147,3 +147,21 @@ npm run develop
 npm run db:migrate   # create/apply migrations (dev)
 npm run db:studio    # browse data in Prisma Studio
 ```
+
+## Site suspension (kill switch)
+
+The whole site can be taken offline for every visitor and brought back
+without touching any data or redeploying, controlled only by the developer
+(the client has no way to see or flip this). On the production server:
+
+```
+node scripts/toggle-site.js on       # suspend the whole site
+node scripts/toggle-site.js off      # bring it back
+node scripts/toggle-site.js status   # check current state, no change
+```
+
+Suspended visitors get a generic "Temporarily Unavailable" 503 page (no
+mention of billing). The developer can still view the live site while
+suspended by visiting `https://salimcyrus.com/?bypass=<SUSPENSION_BYPASS_TOKEN>`
+once; that sets a long-lived cookie so the token doesn't need to be re-entered.
+See `src/middleware.ts` and `src/lib/suspension.ts`.

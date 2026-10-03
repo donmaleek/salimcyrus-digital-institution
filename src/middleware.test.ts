@@ -23,14 +23,14 @@ describe('middleware (site suspension)', () => {
     expect(response.status).toBe(200)
   })
 
-  it('returns a 503 maintenance page for an ordinary visitor once suspended', async () => {
+  it('returns a 503 unreachable-site page for an ordinary visitor once suspended', async () => {
     process.env.APP_SUSPENDED = 'true'
     process.env.SUSPENSION_BYPASS_TOKEN = 'the-real-secret'
     const response = await middleware(request('https://salimcyrus.com/anything'))
     expect(response.status).toBe(503)
     expect(response.headers.get('Retry-After')).toBeTruthy()
     const body = await response.text()
-    expect(body).toContain('Temporarily Unavailable')
+    expect(body).toContain('This site can no longer be reached.')
   })
 
   it('blocks API routes too, not just pages, since "off" means fully off', async () => {

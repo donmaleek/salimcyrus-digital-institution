@@ -40,7 +40,7 @@ export function suspendedPageHtml(): string {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
-<title>Temporarily Unavailable</title>
+<title>Site Cannot Be Reached</title>
 <style>
   body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0f1b2d; color: #f7f3e9; font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 24px; box-sizing: border-box; }
   h1 { font-size: 1.5rem; margin: 0 0 8px; }
@@ -49,8 +49,8 @@ export function suspendedPageHtml(): string {
 </head>
 <body>
   <div>
-    <h1>Temporarily Unavailable</h1>
-    <p>This site is undergoing maintenance. Please check back soon.</p>
+    <h1>This site can no longer be reached.</h1>
+    <p>Please contact your Contabo server provider or CDN for more information.</p>
   </div>
 </body>
 </html>`

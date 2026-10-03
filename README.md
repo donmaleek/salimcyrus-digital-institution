@@ -160,8 +160,9 @@ node scripts/toggle-site.js off      # bring it back
 node scripts/toggle-site.js status   # check current state, no change
 ```
 
-Suspended visitors get a generic "Temporarily Unavailable" 503 page (no
-mention of billing). The developer can still view the live site while
+Suspended visitors get a 503 page reading "This site can no longer be
+reached. Please contact your Contabo server provider or CDN for more
+information." (no mention of billing). The developer can still view the live site while
 suspended by visiting `https://salimcyrus.com/?bypass=<SUSPENSION_BYPASS_TOKEN>`
 once; that sets a long-lived cookie so the token doesn't need to be re-entered.
 See `src/middleware.ts` and `src/lib/suspension.ts`.

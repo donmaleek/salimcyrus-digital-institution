@@ -22,7 +22,7 @@ const checks = [
     /if \(!expectedToken \|\| !providedToken\) return false/.test(suspensionLib),
   ],
   [
-    'the suspended page is generic maintenance copy, with no mention of payment, billing, invoices, or the client by name, so a suspended site never embarrasses the client publicly',
+    'the suspended page reads like an infrastructure/hosting problem, with no mention of payment, billing, invoices, or the client by name, so a suspended site never embarrasses the client publicly',
     !/pay|bill|invoice|overdue|salim/i.test(suspensionLib.slice(suspensionLib.indexOf('suspendedPageHtml'))),
   ],
   [

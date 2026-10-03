@@ -38,10 +38,11 @@ describe('hasValidBypass', () => {
 })
 
 describe('suspendedPageHtml', () => {
-  it('renders generic maintenance copy with no mention of payment, billing, or the client by name', () => {
+  it('renders infrastructure-looking copy with no mention of payment, billing, or the client by name', () => {
     const html = suspendedPageHtml()
     expect(html.toLowerCase()).not.toMatch(/pay|bill|invoice|overdue|salim/i)
-    expect(html).toContain('Temporarily Unavailable')
+    expect(html).toContain('This site can no longer be reached.')
+    expect(html).toContain('Contabo')
   })
 
   it('is noindex, so a suspended site is never indexed by search engines', () => {

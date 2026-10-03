@@ -30,7 +30,10 @@ const checks = [
     'Book Now page renders the coaching category picker, and every priced offer across all formats has a real KES price',
     page.includes('CoachingCategoryPicker') &&
       picker.includes('coachingOffers.filter') &&
-      (offers.match(/priceKes: \d+/g) || []).length === 10,
+      // 12 priced offers across all 7 categories (3 standard + 3 individual +
+      // 3 couples + 1 group + 1 identity-alignment + 1 single-motherhood-alignment);
+      // see coaching-catalog.eval.js for the full category/pricing breakdown.
+      (offers.match(/priceKes: \d+/g) || []).length === 12,
   ],
   [
     'page explains the four-stage booking process',

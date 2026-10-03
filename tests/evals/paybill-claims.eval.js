@@ -87,12 +87,12 @@ const checks = [
       (service.match(/already_reviewed/g) || []).length >= 2,
   ],
   [
-    'Paystack no longer appears as a buyable option on book, teaching, or donation checkout',
-    !bookCheckout.includes('Paystack') &&
-      !teachingCheckout.includes('Paystack') &&
-      !donationOptions.includes('Paystack') &&
-      !bookCheckout.includes("checkout-paystack'") &&
-      !teachingCheckout.includes("/api/teachings/checkout'"),
+    'Paystack is available again as a payment option on book, teaching, and donation checkout (reinstated by "feat: enable Paystack across all payment flows"), alongside Paybill and PayPal rather than instead of them',
+    bookCheckout.includes('Paystack') &&
+      teachingCheckout.includes('Paystack') &&
+      donationOptions.includes('Paystack') &&
+      bookCheckout.includes("'/api/books/checkout'") &&
+      teachingCheckout.includes("'/api/teachings/checkout'"),
   ],
   [
     'PayPal remains available on all three checkout surfaces alongside Paybill',

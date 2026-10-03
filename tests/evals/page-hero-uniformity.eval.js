@@ -31,6 +31,8 @@ function collectPages(directory) {
 const HERO_EXEMPT_PAGES = [
   path.join(pageRoot, 'books', '[slug]', 'page.tsx'),
   path.join(pageRoot, 'teachings', '[slug]', 'page.tsx'),
+  path.join(pageRoot, 'academy', 'courses', '[slug]', 'page.tsx'),
+  path.join(pageRoot, 'academy', 'masterclasses', '[slug]', 'page.tsx'),
 ]
 
 const pagesWithoutSharedHero = collectPages(pageRoot)

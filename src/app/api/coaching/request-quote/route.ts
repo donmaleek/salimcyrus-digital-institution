@@ -20,6 +20,8 @@ const requestQuoteSchema = z.object({
   category: z.enum(['individual', 'couples', 'group', 'vip-summit']),
   tierLabel: z.string().trim().min(2).max(200),
   message: z.string().trim().min(20).max(1500),
+  preferredLocation: z.string().trim().min(2).max(200).optional(),
+  preferredDate: z.string().trim().min(2).max(100).optional(),
 })
 
 export async function POST(request: Request) {
@@ -31,6 +33,11 @@ export async function POST(request: Request) {
   const categoryName = coachingCategories.find((c) => c.slug === data.category)?.name ?? data.category
   const subject = `Coaching quote request: ${categoryName}, ${data.tierLabel}`
   const normalizedEmail = normalizeEmail(data.email)!
+  const detailLines = [
+    data.preferredLocation ? `Preferred location: ${data.preferredLocation}` : null,
+    data.preferredDate ? `Preferred dates: ${data.preferredDate}` : null,
+  ].filter(Boolean)
+  const activityBody = detailLines.length ? `${detailLines.join('\n')}\n\n${data.message}` : data.message
 
   await db.$transaction(async (tx) => {
     let contact = await tx.crmContact.findFirst({ where: { normalizedEmail, deletedAt: null } })
@@ -59,15 +66,20 @@ export async function POST(request: Request) {
         type: 'enquiry',
         direction: 'inbound',
         subject,
-        body: data.message,
+        body: activityBody,
         channel: 'website',
-        metadata: { category: data.category, tierLabel: data.tierLabel },
+        metadata: {
+          category: data.category,
+          tierLabel: data.tierLabel,
+          preferredLocation: data.preferredLocation,
+          preferredDate: data.preferredDate,
+        },
       },
     })
     await tx.crmTask.create({
       data: {
         title: `Respond to coaching quote: ${data.name}`,
-        description: `${subject}\n\n${data.message}`,
+        description: `${subject}\n\n${activityBody}`,
         dueAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
         priority: 'high',
         contactId: contact.id,

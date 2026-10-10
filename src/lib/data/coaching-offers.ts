@@ -198,6 +198,28 @@ export const coachingOffers: CoachingOffer[] = [
   },
 ]
 
+/** One arrangement that must be agreed before an international engagement
+ * is confirmed (accommodation, travel, deposit). Shown as its own callout
+ * on the request tier card, same visual weight as a priced offer's
+ * logisticsNote. */
+export interface CoachingArrangement {
+  label: string
+  note: string
+}
+
+/** Rich detail for a request tier whose terms are fully specified up
+ * front (duration policy, rate policy, arrangements, booking steps) even
+ * though the price itself is negotiated. Tiers without this (Group,
+ * VIP Summit) keep the plain description-only card. */
+export interface CoachingRequestTierDetail {
+  engagementType: string
+  durationNote: string
+  rateNote: string
+  arrangements: CoachingArrangement[]
+  howToBook: string[]
+  ctaLabel: string
+}
+
 /** Tiers with no fixed price: too situational (international travel, very
  * large groups, a conference booking) to quote without a conversation.
  * These never enter the payment pipeline; picking one shows a request
@@ -206,20 +228,56 @@ export interface CoachingRequestTier {
   category: Exclude<CoachingCategorySlug, 'standard'>
   label: string
   description: string
+  /** True when the enquiry form should also collect a preferred location
+   * and date up front, so the first follow-up already has logistics to
+   * work with instead of starting from zero. */
+  collectsLocationAndDate?: boolean
+  detail?: CoachingRequestTierDetail
+}
+
+const internationalCoachingDetail: CoachingRequestTierDetail = {
+  engagementType: 'Personalized Coaching & Mentorship',
+  durationNote: 'By mutual agreement',
+  rateNote: 'Available upon request',
+  arrangements: [
+    {
+      label: 'Accommodation',
+      note: 'Accommodation arrangements will be coordinated as part of the engagement.',
+    },
+    {
+      label: 'Travel & Logistical Arrangements',
+      note: 'International travel and related logistical arrangements will be discussed and agreed upon before confirmation.',
+    },
+    {
+      label: 'Booking Deposit',
+      note: 'A deposit is required to secure the engagement and confirm the agreed schedule. The applicable deposit amount and payment terms will be communicated during the booking process.',
+    },
+  ],
+  howToBook: [
+    'Submit an international coaching request.',
+    'Provide your preferred location, dates, and coaching requirements.',
+    'Discuss session duration, professional fees, accommodation, travel logistics, and deposit terms.',
+    'Receive confirmation once the arrangements and required deposit have been agreed upon.',
+  ],
+  ctaLabel: 'Request International Coaching',
 }
 
 export const coachingRequestTiers: CoachingRequestTier[] = [
   {
     category: 'individual',
-    label: 'Your Location, Outside Kenya',
+    label: 'Your Preferred Location, Outside Kenya',
     description:
-      'International one-on-one coaching. Submit a request to discuss timing and rates.',
+      'Receive individualized coaching and mentorship delivered at your preferred international location, tailored to your personal goals, challenges, and development needs.',
+    collectsLocationAndDate: true,
+    detail: internationalCoachingDetail,
   },
   {
     category: 'couples',
-    label: 'Your Location, Outside Kenya',
+    label: 'Your Preferred Location, Outside Kenya',
     description:
-      'International couples coaching. Submit a request to discuss timing and rates.',
+      'Receive individualized coaching and mentorship for both partners delivered at your preferred international location, tailored to your shared goals, challenges, and development needs.',
+    collectsLocationAndDate: true,
+    detail: internationalCoachingDetail,
   },
   {
     category: 'group',

@@ -334,6 +334,7 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
         {requestTiers.map((tier, index) => {
           const isSelected = selectedOffer === tier.label
           const panelId = `request-${category}-${index}`
+          const detail = tier.detail
 
           return (
             <article
@@ -347,21 +348,50 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
                       {String(pricedTiers.length + index + 1).padStart(2, '0')}
                     </span>
                     <span className="h-px w-8 bg-gold-400" aria-hidden />
-                    <span>Tailored engagement</span>
+                    <span>{detail?.engagementType ?? 'Tailored engagement'}</span>
                   </div>
                   <h4 className="mt-4 max-w-md font-heading text-2xl font-bold leading-tight text-navy sm:text-3xl">
                     {tier.label}
                   </h4>
                 </div>
-                <p className="max-w-xl text-lg leading-8 text-navy-600">
-                  {tier.description}
-                </p>
+                <div className="max-w-xl">
+                  <p className="text-lg leading-8 text-navy-600">{tier.description}</p>
+                  {detail && (
+                    <dl className="mt-5 space-y-4" data-testid="coaching-request-arrangements">
+                      {detail.arrangements.map((arrangement) => (
+                        <div key={arrangement.label} className="border-t border-navy-100 pt-4">
+                          <dt className="font-bold text-navy">{arrangement.label}</dt>
+                          <dd className="mt-1 text-base leading-7 text-navy-600">{arrangement.note}</dd>
+                        </div>
+                      ))}
+                      <div className="border-t border-navy-100 pt-4">
+                        <dt className="font-bold text-navy">How to book</dt>
+                        <dd>
+                          <ol className="mt-2 space-y-2">
+                            {detail.howToBook.map((step, stepIndex) => (
+                              <li key={step} className="grid grid-cols-[20px_1fr] gap-2 leading-7 text-navy-600">
+                                <span className="font-bold text-gold-700">{stepIndex + 1}.</span>
+                                <span>{step}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        </dd>
+                      </div>
+                    </dl>
+                  )}
+                </div>
                 <div className="lg:text-right">
                   <p className="text-sm font-bold uppercase tracking-[0.12em] text-navy-500">
+                    Duration
+                  </p>
+                  <p className="mt-2 font-heading text-2xl font-bold text-navy">
+                    {detail?.durationNote ?? 'By mutual agreement'}
+                  </p>
+                  <p className="mt-5 text-sm font-bold uppercase tracking-[0.12em] text-navy-500">
                     Investment
                   </p>
                   <p className="mt-2 font-heading text-2xl font-bold text-navy">
-                    Custom proposal
+                    {detail?.rateNote ?? 'Custom proposal'}
                   </p>
                   <button
                     type="button"
@@ -370,7 +400,7 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
                     onClick={() => toggleOffer(tier.label)}
                     className="mt-5 min-h-14 w-full border border-navy bg-white px-5 py-4 text-base font-bold text-navy transition-colors hover:bg-navy hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 lg:max-w-[240px]"
                   >
-                    {isSelected ? 'Close enquiry' : 'Request a proposal'}
+                    {isSelected ? 'Close enquiry' : detail?.ctaLabel ?? 'Request a proposal'}
                   </button>
                 </div>
               </div>
@@ -382,6 +412,7 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
                   <CoachingQuoteRequestForm
                     category={tier.category}
                     tierLabel={tier.label}
+                    collectsLocationAndDate={tier.collectsLocationAndDate}
                   />
                 </div>
               )}

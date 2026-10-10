@@ -131,4 +131,45 @@ describe('POST /api/coaching/request-quote', () => {
       })
     )
   })
+
+  it('folds a submitted preferred location/date into the activity body and metadata for an international request', async () => {
+    const tx = fakeTx()
+    mockTransaction.mockImplementation((callback: (tx: unknown) => unknown) => callback(tx))
+
+    await POST(
+      request({
+        ...validBody,
+        category: 'individual',
+        tierLabel: 'Your Preferred Location, Outside Kenya',
+        message: 'Looking to arrange a week of one-on-one coaching ahead of a family event.',
+        preferredLocation: 'London, United Kingdom',
+        preferredDate: 'Week of 12 January 2027',
+      })
+    )
+
+    expect(tx.crmActivity.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          body: expect.stringContaining('Preferred location: London, United Kingdom'),
+          metadata: expect.objectContaining({
+            preferredLocation: 'London, United Kingdom',
+            preferredDate: 'Week of 12 January 2027',
+          }),
+        }),
+      })
+    )
+  })
+
+  it('omits preferred location/date from the activity body entirely when not submitted (Group, VIP Summit)', async () => {
+    const tx = fakeTx()
+    mockTransaction.mockImplementation((callback: (tx: unknown) => unknown) => callback(tx))
+
+    await POST(request(validBody))
+
+    expect(tx.crmActivity.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ body: validBody.message }),
+      })
+    )
+  })
 })

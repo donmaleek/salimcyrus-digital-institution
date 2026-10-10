@@ -20,13 +20,23 @@ const MESSAGE_PLACEHOLDER: Record<CoachingCategorySlug, string> = {
 interface CoachingQuoteRequestFormProps {
   category: Exclude<CoachingCategorySlug, 'standard'>
   tierLabel: string
+  /** When true, also collects a preferred location and date up front
+   * (currently the international one-on-one/couples tiers), so the first
+   * follow-up already has logistics to work with. */
+  collectsLocationAndDate?: boolean
 }
 
-export function CoachingQuoteRequestForm({ category, tierLabel }: CoachingQuoteRequestFormProps) {
+export function CoachingQuoteRequestForm({
+  category,
+  tierLabel,
+  collectsLocationAndDate = false,
+}: CoachingQuoteRequestFormProps) {
   const [expanded, setExpanded] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
+  const [preferredLocation, setPreferredLocation] = useState('')
+  const [preferredDate, setPreferredDate] = useState('')
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
@@ -39,7 +49,16 @@ export function CoachingQuoteRequestForm({ category, tierLabel }: CoachingQuoteR
     const response = await fetch('/api/coaching/request-quote', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, whatsapp: whatsapp || undefined, category, tierLabel, message }),
+      body: JSON.stringify({
+        name,
+        email,
+        whatsapp: whatsapp || undefined,
+        category,
+        tierLabel,
+        message,
+        preferredLocation: collectsLocationAndDate ? preferredLocation : undefined,
+        preferredDate: collectsLocationAndDate ? preferredDate : undefined,
+      }),
     }).catch(() => null)
 
     setSubmitting(false)
@@ -106,6 +125,38 @@ export function CoachingQuoteRequestForm({ category, tierLabel }: CoachingQuoteR
             onChange={(e) => setWhatsapp(e.target.value)}
             className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
+          {collectsLocationAndDate && (
+            <>
+              <label className="block text-sm font-semibold text-navy" htmlFor={`quote-location-${category}`}>
+                Preferred location
+              </label>
+              <input
+                id={`quote-location-${category}`}
+                type="text"
+                required
+                minLength={2}
+                maxLength={200}
+                placeholder="City and country"
+                value={preferredLocation}
+                onChange={(e) => setPreferredLocation(e.target.value)}
+                className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
+              />
+              <label className="block text-sm font-semibold text-navy" htmlFor={`quote-date-${category}`}>
+                Preferred dates
+              </label>
+              <input
+                id={`quote-date-${category}`}
+                type="text"
+                required
+                minLength={2}
+                maxLength={100}
+                placeholder="e.g. Week of 12 January 2027"
+                value={preferredDate}
+                onChange={(e) => setPreferredDate(e.target.value)}
+                className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
+              />
+            </>
+          )}
           <label className="block text-sm font-semibold text-navy" htmlFor={`quote-message-${category}`}>
             Details
           </label>

@@ -5,9 +5,44 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 
-type LessonDraft = { title: string; description: string; content: string; videoUrl: string; durationMinutes: number; isPreview: boolean }
+type LessonDraft = { id?: string; title: string; description: string; content: string; videoUrl: string; durationMinutes: number; isPreview: boolean; resourceLabel?: string | null }
 type SectionDraft = { title: string; description: string; lessons: LessonDraft[] }
-type InitialCourse = { id: string; title: string; subtitle: string | null; description: string; kind: string; category: string; level: string; priceKes: number; priceUsd: number; thumbnailUrl: string | null; trailerUrl: string | null; outcomes: string[]; status: string; featured: boolean; sections: Array<{ title: string; description: string | null; lessons: Array<{ title: string; description: string | null; content: string | null; videoUrl: string | null; durationSeconds: number | null; isPreview: boolean }> }> }
+type InitialCourse = { id: string; title: string; subtitle: string | null; description: string; kind: string; category: string; level: string; priceKes: number; priceUsd: number; thumbnailUrl: string | null; trailerUrl: string | null; outcomes: string[]; status: string; featured: boolean; sections: Array<{ title: string; description: string | null; lessons: Array<{ id: string; title: string; description: string | null; content: string | null; videoUrl: string | null; durationSeconds: number | null; isPreview: boolean; resourceLabel: string | null }> }> }
+
+/** A lesson's downloadable PDF is uploaded against its real database id, so
+ * it only shows once this lesson has been saved at least once (a brand
+ * new, unsaved lesson draft has no id yet). Re-saving the curriculum while
+ * the course still has zero enrollments recreates every lesson row (see
+ * updateCourse), which is also the only state where the curriculum form
+ * itself stays editable, so this never gets out of sync with a live
+ * course members are actually enrolled in. */
+function LessonResourceUpload({ courseId, lessonId, currentLabel, onSaved }: { courseId: string; lessonId: string; currentLabel: string | null | undefined; onSaved: (label: string) => void }) {
+  const [label, setLabel] = useState(currentLabel ?? '')
+  const [uploading, setUploading] = useState(false)
+  const { showToast } = useToast()
+
+  async function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    if (!label.trim()) { showToast('Enter a label for this resource first.', 'error'); event.target.value = ''; return }
+    setUploading(true)
+    const form = new FormData()
+    form.set('label', label.trim())
+    form.set('resource', file)
+    const response = await fetch(`/api/admin/courses/${courseId}/lessons/${lessonId}/resource`, { method: 'POST', body: form }).catch(() => null)
+    setUploading(false)
+    event.target.value = ''
+    if (!response || !response.ok) { showToast('Could not upload that resource.', 'error'); return }
+    onSaved(label.trim())
+    showToast('Resource attached.')
+  }
+
+  return <div className="mt-3 flex flex-wrap items-end gap-3 border-t border-navy-100 pt-3">
+    <label className="flex-1 font-semibold text-navy">Downloadable resource label<input className={field} placeholder="e.g. Family rules planner" value={label} onChange={(e) => setLabel(e.target.value)} /></label>
+    <label className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-navy-200 px-4 text-sm font-semibold text-navy hover:bg-navy-50">{uploading ? 'Uploading…' : currentLabel ? 'Replace PDF' : 'Attach PDF'}<input type="file" accept="application/pdf" className="hidden" disabled={uploading} onChange={handleFile} /></label>
+    {currentLabel && <span className="text-xs text-navy-400">Current: {currentLabel}</span>}
+  </div>
+}
 
 const blankLesson = (): LessonDraft => ({ title: '', description: '', content: '', videoUrl: '', durationMinutes: 0, isPreview: false })
 const field = 'mt-2 w-full border border-navy-200 bg-white px-4 py-3 text-navy focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20'
@@ -25,7 +60,7 @@ export function CourseEditor({ initial }: { initial?: InitialCourse }) {
   const [trailerUrl, setTrailerUrl] = useState(initial?.trailerUrl ?? '')
   const [outcomes, setOutcomes] = useState(initial?.outcomes.join('\n') ?? '')
   const [featured, setFeatured] = useState(initial?.featured ?? false)
-  const [sections, setSections] = useState<SectionDraft[]>(initial?.sections.map((s) => ({ title: s.title, description: s.description ?? '', lessons: s.lessons.map((l) => ({ title: l.title, description: l.description ?? '', content: l.content ?? '', videoUrl: l.videoUrl ?? '', durationMinutes: Math.round((l.durationSeconds ?? 0) / 60), isPreview: l.isPreview })) })) ?? [{ title: 'Start Here', description: '', lessons: [blankLesson()] }])
+  const [sections, setSections] = useState<SectionDraft[]>(initial?.sections.map((s) => ({ title: s.title, description: s.description ?? '', lessons: s.lessons.map((l) => ({ id: l.id, title: l.title, description: l.description ?? '', content: l.content ?? '', videoUrl: l.videoUrl ?? '', durationMinutes: Math.round((l.durationSeconds ?? 0) / 60), isPreview: l.isPreview, resourceLabel: l.resourceLabel })) })) ?? [{ title: 'Start Here', description: '', lessons: [blankLesson()] }])
   const [saving, setSaving] = useState(false)
   const { showToast } = useToast()
   const router = useRouter()
@@ -54,7 +89,7 @@ export function CourseEditor({ initial }: { initial?: InitialCourse }) {
     </section>
     <section><div className="flex items-end justify-between"><div><h2 className="font-heading text-2xl font-bold text-navy">Curriculum</h2><p className="mt-1 text-sm text-navy-500">Organize lessons in the order members should follow.</p></div><Button type="button" variant="outline" onClick={() => setSections([...sections, { title: '', description: '', lessons: [blankLesson()] }])}>Add section</Button></div>
       <div className="mt-5 space-y-5">{sections.map((section, si) => <div key={si} className="rounded-2xl border border-navy-100 bg-white p-5"><div className="flex gap-3"><input aria-label={`Section ${si + 1} title`} placeholder={`Section ${si + 1} title`} className={field} value={section.title} onChange={(e) => patchSection(si, { title: e.target.value })} />{sections.length > 1 && <Button type="button" variant="ghost" onClick={() => setSections(sections.filter((_, i) => i !== si))}>Remove</Button>}</div>
-        <div className="mt-5 space-y-4">{section.lessons.map((lesson, li) => <div key={li} className="border-l-4 border-gold/50 bg-cream p-4"><div className="grid gap-4 sm:grid-cols-2"><label className="font-semibold text-navy">Lesson title<input className={field} value={lesson.title} onChange={(e) => patchLesson(si, li, { title: e.target.value })} /></label><label className="font-semibold text-navy">Video URL<input type="url" className={field} value={lesson.videoUrl} onChange={(e) => patchLesson(si, li, { videoUrl: e.target.value })} /></label><label className="font-semibold text-navy">Duration (minutes)<input type="number" min="0" className={field} value={lesson.durationMinutes} onChange={(e) => patchLesson(si, li, { durationMinutes: Number(e.target.value) })} /></label><label className="flex items-end gap-2 pb-3 font-semibold text-navy"><input type="checkbox" checked={lesson.isPreview} onChange={(e) => patchLesson(si, li, { isPreview: e.target.checked })} /> Free preview</label></div><label className="mt-3 block font-semibold text-navy">Lesson notes<textarea rows={4} className={field} value={lesson.content} onChange={(e) => patchLesson(si, li, { content: e.target.value })} /></label>{section.lessons.length > 1 && <button type="button" className="mt-3 text-sm font-semibold text-red-700" onClick={() => patchSection(si, { lessons: section.lessons.filter((_, i) => i !== li) })}>Remove lesson</button>}</div>)}</div>
+        <div className="mt-5 space-y-4">{section.lessons.map((lesson, li) => <div key={li} className="border-l-4 border-gold/50 bg-cream p-4"><div className="grid gap-4 sm:grid-cols-2"><label className="font-semibold text-navy">Lesson title<input className={field} value={lesson.title} onChange={(e) => patchLesson(si, li, { title: e.target.value })} /></label><label className="font-semibold text-navy">Video URL<input type="url" className={field} value={lesson.videoUrl} onChange={(e) => patchLesson(si, li, { videoUrl: e.target.value })} /></label><label className="font-semibold text-navy">Duration (minutes)<input type="number" min="0" className={field} value={lesson.durationMinutes} onChange={(e) => patchLesson(si, li, { durationMinutes: Number(e.target.value) })} /></label><label className="flex items-end gap-2 pb-3 font-semibold text-navy"><input type="checkbox" checked={lesson.isPreview} onChange={(e) => patchLesson(si, li, { isPreview: e.target.checked })} /> Free preview</label></div><label className="mt-3 block font-semibold text-navy">Lesson notes<textarea rows={4} className={field} value={lesson.content} onChange={(e) => patchLesson(si, li, { content: e.target.value })} /></label>{initial && lesson.id && <LessonResourceUpload courseId={initial.id} lessonId={lesson.id} currentLabel={lesson.resourceLabel} onSaved={(label) => patchLesson(si, li, { resourceLabel: label })} />}{section.lessons.length > 1 && <button type="button" className="mt-3 text-sm font-semibold text-red-700" onClick={() => patchSection(si, { lessons: section.lessons.filter((_, i) => i !== li) })}>Remove lesson</button>}</div>)}</div>
         <Button type="button" variant="outline" size="sm" onClick={() => patchSection(si, { lessons: [...section.lessons, blankLesson()] })}>Add lesson</Button></div>)}</div>
     </section>
     <div className="sticky bottom-4 flex justify-end gap-3 rounded-2xl border border-navy-100 bg-white/95 p-4 shadow-xl"><Button type="button" variant="outline" disabled={saving} onClick={() => save('draft')}>Save draft</Button><Button type="button" disabled={saving} onClick={() => save('published')}>{saving ? 'Saving…' : 'Publish'}</Button></div>

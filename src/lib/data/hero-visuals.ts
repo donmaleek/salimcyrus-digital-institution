@@ -19,6 +19,7 @@ const HERO_VISUALS: Record<string, string> = {
   Resources: '/images/salim/knowledge-hero.webp',
   'Digital Library': '/images/salim/knowledge-hero.webp',
   'Free Guides': '/images/salim/knowledge-hero.webp',
+  'Parental Guidance': '/images/salim/community-hero.webp',
   'Halisi Hub Connect': '/images/salim/community-hero.webp',
   'Halisi Inner Circle': '/images/salim/community-hero.webp',
   Mission: '/images/salim/community-hero.webp',

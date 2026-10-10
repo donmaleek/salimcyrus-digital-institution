@@ -102,7 +102,7 @@ describe('getAvailableBooks', () => {
     const result = await getAvailableBooks()
 
     expect(mockFindMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { status: 'available' } })
+      expect.objectContaining({ where: { status: 'available', category: 'Book' } })
     )
     expect(result).toHaveLength(books.length + 1)
     expect(result.map((b) => b.slug)).toContain('a-new-book')
@@ -136,8 +136,37 @@ describe('getAvailableBooks', () => {
     mockFindMany.mockResolvedValue([])
     const result = await getAvailableBooks()
     expect(mockFindMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { status: 'available' } })
+      expect.objectContaining({ where: { status: 'available', category: 'Book' } })
     )
     expect(result).toHaveLength(books.length)
+  })
+
+  it('filters to Parenting Resources when asked, and never falls back to the static 14 books', async () => {
+    mockFindMany.mockResolvedValue([
+      {
+        id: 'resource-1',
+        slug: 'family-rules-planner',
+        title: 'Family Rules Planner',
+        subtitle: null,
+        description: 'A printable worksheet for setting clear household expectations.',
+        category: 'Parenting Resource',
+        priceKes: 500,
+        priceUsd: 4,
+        pageCount: 1,
+        fileName: 'family-rules-planner.pdf',
+        coverPath: '/images/books/family-rules-planner.webp',
+        status: 'available',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ])
+
+    const result = await getAvailableBooks('Parenting Resource')
+
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { status: 'available', category: 'Parenting Resource' } })
+    )
+    expect(result).toHaveLength(1)
+    expect(result[0]).toEqual(expect.objectContaining({ slug: 'family-rules-planner', category: 'Parenting Resource' }))
   })
 })

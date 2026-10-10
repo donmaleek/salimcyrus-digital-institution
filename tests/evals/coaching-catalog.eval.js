@@ -68,9 +68,11 @@ const checks = [
       offersFile.includes("category: 'vip-summit'"),
   ],
   [
-    'every priced offer and every request-only tier declares a category, and every category is one of the seven published ones (12 priced + 4 request-only)',
-    categorySlugs.length === 16 &&
-      categorySlugs.every((slug) => ['standard', 'identity-alignment', 'single-motherhood-alignment', 'individual', 'couples', 'group', 'vip-summit'].includes(slug)),
+    'every priced offer and every request-only tier declares a category, and every category is one of the eight published ones (12 priced + 5 request-only)',
+    categorySlugs.length === 17 &&
+      categorySlugs.every((slug) =>
+        ['standard', 'identity-alignment', 'single-motherhood-alignment', 'individual', 'couples', 'group', 'vip-summit', 'parenting-mentorship'].includes(slug)
+      ),
   ],
   [
     'Identity & Life Alignment has its own booking category and is priced at exactly KES 25,000',

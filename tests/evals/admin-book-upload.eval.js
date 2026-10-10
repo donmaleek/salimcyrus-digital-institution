@@ -73,7 +73,7 @@ const checks = [
   ],
   [
     'the public listing and homepage only ever show available admin books, never drafts',
-    catalog.slice(catalog.indexOf('export async function getAvailableBooks')).includes("where: { status: 'available' }"),
+    catalog.slice(catalog.indexOf('export async function getAvailableBooks')).includes("where: { status: 'available', category }"),
   ],
   [
     'the book detail page 404s a book that is not available, same rule for both catalogs',

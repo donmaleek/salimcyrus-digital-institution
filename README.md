@@ -169,13 +169,13 @@ See `src/middleware.ts` and `src/lib/suspension.ts`.
 
 ## Coaching category card images
 
-The 7 coaching category cards on Book Now (Standard, Identity & Life
+The 8 coaching category cards on Book Now (Standard, Identity & Life
 Alignment, Single Motherhood & Life Alignment, Individual, Couples, Group,
-VIP Summit) each show a small gold-on-navy mark instead of the initials
-fallback. The default set is generated from committed source, not stock
-photos: each one is a hand-authored SVG in
+VIP Summit, Parenting Mentorship) each show a small gold-on-navy mark
+instead of the initials fallback. The default set is generated from
+committed source, not stock photos: each one is a hand-authored SVG in
 `scripts/lib/coaching-category-svg.js`, rasterized to WebP with `sharp`
-(already a project dependency). Regenerate and re-seed all 7 any time with:
+(already a project dependency). Regenerate and re-seed all 8 any time with:
 
 ```
 node scripts/generate-coaching-category-images.js
@@ -192,3 +192,53 @@ a clear "not configured" message rather than failing silently, same
 degrade-gracefully pattern as Paystack/PayPal/Resend elsewhere in this
 app. Every call costs real money on that key's account, so it's admin-only
 and never reachable from a public route.
+
+## Parental Guidance (parenting curriculum platform)
+
+A full paid curriculum under `/parental-guidance`, built entirely on the
+existing Academy course infrastructure rather than a parallel system:
+
+- **Courses.** The 12 curriculum modules plus the flagship "Foundations of
+  Intentional Parenting" course are ordinary `Course` rows tagged
+  `category: "Parental Guidance"`, so they get the existing catalogue,
+  checkout (Paystack/PayPal), enrollment, progress tracking, and admin
+  `CourseEditor` for free. They ship as **drafts with placeholder prices**;
+  an admin must review pricing in `/dashboard/admin/courses` and publish
+  each one before it is purchasable.
+- **Parent Membership** (`/parental-guidance/membership`) grants access to
+  every Parental Guidance course for 30 days per payment. There is no
+  recurring/auto-charge billing anywhere in this codebase, so membership is
+  structured exactly like the Journal's: each payment appends its own
+  30-day row (`ParentMembership`), and access is "does the user have any
+  row still in the future" (see `src/services/payments/parent-membership.ts`).
+  A member who opens a course they have not separately purchased is
+  auto-enrolled with a zero-amount synthetic reference, the same mechanism
+  a free course already uses.
+- **Lesson resources.** A lesson can carry one downloadable PDF
+  (`CourseLesson.resourceLabel`/`resourceFileName`), gated by the same rule
+  as the lesson itself (enrollment or an active membership), served from
+  `COURSE_RESOURCES_STORAGE_DIR` (see `.env.example`), never `/public`. An
+  admin attaches or replaces one from the course edit page once a lesson
+  has been saved.
+- **Parenting Mentorship** and the **school/organization package** are
+  request-only, no fixed price: mentorship reuses the existing coaching
+  request-tier pattern (`parenting-mentorship` category in
+  `src/lib/data/coaching-offers.ts`), and the school/org request is a CRM
+  lead capture at `/api/parental-guidance/school-request`.
+- **Standalone resources** (journals/worksheets sold outside a course) can
+  reuse the existing `Book` model via `Book.category = "Parenting
+  Resource"`, which keeps them out of the public Books catalogue (that
+  page defaults to `category: "Book"`) while sharing the same
+  purchase/review/download-grant machinery.
+
+Seed the 12 modules and the flagship course (idempotent, safe to re-run):
+
+```
+node scripts/seed-parental-guidance.js
+```
+
+This also renders each module's real downloadable worksheet as a PDF via
+Playwright's Chromium (already a project dependency for e2e tests, so no
+new npm package was needed) from `scripts/lib/render-worksheet-pdf.js`,
+using the actual curriculum content in
+`scripts/lib/parental-guidance-curriculum.js`.

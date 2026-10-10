@@ -36,7 +36,12 @@ playwright-report/
 # 150MB+). Lives in BOOKS_STORAGE_DIR outside the repo in production. See README.
 /Books/
 
-# Generated coaching category card images — reproducible output of
+# Generated coaching category card images: reproducible output of
 # scripts/generate-coaching-category-images.js, not source. Lives in
 # COACHING_IMAGES_STORAGE_DIR outside the repo in production.
 /CoachingImages/
+
+# Generated Parental Guidance lesson resource PDFs: reproducible output of
+# scripts/seed-parental-guidance.js, not source. Lives in
+# COURSE_RESOURCES_STORAGE_DIR outside the repo in production.
+/CourseResources/

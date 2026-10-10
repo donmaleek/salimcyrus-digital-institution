@@ -27,6 +27,7 @@ model User {
   paymentClaims        PaymentClaim[]
   journalEntries       JournalEntry[]
   journalSubscriptions JournalSubscription[]
+  parentMemberships    ParentMembership[]
   passwordResetTokens  PasswordResetToken[]
   ownedContacts        CrmContact[]          @relation("ContactOwner")
   ownedOpportunities   CrmOpportunity[]      @relation("OpportunityOwner")
@@ -73,18 +74,28 @@ model CourseSection {
 }
 
 model CourseLesson {
-  id              String                 @id @default(cuid())
-  sectionId       String
-  section         CourseSection          @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  title           String
-  description     String?
-  content         String?
-  videoUrl        String?
-  durationSeconds Int?
-  position        Int
-  isPreview       Boolean                @default(false)
-  status          String                 @default("published")
-  progress        CourseLessonProgress[]
+  id               String                 @id @default(cuid())
+  sectionId        String
+  section          CourseSection          @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  content          String?
+  videoUrl         String?
+  durationSeconds  Int?
+  position         Int
+  isPreview        Boolean                @default(false)
+  status           String                 @default("published")
+  /// Display name for an optional downloadable PDF attached to this lesson
+  /// (a worksheet, planner, or checklist), e.g. "Family rules planner".
+  /// Null means the lesson has no downloadable resource.
+  resourceLabel    String?
+  /// Filename under COURSE_RESOURCES_STORAGE_DIR; never a public URL, same
+  /// private-storage-dir pattern as book PDFs and teaching videos. Gated by
+  /// the same access check as the lesson itself (enrollment or an active
+  /// membership covering this course's category), see
+  /// /api/courses/lessons/[lessonId]/resource.
+  resourceFileName String?
+  progress         CourseLessonProgress[]
 
   @@unique([sectionId, position])
 }
@@ -182,8 +193,33 @@ model JournalSubscription {
   @@index([userId, expiresAt])
 }
 
+/// A single paid month of Parent Membership (Parental Guidance), structured
+/// identically to JournalSubscription for the same reason: no recurring
+/// billing exists in this codebase, so a member accumulates one row per
+/// successful payment and access is "does this user have any row whose
+/// expiresAt is still in the future". Renewing while still active stacks
+/// the new 30 days onto the existing expiresAt rather than today. Access
+/// granted: every published Course where category = "Parental Guidance",
+/// checked alongside CourseEnrollment at the same gate (see
+/// src/services/payments/parent-membership.ts).
+model ParentMembership {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  provider          String
+  externalReference String
+  amountMinor       Int
+  currency          String
+  startsAt          DateTime @default(now())
+  expiresAt         DateTime
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, externalReference])
+  @@index([userId, expiresAt])
+}
+
 /// Coaching offers themselves stay defined in src/lib/data/coaching-offers.ts
-/// (name, category, copy, points) — only the fields the client explicitly
+/// (name, category, copy, points): only the fields the client explicitly
 /// asked to edit without a redeploy live here, one row per offer an admin
 /// has actually changed. offerName is the same stable string every payment
 /// route, Paybill claim, and booking-confirm flow already keys offers by;
@@ -249,6 +285,12 @@ model Book {
   title       String
   subtitle    String?
   description String
+  /// "Book" (default, Salim's own published titles) or "Parenting Resource"
+  /// (a standalone worksheet/journal/guide sold through Parental Guidance).
+  /// Both share the same purchase/review/download-grant machinery; this
+  /// only exists so the two can be listed on separate catalogue pages
+  /// instead of mixing unrelated products in one list.
+  category    String   @default("Book")
   priceKes    Int
   priceUsd    Int
   pageCount   Int?

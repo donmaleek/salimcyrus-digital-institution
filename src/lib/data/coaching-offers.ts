@@ -6,6 +6,7 @@ export type CoachingCategorySlug =
   | 'couples'
   | 'group'
   | 'vip-summit'
+  | 'parenting-mentorship'
 
 export interface CoachingOffer {
   name: string
@@ -291,6 +292,12 @@ export const coachingRequestTiers: CoachingRequestTier[] = [
     description:
       "Conference keynotes, men's conferences, and summit speaking. Submit a request with your event details.",
   },
+  {
+    category: 'parenting-mentorship',
+    label: 'Scheduled Educational Session',
+    description:
+      'A one-on-one mentorship session focused on your parenting goals, drawn from the Parental Guidance curriculum. Submit a request to discuss topics and scheduling.',
+  },
 ]
 
 export interface CoachingCategory {
@@ -337,6 +344,11 @@ export const coachingCategories: CoachingCategory[] = [
     slug: 'vip-summit',
     name: 'VIP Summit & Speaking',
     description: 'Conference keynotes and summit speaking engagements.',
+  },
+  {
+    slug: 'parenting-mentorship',
+    name: 'Parenting Mentorship',
+    description: 'One-on-one mentorship sessions focused on your parenting goals.',
   },
 ]
 

@@ -17,7 +17,7 @@ const requestQuoteSchema = z.object({
   name: z.string().trim().min(2).max(100),
   email: z.string().email(),
   whatsapp: z.string().max(40).optional(),
-  category: z.enum(['individual', 'couples', 'group', 'vip-summit']),
+  category: z.enum(['individual', 'couples', 'group', 'vip-summit', 'parenting-mentorship']),
   tierLabel: z.string().trim().min(2).max(200),
   message: z.string().trim().min(20).max(1500),
   preferredLocation: z.string().trim().min(2).max(200).optional(),

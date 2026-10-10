@@ -114,7 +114,7 @@ describe('getCoachingCategories', () => {
     mockImagesFindMany.mockResolvedValue([])
     const categories = await getCoachingCategories()
     expect(categories.every((c) => c.imagePath === null)).toBe(true)
-    expect(categories).toHaveLength(7)
+    expect(categories).toHaveLength(8)
   })
 
   it('attaches the uploaded image path only to the matching category, leaving every other category at null', async () => {

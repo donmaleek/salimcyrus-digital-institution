@@ -15,6 +15,8 @@ const MESSAGE_PLACEHOLDER: Record<CoachingCategorySlug, string> = {
   couples: 'Tell us your country and city, and the dates that work for both of you.',
   group: 'Tell us the group size, the occasion, and your preferred dates.',
   'vip-summit': 'Tell us about the event, expected audience, topic, and date.',
+  'parenting-mentorship':
+    'Tell us what you would like the session to focus on, and the dates that work for you.',
 }
 
 interface CoachingQuoteRequestFormProps {

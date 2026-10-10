@@ -16,6 +16,7 @@ function dbBookToEntry(book: DbBook): BookEntry {
     title: book.title,
     subtitle: book.subtitle ?? undefined,
     description: book.description,
+    category: book.category === 'Parenting Resource' ? 'Parenting Resource' : 'Book',
     priceKes: book.priceKes,
     priceUsd: book.priceUsd,
     pageCount: book.pageCount ?? 0,
@@ -48,12 +49,19 @@ export async function getBookBySlug(slug: string): Promise<BookEntry | null> {
  * both the homepage teaser and the my-books "recommended" strip only ever
  * show a slice of this list, so a book Salim just published needs to be
  * near the front to actually be seen, not permanently buried behind an
- * unchanging static catalog.
+ * unchanging static catalog. Defaults to "Book" so the existing public
+ * catalogue keeps showing only Salim's own titles; pass "Parenting
+ * Resource" for the Parental Guidance resources catalogue instead. Every
+ * static entry is implicitly "Book" (see dbBookToEntry's same default for
+ * the DB side), so this never needs to touch the 14 hand-curated titles.
  */
-export async function getAvailableBooks(): Promise<BookEntry[]> {
+export async function getAvailableBooks(
+  category: 'Book' | 'Parenting Resource' = 'Book'
+): Promise<BookEntry[]> {
   const dbBooks = await db.book.findMany({
-    where: { status: 'available' },
+    where: { status: 'available', category },
     orderBy: { createdAt: 'desc' },
   })
-  return [...dbBooks.map(dbBookToEntry), ...books.filter((b) => b.status === 'available')]
+  const staticEntries = category === 'Book' ? books.filter((b) => b.status === 'available') : []
+  return [...dbBooks.map(dbBookToEntry), ...staticEntries]
 }

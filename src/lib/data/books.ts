@@ -8,6 +8,11 @@ export interface BookEntry {
   title: string
   subtitle?: string
   description: string
+  /** "Book" (default, Salim's own published titles, including every
+   * static entry below) or "Parenting Resource" (a standalone
+   * worksheet/journal/guide sold through Parental Guidance). Only an
+   * admin-uploaded DB row can be the latter; see book-catalog.ts. */
+  category?: 'Book' | 'Parenting Resource'
   priceKes: number
   /** PayPal can't charge in KES (unsupported currency), see PayPal's
    * currency-codes reference. Statically priced in USD at the same rate

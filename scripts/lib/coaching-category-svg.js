@@ -1,8 +1,8 @@
-// Pure SVG generation for the 7 coaching category card images: one
+// Pure SVG generation for the 8 coaching category card images: one
 // abstract, gold-on-navy geometric mark per category (compass, rings,
 // protective arc, etc.), all drawn from the same brand palette as
 // tailwind.config.js (navy/gold) so they read as one cohesive set rather
-// than seven unrelated pictures. Kept separate from
+// than eight unrelated pictures. Kept separate from
 // generate-coaching-category-images.js so the markup itself is testable
 // without needing sharp, Prisma, or disk access.
 
@@ -36,7 +36,7 @@ function card(size, iconMarkup) {
 </svg>`
 }
 
-/** Returns { [CoachingCategorySlug]: svgMarkup } for all 7 categories in
+/** Returns { [CoachingCategorySlug]: svgMarkup } for all 8 categories in
  * src/lib/data/coaching-offers.ts. `size` is the square canvas size in px;
  * every icon is drawn proportionally to it. */
 function coachingCategorySvgs(size) {
@@ -124,6 +124,19 @@ function coachingCategorySvgs(size) {
     <line x1="0" y1="0" x2="-150" y2="-49" />
   </g>
   <path d="M 0 -62 L 18 -19 L 64 -19 L 27 8 L 41 52 L 0 25 L -41 52 L -27 8 L -64 -19 L -18 -19 Z" fill="${GOLD}" />
+`
+    ),
+
+    // Parenting Mentorship: ascending stepping-stone circles along a rising
+    // guiding curve, a growth journey walked alongside a mentor.
+    'parenting-mentorship': card(
+      size,
+      `
+  <path d="M -130 110 Q -40 110 0 20 Q 40 -70 130 -110" fill="none" stroke="${GOLD_PALE}" stroke-width="4" opacity="0.6" stroke-linecap="round" />
+  <circle cx="-130" cy="110" r="18" fill="${GOLD_LIGHT}" />
+  <circle cx="-30" cy="46" r="24" fill="${GOLD_LIGHT}" />
+  <circle cx="60" cy="-38" r="30" fill="${GOLD}" />
+  <circle cx="130" cy="-110" r="38" fill="${GOLD}" />
 `
     ),
   }

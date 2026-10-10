@@ -25,6 +25,16 @@ export const mainNav: NavItem[] = [
     ],
   },
   {
+    label: 'Parental Guidance',
+    href: '/parental-guidance',
+    children: [
+      { label: 'Courses', href: '/parental-guidance/courses' },
+      { label: 'Parent Membership', href: '/parental-guidance/membership' },
+      { label: 'Mentorship', href: '/parental-guidance/mentorship' },
+      { label: 'Schools & Organizations', href: '/parental-guidance/school' },
+    ],
+  },
+  {
     label: 'Explore',
     href: '/knowledge-centre',
     children: [
@@ -50,6 +60,7 @@ export const footerNav: NavItem[] = [
   { label: 'About', href: '/about' },
   { label: 'Coaching', href: '/work-with-salim/coaching' },
   { label: 'Academy', href: '/academy' },
+  { label: 'Parental Guidance', href: '/parental-guidance' },
   { label: 'Knowledge Centre', href: '/knowledge-centre' },
   { label: 'Books', href: '/books' },
   { label: 'Teaching Library', href: '/teachings' },

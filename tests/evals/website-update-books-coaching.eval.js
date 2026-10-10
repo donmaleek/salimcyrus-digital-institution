@@ -22,6 +22,9 @@ const coachingAdminPage = read('src/app/(dashboard)/dashboard/admin/coaching/pag
 const offerOverrideRoute = read('src/app/api/admin/coaching/offers/[name]/route.ts')
 const categoryImageRoute = read('src/app/api/admin/coaching/categories/[slug]/image/route.ts')
 const schema = read('prisma/schema.prisma')
+const imageGeneratorScript = read('scripts/generate-coaching-category-images.js')
+const imageGeneratorSvg = read('scripts/lib/coaching-category-svg.js')
+const readme = read('README.md')
 
 const surface = [
   books,
@@ -39,6 +42,8 @@ const surface = [
   coachingAdminPage,
   offerOverrideRoute,
   categoryImageRoute,
+  imageGeneratorScript,
+  imageGeneratorSvg,
 ].join('\n')
 
 const bookPriceKesValues = [...books.matchAll(/^\s{4}(\d+),$/gm)]
@@ -168,6 +173,19 @@ const checks = [
     categoryImageRoute.includes("requireCrmApi('content:write')") &&
       categoryImageRoute.includes('ALLOWED_IMAGE_TYPES') &&
       coachingOfferManager.includes('Upload image'),
+  ],
+  [
+    'every one of the 7 category images actually shown on the site is generated from committed source (an SVG mark rasterized with sharp), not a binary committed to the repo or fetched from an external image API',
+    imageGeneratorScript.includes('sharp') &&
+      imageGeneratorScript.includes('coachingCategorySvgs') &&
+      !imageGeneratorScript.includes('openai') &&
+      !imageGeneratorScript.includes('dall-e') &&
+      (imageGeneratorSvg.match(/^\s{4}(?:standard|'identity-alignment'|'single-motherhood-alignment'|individual|couples|group|'vip-summit'):\s*card\(/gm) || []).length === 7,
+  ],
+  [
+    'the image generator is idempotent and reusable, upserting rather than erroring on a re-run, and documented in the README so it is not a one-off throwaway script',
+    imageGeneratorScript.includes('db.coachingCategoryImage.upsert') &&
+      readme.includes('generate-coaching-category-images.js'),
   ],
 
   // 7 & 8. Admin-editable pricing, never hard-coded, applies to every priced offer

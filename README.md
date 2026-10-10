@@ -166,3 +166,22 @@ information." (no mention of billing). The developer can still view the live sit
 suspended by visiting `https://salimcyrus.com/?bypass=<SUSPENSION_BYPASS_TOKEN>`
 once; that sets a long-lived cookie so the token doesn't need to be re-entered.
 See `src/middleware.ts` and `src/lib/suspension.ts`.
+
+## Coaching category card images
+
+The 7 coaching category cards on Book Now (Standard, Identity & Life
+Alignment, Single Motherhood & Life Alignment, Individual, Couples, Group,
+VIP Summit) each show a small gold-on-navy mark instead of the initials
+fallback. These are generated, not uploaded stock photos or an external
+image-generation API call: each one is a hand-authored SVG in
+`scripts/lib/coaching-category-svg.js`, rasterized to WebP with `sharp`
+(already a project dependency). Regenerate and re-seed all 7 any time with:
+
+```
+node scripts/generate-coaching-category-images.js
+```
+
+Safe to re-run; it overwrites the existing files and DB rows in place. An
+admin can still replace any individual category's image from
+`/dashboard/admin/coaching` without touching this script at all, see
+`CoachingOfferManager`.

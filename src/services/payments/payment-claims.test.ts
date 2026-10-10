@@ -17,9 +17,7 @@ jest.mock('../courses/course-service', () => ({ enrollUser: jest.fn() }))
 jest.mock('./journal-subscriptions', () => ({ recordJournalSubscription: jest.fn() }))
 jest.mock('../../lib/api/email', () => ({ sendEmail: jest.fn(), bookDownloadEmailHtml: jest.fn(() => '<html></html>') }))
 
-import { Prisma } from '@prisma/client'
 import {
-  submitPaymentClaim,
   approvePaymentClaim,
   rejectPaymentClaim,
 } from './payment-claims'
@@ -32,7 +30,6 @@ import { sendEmail } from '@/lib/api/email'
 import { enrollUser } from '@/services/courses/course-service'
 import { recordJournalSubscription } from './journal-subscriptions'
 
-const mockCreate = db.paymentClaim.create as jest.Mock
 const mockFindUnique = db.paymentClaim.findUnique as jest.Mock
 const mockUpdate = db.paymentClaim.update as jest.Mock
 const mockBookPurchaseUpdate = db.bookPurchase.update as jest.Mock
@@ -46,48 +43,6 @@ const mockSendEmail = sendEmail as jest.Mock
 const mockEnrollUser = enrollUser as jest.Mock
 const mockCourseFindUnique = db.course.findUnique as jest.Mock
 const mockRecordJournalSubscription = recordJournalSubscription as jest.Mock
-
-describe('submitPaymentClaim', () => {
-  beforeEach(() => jest.clearAllMocks())
-
-  it('creates a pending claim', async () => {
-    mockCreate.mockResolvedValue({ id: 'claim-1' })
-
-    const result = await submitPaymentClaim({
-      offerType: 'book',
-      bookSlug: 'the-cost-of-infidelity',
-      userId: 'user-1',
-      email: 'buyer@example.com',
-      name: 'Buyer',
-      amountKes: 800,
-      mpesaCode: 'QGH7XXXXX1',
-    })
-
-    expect(result).toEqual({ status: 'created', claimId: 'claim-1' })
-    expect(mockCreate).toHaveBeenCalledWith({
-      data: expect.objectContaining({ mpesaCode: 'QGH7XXXXX1', amountKes: 800, offerType: 'book' }),
-    })
-  })
-
-  it('rejects a duplicate M-Pesa code instead of creating a second claim', async () => {
-    mockCreate.mockRejectedValue(
-      new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
-        code: 'P2002',
-        clientVersion: '6.19.2',
-      })
-    )
-
-    const result = await submitPaymentClaim({
-      offerType: 'donation',
-      email: 'donor@example.com',
-      name: 'Donor',
-      amountKes: 1000,
-      mpesaCode: 'DUPLICATE1',
-    })
-
-    expect(result).toEqual({ status: 'duplicate_code' })
-  })
-})
 
 describe('approvePaymentClaim', () => {
   beforeEach(() => jest.clearAllMocks())

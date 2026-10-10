@@ -20,7 +20,7 @@ const bookingSteps = [
   ],
   [
     'Reserve',
-    'Pay with Paystack or PayPal, or use M-Pesa Paybill with a quick review, right on this page.',
+    'Pay with Paystack or PayPal, right on this page.',
   ],
   [
     'Confirm',

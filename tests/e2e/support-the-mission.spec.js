@@ -1,19 +1,13 @@
 const { test, expect } = require('@playwright/test')
 
-test('support page presents three clear payment routes and independent proof', async ({
+test('support page presents two clear payment routes and independent proof', async ({
   page,
 }) => {
   await page.goto('/support-the-mission')
 
   const options = page.getByTestId('payment-options')
   await expect(options.getByRole('heading', { name: 'Paystack' })).toBeVisible()
-  await expect(
-    options.getByRole('heading', { name: 'M-Pesa Paybill' })
-  ).toBeVisible()
   await expect(options.getByRole('heading', { name: 'PayPal' })).toBeVisible()
-  await expect(options.getByText('303030')).toBeVisible()
-  await expect(options.getByText('S6UB#')).toBeVisible()
-  await expect(options.getByText('salimcyrus@gmail.com')).toBeVisible()
   await expect(
     options.getByRole('button', { name: 'Continue to Paystack' })
   ).toBeVisible()

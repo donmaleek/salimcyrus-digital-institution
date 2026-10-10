@@ -11,4 +11,6 @@ Successful charges are verified in two independent paths:
 
 Payment records use provider/reference uniqueness so retries and duplicate webhooks do not grant the same payment twice. Course access is verified and granted on its authenticated return page, matching its PayPal flow.
 
-PayPal uses server-side order creation and capture when its credentials are configured. M-Pesa Paybill payments are manual and require the buyer to submit the confirmation code for reconciliation.
+PayPal uses server-side order creation and capture when its credentials are configured.
+
+M-Pesa Paybill (a manual flow where the buyer submitted a confirmation code for an admin to review) was removed as a checkout option in favor of Paystack and PayPal everywhere. `PaymentClaim`, `approvePaymentClaim`, and `rejectPaymentClaim` in `payment-claims.ts` are untouched so any claim submitted before the removal can still be reviewed; only the claim-creation route and form are gone.

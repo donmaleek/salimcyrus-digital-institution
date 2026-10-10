@@ -57,7 +57,7 @@ function buildQuestions(availableCount: number) {
     {
       question: 'Where do purchases happen?',
       answer:
-        'Most titles offer Buy & Download: pay with PayPal, or M-Pesa Paybill with a quick review, and the PDF unlocks immediately. The rest use WhatsApp ordering, sending a prefilled message with the book title and price so the team can confirm payment and delivery.',
+        'Most titles offer Buy & Download: pay with Paystack or PayPal, and the PDF unlocks immediately. The rest use WhatsApp ordering, sending a prefilled message with the book title and price so the team can confirm payment and delivery.',
     },
     {
       question: 'Are there free resources too?',

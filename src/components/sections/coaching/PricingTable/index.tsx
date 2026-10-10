@@ -7,7 +7,7 @@ const standardOffers = coachingOffers.filter((offer) => offer.category === 'stan
 /**
  * A teaser for the Standard tier only, not the full catalog: Individual,
  * Couples, Group, and VIP Summit pricing lives on /book-now, where the
- * category picker and real checkout (PayPal/Paybill) actually work.
+ * category picker and real checkout (Paystack/PayPal) actually work.
  */
 export function PricingTable() {
   return (

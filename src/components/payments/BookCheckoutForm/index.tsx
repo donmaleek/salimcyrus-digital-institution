@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { PaybillClaimForm } from '@/components/payments/PaybillClaimForm'
 
 export function BookCheckoutForm({
   slug,
@@ -93,7 +92,6 @@ export function BookCheckoutForm({
           {error}
         </p>
       )}
-      <PaybillClaimForm offerType="book" bookSlug={slug} amountKes={priceKes} />
       <p className="text-sm text-navy-500">
         Prefer WhatsApp?{' '}
         <a href={whatsappOrderUrl} className="font-semibold text-navy underline">

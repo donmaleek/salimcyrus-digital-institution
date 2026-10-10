@@ -56,8 +56,9 @@ export default async function AdminPaymentClaimsPage() {
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Finance</p>
         <h1 className="mt-3 font-heading text-3xl font-bold">Paybill Payment Claims</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
-          Review M-Pesa Paybill payments buyers have self-reported. Approving one records a real purchase and
-          unlocks access; nothing unlocks until you approve it.
+          Review M-Pesa Paybill payments buyers self-reported before Paybill was removed as a checkout option.
+          Approving one still records a real purchase and unlocks access; nothing unlocks until you approve it.
+          New submissions are no longer accepted, only Paystack and PayPal are offered at checkout now.
         </p>
       </div>
       <div className="mt-8">

@@ -12,7 +12,6 @@ const checkoutPaypal = read('src/app/api/coaching/checkout-paypal/route.ts')
 const checkoutPaystack = read('src/app/api/coaching/checkout/route.ts')
 const verifyPaypal = read('src/app/api/coaching/verify-paypal/route.ts')
 const coachingBookings = read('src/services/payments/coaching-bookings.ts')
-const claimForm = read('src/components/payments/PaybillClaimForm/index.tsx')
 const paystackLib = read('src/lib/api/paystack.ts')
 
 const coachingSurface = [
@@ -33,10 +32,11 @@ const checks = [
       (offers.match(/priceUsd: \d+/g) || []).length === 12,
   ],
   [
-    'Book Now shows real prices and offers first-party Paystack, PayPal, and Paybill checkout',
+    'Book Now shows real prices and offers first-party Paystack and PayPal checkout (Paybill was removed)',
     bookNowPage.includes('CoachingCategoryPicker') &&
       picker.includes('CoachingCheckoutForm') &&
       !picker.includes('offer.paystackUrl') &&
+      !/paybill/i.test(picker) &&
       checkoutPaystack.includes('initializePaystackCoachingCheckout'),
   ],
   [
@@ -62,7 +62,7 @@ const checks = [
     verifyPaypal.includes('captured.payerEmail') && verifyPaypal.includes('email: captured.payerEmail'),
   ],
   [
-    'a coaching payment (PayPal or Paybill) creates a paid-but-unscheduled Booking, mirroring the existing Paystack webhook shape exactly',
+    'a coaching payment creates a paid-but-unscheduled Booking, mirroring the existing Paystack webhook shape exactly, generic enough across providers that historical Paybill-recorded bookings still read correctly',
     coachingBookings.includes("status: 'paid'") &&
       coachingBookings.includes('paystackReference: reference') &&
       coachingBookings.includes("source: `${provider}_checkout`"),
@@ -73,7 +73,7 @@ const checks = [
       coachingBookings.includes("return { isNew: false }"),
   ],
   [
-    '/api/booking/confirm accepts bookings paid via any verified provider (Paystack webhook, PayPal, or an approved Paybill claim), not only Paystack',
+    '/api/booking/confirm still accepts bookings paid via Paystack webhook, PayPal, or (for historical bookings) an approved Paybill claim, so a past Paybill-paid booking is never treated as unverified now that the live checkout option is gone',
     confirmRoute.includes("'paystack_webhook'") &&
       confirmRoute.includes("'paypal_checkout'") &&
       confirmRoute.includes("'paybill_checkout'") &&
@@ -82,10 +82,6 @@ const checks = [
   [
     '/api/booking/confirm still only ever updates the pre-verified booking, never creates one (the payment step is what creates it)',
     !confirmRoute.includes('tx.booking.create'),
-  ],
-  [
-    'Paybill claims support coaching bookings, requiring email and name since there is no account gate',
-    claimForm.includes("offerType === 'coaching'") || claimForm.includes("'donation' || offerType === 'coaching'"),
   ],
   [
     'stray external Paystack coaching links still get labeled correctly by amount, now that real prices exist in our own data',

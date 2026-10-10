@@ -313,8 +313,7 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
                   ) : (
                     <>
                       <p className="mt-4 text-base leading-7 text-navy-600">
-                        Choose Paystack or PayPal for immediate checkout, or M-Pesa
-                        Paybill for manual confirmation.
+                        Choose Paystack or PayPal for immediate checkout.
                       </p>
                       <div className="mt-5">
                         <CoachingCheckoutForm

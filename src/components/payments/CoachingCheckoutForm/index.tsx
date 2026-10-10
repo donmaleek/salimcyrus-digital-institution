@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { PaybillClaimForm } from '@/components/payments/PaybillClaimForm'
 
 export function CoachingCheckoutForm({
   offerName,
@@ -99,7 +98,6 @@ export function CoachingCheckoutForm({
           {error}
         </p>
       )}
-      <PaybillClaimForm offerType="coaching" coachingOfferName={offerName} amountKes={priceKes} />
     </div>
   )
 }

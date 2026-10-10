@@ -83,7 +83,7 @@ describe('coaching offers data', () => {
     expect(new Set(names).size).toBe(names.length)
   })
 
-  it('every coaching offer has a valid positive price in both KES and USD (checkout is PayPal/Paybill now, not a Paystack link)', () => {
+  it('every coaching offer has a valid positive price in both KES and USD (checkout is Paystack/PayPal, not a hosted Paystack link)', () => {
     const broken = coachingOffers
       .filter((offer) => !(offer.priceKes > 0) || !(offer.priceUsd > 0))
       .map((offer) => offer.name)

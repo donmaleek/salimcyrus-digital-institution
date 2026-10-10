@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { PaybillClaimForm } from '@/components/payments/PaybillClaimForm'
 
 const PRICE_KES = 500
 const PRICE_USD = 4
@@ -63,7 +62,6 @@ export function JournalSubscribeForm({ email }: { email: string }) {
           {error}
         </p>
       )}
-      <PaybillClaimForm offerType="journal" amountKes={PRICE_KES} />
     </div>
   )
 }

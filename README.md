@@ -86,13 +86,19 @@ provides asynchronous fulfillment where applicable. To activate it, set
 `PAYSTACK_SECRET_KEY` and add a webhook in the Paystack dashboard pointing at
 `https://<your-domain>/api/payments/webhook` — see `.env.example`.
 
-Mission support at `/support-the-mission` offers three routes:
+Mission support at `/support-the-mission` offers two routes:
 
 - Paystack creates a server-side KES checkout through `/api/payments/initiate`; card and
   mobile-money details remain on Paystack's hosted checkout.
-- M-Pesa Paybill displays the verified Paybill and account values with copy controls.
-- PayPal displays the confirmed recipient email. Replace this instruction with a tested
-  PayPal Business payment link when one has been created in the account dashboard.
+- PayPal creates a real order through `/api/payments/paypal-donate`, charged in USD.
+
+M-Pesa Paybill was offered as a third, manually-reviewed route (a buyer-submitted
+confirmation code an admin approved) across donations, books, teachings, courses, Journal,
+and coaching. It was removed as a live checkout option in favor of Paystack and PayPal
+everywhere. The underlying `PaymentClaim` model and admin review flow
+(`/dashboard/admin/payment-claims`) are untouched, so any claim submitted before the
+removal can still be reviewed and approved; only the submission route and form
+(`PaybillClaimForm`) were removed.
 
 ### Private alignment sessions
 

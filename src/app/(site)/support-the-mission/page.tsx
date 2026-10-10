@@ -9,7 +9,7 @@ import { TUKO_FEATURE_URL } from '@/lib/utils/constants'
 export const metadata: Metadata = {
   title: 'Support the Mission',
   description:
-    'Support Halisi Hub Connect mentorship, community initiatives, and free educational resources through Paystack, M-Pesa Paybill, or PayPal.',
+    'Support Halisi Hub Connect mentorship, community initiatives, and free educational resources through Paystack or PayPal.',
 }
 
 const impactAreas = [
@@ -30,11 +30,12 @@ const impactAreas = [
   },
 ]
 
-export default function SupportTheMissionPage({
-  searchParams,
-}: {
-  searchParams?: { payment?: string; token?: string }
-}) {
+export default async function SupportTheMissionPage(
+  props: {
+    searchParams?: Promise<{ payment?: string; token?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   return (
     <>
       <PageHero
@@ -110,11 +111,10 @@ export default function SupportTheMissionPage({
                 id="payment-options-heading"
                 className="mt-3 font-heading text-4xl font-bold text-navy"
               >
-                Paystack, M-Pesa Paybill, or PayPal
+                Paystack or PayPal
               </h2>
               <p className="mt-5 text-lg leading-8 text-navy-600">
-                Pay securely in KES through Paystack, use M-Pesa Paybill and
-                submit your confirmation code for review, or use PayPal in USD.
+                Pay securely in KES through Paystack, or use PayPal in USD.
               </p>
             </div>
             <div className="mt-12">

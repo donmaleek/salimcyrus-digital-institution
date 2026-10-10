@@ -37,7 +37,7 @@ const faqs = [
   {
     question: 'How do payments work?',
     answer:
-      'Paystack supports secure card and available mobile-money checkout. Direct M-Pesa Paybill and PayPal recipient details are also available on the Support the Mission page.',
+      'Paystack supports secure card and available mobile-money checkout. PayPal is also available for international payment, see the Support the Mission page.',
   },
   {
     question: 'What happens after booking?',

@@ -1,5 +1,4 @@
 import { db } from '@/lib/db'
-import { Prisma } from '@prisma/client'
 import { recordBookPurchase, createDownloadGrant, downloadUrlFor } from '@/services/payments/book-purchases'
 import { recordTeachingPurchase } from '@/services/payments/teaching-purchases'
 import { recordDonation } from '@/services/payments/donations'
@@ -10,60 +9,11 @@ import { sendEmail, bookDownloadEmailHtml } from '@/lib/api/email'
 
 export type PaymentClaimOfferType = 'book' | 'teaching' | 'course' | 'journal' | 'donation' | 'coaching'
 
-export interface SubmitPaymentClaimInput {
-  offerType: PaymentClaimOfferType
-  bookSlug?: string
-  teachingId?: string
-  courseId?: string
-  coachingOfferName?: string
-  userId?: string
-  email: string
-  name: string
-  amountKes: number
-  mpesaCode: string
-  evidenceFileName?: string
-}
-
-export type SubmitPaymentClaimResult =
-  | { status: 'created'; claimId: string }
-  | { status: 'duplicate_code' }
-
-/**
- * Records a buyer's self-reported Paybill payment as a pending claim.
- * Never grants access by itself: a claim only becomes a real purchase once
- * an admin reviews the M-Pesa code (and optional screenshot) and approves
- * it. mpesaCode is globally unique, a real M-Pesa confirmation code is
- * never reused, so a duplicate submission (honest resubmission or an
- * attempt to reuse someone else's code) is rejected here rather than
- * silently creating a second claim.
- */
-export async function submitPaymentClaim(
-  input: SubmitPaymentClaimInput
-): Promise<SubmitPaymentClaimResult> {
-  try {
-    const claim = await db.paymentClaim.create({
-      data: {
-        offerType: input.offerType,
-        bookSlug: input.bookSlug,
-        teachingId: input.teachingId,
-        courseId: input.courseId,
-        coachingOfferName: input.coachingOfferName,
-        userId: input.userId,
-        email: input.email,
-        name: input.name,
-        amountKes: input.amountKes,
-        mpesaCode: input.mpesaCode,
-        evidenceFileName: input.evidenceFileName,
-      },
-    })
-    return { status: 'created', claimId: claim.id }
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-      return { status: 'duplicate_code' }
-    }
-    throw error
-  }
-}
+// Paybill checkout (and the submission flow that created a pending
+// PaymentClaim from a buyer-entered M-Pesa code) was removed in favor of
+// Paystack and PayPal everywhere. approvePaymentClaim/rejectPaymentClaim
+// below stay fully intact so claims submitted before the removal can still
+// be reviewed; only the creation path (submitPaymentClaim) is gone.
 
 export type ReviewPaymentClaimResult =
   | { status: 'approved' }

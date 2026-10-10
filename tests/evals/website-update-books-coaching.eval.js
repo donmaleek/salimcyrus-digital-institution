@@ -111,8 +111,8 @@ const checks = [
       !bookNowPage.includes("from '@/lib/data/coaching-offers'"),
   ],
   [
-    'checkout and the Paybill claim route all charge from the live, override-aware catalog (getCoachingOfferByName), never the static array directly, so an admin price edit is actually reflected at the moment of charging',
-    ['src/app/api/coaching/checkout/route.ts', 'src/app/api/coaching/checkout-paypal/route.ts', 'src/app/api/coaching/verify/route.ts', 'src/app/api/coaching/verify-paypal/route.ts', 'src/app/api/payments/paybill/claim/route.ts']
+    'every coaching checkout/verify route charges from the live, override-aware catalog (getCoachingOfferByName), never the static array directly, so an admin price edit is actually reflected at the moment of charging',
+    ['src/app/api/coaching/checkout/route.ts', 'src/app/api/coaching/checkout-paypal/route.ts', 'src/app/api/coaching/verify/route.ts', 'src/app/api/coaching/verify-paypal/route.ts']
       .every((file) => read(file).includes('getCoachingOfferByName') && !read(file).includes('coachingOffers.find')),
   ],
 

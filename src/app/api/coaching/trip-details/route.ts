@@ -11,8 +11,8 @@ import { getCoachingOfferByName } from '@/lib/data/coaching-catalog'
  * time, and who's attending, captured before the buyer moves on to
  * payment so Salim's team can arrange transport and, where needed,
  * accommodation ahead of the session. This never grants or blocks access
- * to anything: payment still goes through the normal checkout/Paybill
- * flow independently; this is a CRM lead/task so the trip gets planned,
+ * to anything: payment still goes through the normal Paystack/PayPal
+ * checkout independently; this is a CRM lead/task so the trip gets planned,
  * mirroring /api/coaching/request-quote's capture shape.
  */
 const tripDetailsSchema = z.object({

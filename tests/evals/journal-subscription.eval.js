@@ -7,18 +7,16 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 const schema = read('prisma/schema.prisma')
 const service = read('src/services/payments/journal-subscriptions.ts')
 const claims = read('src/services/payments/payment-claims.ts')
-const claimRoute = read('src/app/api/payments/paybill/claim/route.ts')
 const checkoutPaypal = read('src/app/api/journal/checkout-paypal/route.ts')
 const verifyPaypal = read('src/app/api/journal/verify-paypal/route.ts')
 const entryPage = read('src/app/(site)/journal/[slug]/page.tsx')
 const indexPage = read('src/app/(site)/journal/page.tsx')
 const subscribeForm = read('src/components/payments/JournalSubscribeForm/index.tsx')
-const paybillForm = read('src/components/payments/PaybillClaimForm/index.tsx')
 const adminClaimsPage = read('src/app/(dashboard)/dashboard/admin/payment-claims/page.tsx')
 const myJournalPage = read('src/app/(dashboard)/dashboard/my-journal/page.tsx')
 const dashboardLayout = read('src/components/dashboard/DashboardLayout/index.tsx')
 
-const surface = [service, claims, claimRoute, checkoutPaypal, verifyPaypal, entryPage, indexPage, subscribeForm, myJournalPage].join('\n')
+const surface = [service, claims, checkoutPaypal, verifyPaypal, entryPage, indexPage, subscribeForm, myJournalPage].join('\n')
 
 const checks = [
   [
@@ -38,19 +36,17 @@ const checks = [
     'the fixed price (500 KES / $4, the same ~129.4 KES/USD rate used for books and courses) is defined once and reused everywhere, never hand-typed in a second place',
     service.includes('JOURNAL_SUBSCRIPTION_PRICE_KES = 500') &&
       service.includes('JOURNAL_SUBSCRIPTION_PRICE_USD = 4') &&
-      claimRoute.includes('JOURNAL_SUBSCRIPTION_PRICE_KES') &&
       checkoutPaypal.includes('JOURNAL_SUBSCRIPTION_PRICE_USD'),
   ],
   [
-    'approving a journal Paybill claim reuses recordJournalSubscription, the same idempotent path PayPal verification uses, not a separate one-off implementation',
+    'approving a historical journal Paybill claim still reuses recordJournalSubscription, the same idempotent path PayPal verification uses, not a separate one-off implementation (the claim-creation flow is gone, but approving an already-submitted claim must keep working)',
     claims.includes("claim.offerType === 'journal'") &&
       claims.includes('recordJournalSubscription(') &&
       verifyPaypal.includes('recordJournalSubscription('),
   ],
   [
-    'a journal claim always requires a signed-in account (a subscription with nowhere to attach is meaningless), unlike donations',
-    /if \(!claim\.userId\) return \{ status: 'offer_missing' \}\s*\n\s*await recordJournalSubscription/.test(claims) &&
-      claimRoute.includes("Sign in to subscribe to the Journal"),
+    'a journal claim always requires a signed-in account at approval time (a subscription with nowhere to attach is meaningless), unlike donations',
+    /if \(!claim\.userId\) return \{ status: 'offer_missing' \}\s*\n\s*await recordJournalSubscription/.test(claims),
   ],
   [
     'the PayPal verify route rejects a captured amount or reference that does not match this account and this subscription price (tamper guard, matching the book/teaching/course pattern)',
@@ -58,12 +54,10 @@ const checks = [
       verifyPaypal.includes('JOURNAL_SUBSCRIPTION_PRICE_USD * 100'),
   ],
   [
-    'PayPal and Paybill are both offered for the subscription, matching every other paid surface on the site',
-    subscribeForm.includes('/api/journal/checkout-paypal') && subscribeForm.includes("PaybillClaimForm"),
-  ],
-  [
-    'the Paybill claim form accepts journal as a real offer type, not silently falling through to donation handling',
-    paybillForm.includes("'journal'"),
+    'Paystack and PayPal are both offered for the subscription (Paybill was removed from this and every other checkout surface)',
+    subscribeForm.includes('/api/journal/checkout') &&
+      subscribeForm.includes('/api/journal/checkout-paypal') &&
+      !/paybill/i.test(subscribeForm),
   ],
   [
     'the admin payment-claims queue labels a journal claim distinctly, not lumped into the "Support the Mission" donation fallback (the same mislabeling bug fixed for coaching claims earlier)',

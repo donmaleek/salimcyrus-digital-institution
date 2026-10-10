@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { PaybillClaimForm } from '@/components/payments/PaybillClaimForm'
 
 export function TeachingCheckoutForm({
   teachingId,
@@ -89,7 +88,6 @@ export function TeachingCheckoutForm({
           {error}
         </p>
       )}
-      <PaybillClaimForm offerType="teaching" teachingId={teachingId} amountKes={priceKes} />
     </div>
   )
 }

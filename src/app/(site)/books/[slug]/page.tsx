@@ -24,7 +24,7 @@ async function moreBooksBy(current: BookEntry, count: number): Promise<BookEntry
 }
 
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 // Reviews change over time; static params keep the page fast to build while
@@ -37,7 +37,8 @@ export function generateStaticParams() {
 
 export const revalidate = 60
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const book = await getBookBySlug(params.slug)
   if (!book || book.status !== 'available') return { title: 'Book' }
   return {
@@ -52,7 +53,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function BookDetailPage({ params }: PageProps) {
+export default async function BookDetailPage(props: PageProps) {
+  const params = await props.params;
   const book = await getBookBySlug(params.slug)
   if (!book || book.status !== 'available') notFound()
 
@@ -249,7 +251,7 @@ export default async function BookDetailPage({ params }: PageProps) {
                     </li>
                     <li className="flex gap-2">
                       <span aria-hidden="true">✓</span>
-                      Pay with Paystack, PayPal, or M-Pesa Paybill with a quick review
+                      Pay with Paystack or PayPal
                     </li>
                     <li className="flex gap-2">
                       <span aria-hidden="true">✓</span>

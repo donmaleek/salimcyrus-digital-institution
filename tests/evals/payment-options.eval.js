@@ -5,21 +5,16 @@ const root = path.resolve(__dirname, '../..')
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 const page = read('src/app/(site)/support-the-mission/page.tsx')
 const options = read('src/components/payments/DonationPaymentOptions/index.tsx')
-const claimForm = read('src/components/payments/PaybillClaimForm/index.tsx')
 const constants = read('src/lib/utils/constants.ts')
 const route = read('src/app/api/payments/initiate/route.ts')
 const service = read('src/services/payments/paystack.ts')
 
 const checks = [
   [
-    'support page presents Paystack, M-Pesa, and PayPal as live payment methods',
-    ['Paystack', 'M-Pesa', 'PayPal'].every((method) => page.includes(method)) &&
+    'support page presents Paystack and PayPal as live payment methods (Paybill was removed as a checkout option)',
+    ['Paystack', 'PayPal'].every((method) => page.includes(method)) &&
+      !page.includes('M-Pesa') &&
       options.includes("fetch('/api/payments/initiate'"),
-  ],
-  [
-    'Paybill details match the supplied artwork',
-    constants.includes("MPESA_PAYBILL_NUMBER = '303030'") &&
-      constants.includes("MPESA_ACCOUNT_NUMBER = 'S6UB#'"),
   ],
   [
     'PayPal is a real checkout, not a manual "send money to this email" instruction',
@@ -29,29 +24,6 @@ const checks = [
   [
     'PayPal donation checkout charges in USD (PayPal does not support KES)',
     read('src/app/api/payments/paypal-donate/route.ts').includes('amountUsd'),
-  ],
-  [
-    'payment values have copy controls',
-    claimForm.includes('navigator.clipboard.writeText'),
-  ],
-  [
-    'Paybill claims require structured evidence (an M-Pesa code), not just a promise',
-    claimForm.includes('mpesaCode') && read('src/app/api/payments/paybill/claim/route.ts').includes('mpesaCode'),
-  ],
-  [
-    'Paybill payments never grant access on submission alone, only approvePaymentClaim can record a real purchase',
-    (() => {
-      const claims = read('src/services/payments/payment-claims.ts')
-      const submitFn = claims.slice(claims.indexOf('export async function submitPaymentClaim'), claims.indexOf('export type ReviewPaymentClaimResult'))
-      const approveFn = claims.slice(claims.indexOf('export async function approvePaymentClaim'))
-      return (
-        submitFn.includes('db.paymentClaim.create') &&
-        !submitFn.includes('recordBookPurchase') &&
-        approveFn.includes('recordBookPurchase') &&
-        approveFn.includes('recordTeachingPurchase') &&
-        approveFn.includes('recordDonation')
-      )
-    })(),
   ],
   [
     'Paystack donation UI calls the server-side initializer',
@@ -69,8 +41,8 @@ const checks = [
       constants.includes('tuko.co.ke/people/family/445138'),
   ],
   [
-    'Paybill artwork is optimized and available',
-    fs.existsSync(path.join(root, 'public/images/payments/mpesa-paybill.webp')),
+    'donation payment options are a clean two-column layout now that Paybill is gone, not a stale three-column grid',
+    options.includes('lg:grid-cols-2') && !options.includes('lg:grid-cols-3'),
   ],
 ]
 

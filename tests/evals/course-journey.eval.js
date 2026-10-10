@@ -19,7 +19,7 @@ const checks = [
   ['admin can publish and reopen courses', editor.includes("save('published')") && nav.includes("'/dashboard/admin/courses'")],
   ['admin can archive and republish catalog products', manager.includes("changeStatus(course, 'archived')") && manager.includes("changeStatus(course, 'published')")],
   ['catalog supports search and category filtering', catalog.includes('type="search"') && catalog.includes('Filter by category')],
-  ['checkout supports free enrollment plus Paystack, PayPal, and M-Pesa', sales.includes('Enroll Free') && sales.includes('CourseCheckoutForm') && read('src/components/payments/CourseCheckoutForm/index.tsx').includes('PaybillClaimForm')],
+  ['checkout supports free enrollment plus Paystack and PayPal (Paybill was removed)', sales.includes('Enroll Free') && sales.includes('CourseCheckoutForm') && read('src/components/payments/CourseCheckoutForm/index.tsx').includes('checkout-paypal') && !read('src/components/payments/CourseCheckoutForm/index.tsx').includes('PaybillClaimForm')],
   ['online payments are bound to learner, offer, and exact price', paystack.includes('data.amount !== course.priceKes * 100') && paypal.includes("captured.currencyCode !== 'USD'")],
   ['admin edits cannot erase enrolled learner progress', service.includes("throw new Error('COURSE_HAS_ENROLLMENTS')")],
   ['player supports explicit progress and sequential continuation', player.includes('Complete & Continue') && player.includes('Course complete. Well done.')],

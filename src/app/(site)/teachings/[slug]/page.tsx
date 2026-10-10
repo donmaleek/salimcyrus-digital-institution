@@ -16,10 +16,11 @@ import { TeachingPurchaseReturn } from '@/components/payments/TeachingPurchaseRe
 export const revalidate = 60
 
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const teaching = await db.teaching.findUnique({ where: { slug: params.slug } })
   if (!teaching || teaching.status !== 'published') return { title: 'Teaching' }
   return {
@@ -34,7 +35,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function TeachingDetailPage({ params }: PageProps) {
+export default async function TeachingDetailPage(props: PageProps) {
+  const params = await props.params;
   const teaching = await db.teaching.findUnique({ where: { slug: params.slug } })
   if (!teaching || teaching.status !== 'published') notFound()
 
@@ -177,7 +179,7 @@ export default async function TeachingDetailPage({ params }: PageProps) {
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden="true">✓</span>
-                  Pay with Paystack, PayPal, or M-Pesa Paybill with a quick review
+                  Pay with Paystack or PayPal
                 </li>
                 <li className="flex gap-2">
                   <span aria-hidden="true">✓</span>

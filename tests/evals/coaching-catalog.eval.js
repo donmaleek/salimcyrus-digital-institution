@@ -32,7 +32,7 @@ const detailDeepLinksToIdentityOffer = () =>
   alignmentDetail.includes(
     '/book-now?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session'
   ) &&
-  picker.includes("new URLSearchParams(window.location.search).get(") &&
+  picker.includes("searchParams.get('offer')") &&
   picker.includes('setCategory(requestedOffer.category)') &&
   picker.includes('setSelectedOffer(requestedOffer.name)')
 
@@ -90,7 +90,7 @@ const checks = [
     'the Book Now page presents tabs to switch between the seven formats, not seven separate flat sections',
     bookNowPage.includes('CoachingCategoryPicker') &&
       picker.includes('role="tablist"') &&
-      picker.includes('coachingCategories.map'),
+      picker.includes('categories.map'),
   ],
   [
     'a request-only tier never gets a checkout form: quote requests and paid checkout are mutually exclusive per tier',

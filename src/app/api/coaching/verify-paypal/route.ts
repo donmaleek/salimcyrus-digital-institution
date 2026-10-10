@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getPayPalAccessToken, capturePayPalOrder } from '@/lib/api/paypal'
-import { coachingOffers } from '@/lib/data/coaching-offers'
+import { getCoachingOfferByName } from '@/lib/data/coaching-catalog'
 import { recordCoachingPayment } from '@/services/payments/coaching-bookings'
 
 function slugFor(offerName: string): string {
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing PayPal order reference.' }, { status: 400 })
   }
 
-  const offer = coachingOffers.find((o) => o.name === offerName)
+  const offer = await getCoachingOfferByName(offerName)
   if (!offer) {
     return NextResponse.json({ error: 'Unknown session.' }, { status: 404 })
   }

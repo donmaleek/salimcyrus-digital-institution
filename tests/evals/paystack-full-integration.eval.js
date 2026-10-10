@@ -47,7 +47,7 @@ const checks = [
     routes.books.includes('book.priceKes') &&
       routes.teachings.includes('teaching.priceKes') &&
       routes.courses.includes('course.priceKes') &&
-      routes.coaching.includes('coachingOffers.find') &&
+      routes.coaching.includes('getCoachingOfferByName') &&
       read('src/services/payments/paystack.ts').includes('JOURNAL_SUBSCRIPTION_PRICE_KES * 100'),
   ],
   [

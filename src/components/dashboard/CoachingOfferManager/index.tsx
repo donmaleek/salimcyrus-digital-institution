@@ -1,0 +1,259 @@
+'use client'
+
+import { useRef, useState } from 'react'
+import Image from 'next/image'
+import { Button } from '@/components/ui/Button'
+import { useToast } from '@/components/ui/Toast'
+import { formatCurrency } from '@/lib/utils/currency'
+import type { CoachingOffer, CoachingCategorySlug } from '@/lib/data/coaching-offers'
+import type { ResolvedCoachingCategory } from '@/lib/data/coaching-catalog'
+
+interface CoachingOfferManagerProps {
+  initialOffers: CoachingOffer[]
+  initialCategories: ResolvedCoachingCategory[]
+}
+
+interface EditState {
+  priceKes: string
+  priceUsd: string
+  duration: string
+  tagline: string
+  location: string
+}
+
+function toEditState(offer: CoachingOffer): EditState {
+  return {
+    priceKes: String(offer.priceKes),
+    priceUsd: String(offer.priceUsd),
+    duration: offer.duration,
+    tagline: offer.tagline,
+    location: offer.location ?? '',
+  }
+}
+
+function OfferRow({ offer, onSaved }: { offer: CoachingOffer; onSaved: (updated: CoachingOffer) => void }) {
+  const [expanded, setExpanded] = useState(false)
+  const [form, setForm] = useState<EditState>(() => toEditState(offer))
+  const [saving, setSaving] = useState(false)
+  const { showToast } = useToast()
+
+  async function handleSave() {
+    setSaving(true)
+    const response = await fetch(`/api/admin/coaching/offers/${encodeURIComponent(offer.name)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        priceKes: form.priceKes ? Number(form.priceKes) : null,
+        priceUsd: form.priceUsd ? Number(form.priceUsd) : null,
+        duration: form.duration.trim() || null,
+        tagline: form.tagline.trim() || null,
+        location: form.location.trim() || null,
+      }),
+    }).catch(() => null)
+    setSaving(false)
+
+    if (!response || !response.ok) {
+      showToast('Could not save that change.', 'error')
+      return
+    }
+
+    onSaved({
+      ...offer,
+      priceKes: Number(form.priceKes) || offer.priceKes,
+      priceUsd: Number(form.priceUsd) || offer.priceUsd,
+      duration: form.duration.trim() || offer.duration,
+      tagline: form.tagline.trim() || offer.tagline,
+      location: form.location.trim() || undefined,
+    })
+    showToast('Saved. Live on Book Now immediately.')
+    setExpanded(false)
+  }
+
+  async function handleReset() {
+    setSaving(true)
+    const response = await fetch(`/api/admin/coaching/offers/${encodeURIComponent(offer.name)}`, {
+      method: 'DELETE',
+    }).catch(() => null)
+    setSaving(false)
+
+    if (!response || !response.ok) {
+      showToast('Could not reset that session.', 'error')
+      return
+    }
+    showToast('Reverted to the default price and copy. Refresh to see the restored values.')
+  }
+
+  return (
+    <div className="border-b border-navy-100 py-4 last:border-b-0">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="font-semibold text-navy">{offer.name}</p>
+          <p className="mt-1 text-sm text-navy-400">
+            {offer.duration} &middot; {formatCurrency(offer.priceKes)} &middot; ${offer.priceUsd}
+            {offer.location ? ` · ${offer.location}` : ''}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => setExpanded((v) => !v)}>
+          {expanded ? 'Close' : 'Edit'}
+        </Button>
+      </div>
+
+      {expanded && (
+        <div className="mt-4 grid gap-3 rounded-xl bg-navy-50 p-4 sm:grid-cols-2">
+          <label className="block text-sm font-semibold text-navy">
+            Price (KES)
+            <input
+              type="number"
+              min={1}
+              value={form.priceKes}
+              onChange={(e) => setForm((f) => ({ ...f, priceKes: e.target.value }))}
+              className="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            />
+          </label>
+          <label className="block text-sm font-semibold text-navy">
+            Price (USD)
+            <input
+              type="number"
+              min={1}
+              value={form.priceUsd}
+              onChange={(e) => setForm((f) => ({ ...f, priceUsd: e.target.value }))}
+              className="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            />
+          </label>
+          <label className="block text-sm font-semibold text-navy">
+            Duration
+            <input
+              type="text"
+              value={form.duration}
+              onChange={(e) => setForm((f) => ({ ...f, duration: e.target.value }))}
+              placeholder="e.g. 2 Hours"
+              className="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            />
+          </label>
+          <label className="block text-sm font-semibold text-navy">
+            Location <span className="font-normal text-navy-400">(optional)</span>
+            <input
+              type="text"
+              value={form.location}
+              onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
+              placeholder="e.g. Your location, within Mombasa"
+              className="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            />
+          </label>
+          <label className="block text-sm font-semibold text-navy sm:col-span-2">
+            Description
+            <textarea
+              rows={2}
+              value={form.tagline}
+              onChange={(e) => setForm((f) => ({ ...f, tagline: e.target.value }))}
+              className="mt-1 w-full resize-y rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            />
+          </label>
+          <div className="flex gap-3 sm:col-span-2">
+            <Button onClick={handleSave} loading={saving} size="sm">
+              Save
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleReset} disabled={saving}>
+              Reset to default
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CategoryImageUpload({ category, onUploaded }: { category: ResolvedCoachingCategory; onUploaded: (imagePath: string) => void }) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
+  const { showToast } = useToast()
+
+  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+
+    const form = new FormData()
+    form.set('image', file)
+    const response = await fetch(`/api/admin/coaching/categories/${category.slug}/image`, {
+      method: 'POST',
+      body: form,
+    }).catch(() => null)
+    setUploading(false)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+
+    if (!response || !response.ok) {
+      showToast('Could not upload that image.', 'error')
+      return
+    }
+    const payload = (await response.json()) as { image: { imagePath: string } }
+    onUploaded(payload.image.imagePath)
+    showToast('Image updated.')
+  }
+
+  return (
+    <div className="flex items-center gap-4">
+      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-navy-50">
+        {category.imagePath ? (
+          <Image src={category.imagePath} alt="" fill unoptimized className="object-cover" />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center font-heading text-sm font-bold text-navy-300">
+            No image
+          </span>
+        )}
+      </div>
+      <label className="inline-flex min-h-9 cursor-pointer items-center rounded-full border border-navy-200 px-4 text-sm font-semibold text-navy hover:bg-navy-50">
+        {uploading ? 'Uploading…' : 'Upload image'}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/webp,image/jpeg,image/png"
+          onChange={handleFileChange}
+          disabled={uploading}
+          className="hidden"
+        />
+      </label>
+    </div>
+  )
+}
+
+export function CoachingOfferManager({ initialOffers, initialCategories }: CoachingOfferManagerProps) {
+  const [offers, setOffers] = useState(initialOffers)
+  const [categories, setCategories] = useState(initialCategories)
+
+  function updateOffer(updated: CoachingOffer) {
+    setOffers((current) => current.map((offer) => (offer.name === updated.name ? updated : offer)))
+  }
+
+  function updateCategoryImage(slug: CoachingCategorySlug, imagePath: string) {
+    setCategories((current) =>
+      current.map((category) => (category.slug === slug ? { ...category, imagePath } : category))
+    )
+  }
+
+  return (
+    <div className="space-y-8">
+      {categories.map((category) => {
+        const categoryOffers = offers.filter((offer) => offer.category === category.slug)
+        if (categoryOffers.length === 0) return null
+
+        return (
+          <div key={category.slug} className="rounded-2xl border border-navy-100 bg-white p-5 shadow-sm sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-navy-100 pb-4">
+              <div>
+                <h2 className="font-heading text-xl font-bold text-navy">{category.name}</h2>
+                <p className="mt-1 text-sm text-navy-500">{category.description}</p>
+              </div>
+              <CategoryImageUpload category={category} onUploaded={(path) => updateCategoryImage(category.slug, path)} />
+            </div>
+            <div className="mt-2">
+              {categoryOffers.map((offer) => (
+                <OfferRow key={offer.name} offer={offer} onSaved={updateOffer} />
+              ))}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

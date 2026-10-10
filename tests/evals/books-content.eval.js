@@ -22,8 +22,8 @@ const checks = [
     (catalog.match(/\n  book\(/g) || []).length === 14,
   ],
   [
-    'every title is priced individually within the KES 500-1,000 band',
-    catalog.includes('BOOK_MIN_PRICE_KES = 500') && catalog.includes('BOOK_MAX_PRICE_KES = 1000'),
+    'every title is priced individually within the KES 500-600 band',
+    catalog.includes('BOOK_MIN_PRICE_KES = 500') && catalog.includes('BOOK_MAX_PRICE_KES = 600'),
   ],
   ['every catalog title has an optimized cover', covers.length === 14],
   [

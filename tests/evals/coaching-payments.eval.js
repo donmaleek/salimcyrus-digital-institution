@@ -45,7 +45,7 @@ const checks = [
   ],
   [
     'Paystack coaching checkout validates the selected server-owned offer and returns to booking confirmation',
-    checkoutPaystack.includes('coachingOffers.find') &&
+    checkoutPaystack.includes('getCoachingOfferByName') &&
       checkoutPaystack.includes('/book-now/confirm?offerName=') &&
       checkoutPaystack.includes('PAYSTACK_SECRET_KEY'),
   ],

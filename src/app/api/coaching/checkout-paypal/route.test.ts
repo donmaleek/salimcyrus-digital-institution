@@ -7,6 +7,14 @@ jest.mock('../../../../lib/api/paypal', () => ({
   getPayPalAccessToken: jest.fn(),
   createPayPalOrder: jest.fn(),
 }))
+jest.mock('../../../../lib/data/coaching-catalog', () => {
+  const { coachingOffers: offers } = jest.requireActual('../../../../lib/data/coaching-offers')
+  return {
+    getCoachingOfferByName: jest.fn((name: string) =>
+      Promise.resolve(offers.find((offer: { name: string }) => offer.name === name) ?? null)
+    ),
+  }
+})
 
 import { POST } from './route'
 import { getPayPalAccessToken, createPayPalOrder } from '@/lib/api/paypal'

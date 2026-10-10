@@ -10,7 +10,25 @@ export type CoachingCategorySlug =
 export interface CoachingOffer {
   name: string
   category: CoachingCategorySlug
+  /** Always a real session length (e.g. "2 Hours"), never a location
+   * descriptor, see `location` for that. Shown prominently on every
+   * booking card before price, per the client's explicit requirement that
+   * duration never be buried. */
   duration: string
+  /** Where the session happens, when that varies by offer (e.g. "Your
+   * location, outside Mombasa"). Undefined for offers where location
+   * isn't a variable, like the private alignment sessions. */
+  location?: string
+  /** A logistics commitment that must be visible before the client
+   * confirms booking, e.g. travel/accommodation coverage for an
+   * out-of-town session. Shown as its own callout, not buried in the
+   * tagline. */
+  logisticsNote?: string
+  /** True for offers whose booking flow needs more than email/name before
+   * payment (county/town, preferred date and time, and for couples the
+   * number of participants), currently the two "outside Mombasa" travel
+   * offers, see CoachingTripDetailsForm. */
+  requiresTripDetails?: boolean
   tagline: string
   points: string[]
   outcome: string
@@ -64,7 +82,8 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: "Individual Coaching, At Salim's Location",
     category: 'individual',
-    duration: "At Salim's location",
+    duration: '2 Hours',
+    location: "At Salim's location",
     tagline: "One-on-one coaching, hosted at Salim's own location.",
     points: [
       'Full one-on-one attention.',
@@ -77,7 +96,8 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: 'Individual Coaching, Your Location (Mombasa)',
     category: 'individual',
-    duration: 'Your location, within Mombasa',
+    duration: '2 Hours 30 Minutes',
+    location: 'Your location, within Mombasa',
     tagline: 'One-on-one coaching at your location, within Mombasa.',
     points: ['Salim comes to you.', 'Same depth, your own space.'],
     outcome: 'A private session built around your exact situation.',
@@ -87,7 +107,11 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: 'Individual Coaching, Your Location (Kenya, Outside Mombasa)',
     category: 'individual',
-    duration: 'Your location, outside Mombasa',
+    duration: '3 Hours 30 Minutes',
+    location: 'Your location, outside Mombasa',
+    logisticsNote:
+      'Transport is catered for outside Mombasa, together with accommodation where required.',
+    requiresTripDetails: true,
     tagline: 'One-on-one coaching at your location, elsewhere in Kenya.',
     points: ['Salim travels to you.', 'Same depth, wherever you are.'],
     outcome: 'A private session built around your exact situation.',
@@ -97,7 +121,7 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: 'Identity & Life Alignment Session',
     category: 'identity-alignment',
-    duration: 'Private one-on-one session',
+    duration: '2 Hours',
     tagline:
       'A confidential conversation for clarity around identity, relationships, values, faith, and personal direction.',
     points: [
@@ -111,7 +135,7 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: 'Single Motherhood & Life Alignment Session',
     category: 'single-motherhood-alignment',
-    duration: 'Private one-on-one session',
+    duration: '1 Hour 30 Minutes',
     tagline:
       'A confidential space for healing, relationships, boundaries, motherhood, purpose, and a thoughtful future.',
     points: [
@@ -125,7 +149,8 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: "Couples Coaching, At Salim's Location",
     category: 'couples',
-    duration: "At Salim's location",
+    duration: '2 Hours',
+    location: "At Salim's location",
     tagline: "One-on-one couples coaching, hosted at Salim's own location.",
     points: ['Both partners present.', 'A structured, neutral setting.'],
     outcome: 'A shared next step you both leave agreeing on.',
@@ -135,7 +160,8 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: 'Couples Coaching, Your Location (Mombasa)',
     category: 'couples',
-    duration: 'Your location, within Mombasa',
+    duration: '2 Hours 30 Minutes',
+    location: 'Your location, within Mombasa',
     tagline: 'One-on-one couples coaching at your location, within Mombasa.',
     points: ['Salim comes to you.', 'Same depth, your own space.'],
     outcome: 'A shared next step you both leave agreeing on.',
@@ -145,7 +171,11 @@ export const coachingOffers: CoachingOffer[] = [
   {
     name: 'Couples Coaching, Your Location (Kenya, Outside Mombasa)',
     category: 'couples',
-    duration: 'Your location, outside Mombasa',
+    duration: '3 Hours 30 Minutes',
+    location: 'Your location, outside Mombasa',
+    logisticsNote:
+      'Transport is catered for outside Mombasa, together with accommodation where required.',
+    requiresTripDetails: true,
     tagline:
       'One-on-one couples coaching at your location, elsewhere in Kenya.',
     points: ['Salim travels to you.', 'Same depth, wherever you are.'],

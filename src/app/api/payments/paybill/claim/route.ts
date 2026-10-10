@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { getBookBySlug } from '@/lib/data/book-catalog'
-import { coachingOffers } from '@/lib/data/coaching-offers'
+import { getCoachingOfferByName } from '@/lib/data/coaching-catalog'
 import { JOURNAL_SUBSCRIPTION_PRICE_KES } from '@/services/payments/journal-subscriptions'
 import { submitPaymentClaim } from '@/services/payments/payment-claims'
 import { evidenceStorageDir, evidenceFilePath } from '@/lib/api/payment-evidence-storage'
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     if (!data.coachingOfferName) {
       return NextResponse.json({ error: 'Missing session.' }, { status: 400 })
     }
-    const offer = coachingOffers.find((o) => o.name === data.coachingOfferName)
+    const offer = await getCoachingOfferByName(data.coachingOfferName)
     if (!offer) {
       return NextResponse.json({ error: 'This session is not available for booking.' }, { status: 404 })
     }

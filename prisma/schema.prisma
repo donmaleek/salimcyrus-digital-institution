@@ -182,6 +182,39 @@ model JournalSubscription {
   @@index([userId, expiresAt])
 }
 
+/// Coaching offers themselves stay defined in src/lib/data/coaching-offers.ts
+/// (name, category, copy, points) — only the fields the client explicitly
+/// asked to edit without a redeploy live here, one row per offer an admin
+/// has actually changed. offerName is the same stable string every payment
+/// route, Paybill claim, and booking-confirm flow already keys offers by;
+/// an offer with no row here just uses its static defaults, unchanged. Any
+/// null field here falls back to the static default for that field too, so
+/// an admin can edit just the price without having to also restate the
+/// duration.
+model CoachingOfferOverride {
+  id        String   @id @default(cuid())
+  offerName String   @unique
+  priceKes  Int?
+  priceUsd  Int?
+  duration  String?
+  tagline   String?
+  location  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// A dedicated card image per coaching category (Identity & Life Alignment,
+/// Individual Coaching, etc.), uploaded by an admin. categorySlug matches
+/// CoachingCategorySlug. A category with no row here renders the picker's
+/// built-in icon/gradient fallback instead of a broken image.
+model CoachingCategoryImage {
+  id           String   @id @default(cuid())
+  categorySlug String   @unique
+  imagePath    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 model Booking {
   id                String            @id @default(cuid())
   userId            String?

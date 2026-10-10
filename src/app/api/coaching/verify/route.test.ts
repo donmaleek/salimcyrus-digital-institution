@@ -5,6 +5,14 @@ jest.mock('next-auth', () => ({ getServerSession: jest.fn() }))
 jest.mock('../../../../lib/auth', () => ({ authOptions: {} }))
 jest.mock('../../../../lib/api/paystack', () => ({ verifyPaystackTransaction: jest.fn() }))
 jest.mock('../../../../services/payments/coaching-bookings', () => ({ recordCoachingPayment: jest.fn() }))
+jest.mock('../../../../lib/data/coaching-catalog', () => {
+  const { coachingOffers: offers } = jest.requireActual('../../../../lib/data/coaching-offers')
+  return {
+    getCoachingOfferByName: jest.fn((name: string) =>
+      Promise.resolve(offers.find((offer: { name: string }) => offer.name === name) ?? null)
+    ),
+  }
+})
 
 import { getServerSession } from 'next-auth'
 import { verifyPaystackTransaction } from '@/lib/api/paystack'

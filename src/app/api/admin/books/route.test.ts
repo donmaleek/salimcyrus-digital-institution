@@ -32,8 +32,8 @@ function validMeta() {
   return {
     title: 'Leading a Family',
     description: 'A book on leading your household well.',
-    priceKes: '800',
-    priceUsd: '6',
+    priceKes: '550',
+    priceUsd: '4',
   }
 }
 
@@ -95,6 +95,17 @@ describe('POST /api/admin/books', () => {
     expect(response.status).toBe(400)
   })
 
+  it('rejects a price above the KES 600 ceiling, so a book can never be listed above the site-wide cap', async () => {
+    const response = await POST(request(buildForm({ priceKes: '601' })))
+    expect(response.status).toBe(400)
+    expect(mockCreate).not.toHaveBeenCalled()
+  })
+
+  it('accepts a price exactly at the KES 600 ceiling', async () => {
+    const response = await POST(request(buildForm({ priceKes: '600' })))
+    expect(response.status).toBe(200)
+  })
+
   it('returns 400 when no PDF is attached', async () => {
     const response = await POST(request(buildForm({}, { pdf: null })))
     expect(response.status).toBe(400)
@@ -139,8 +150,8 @@ describe('POST /api/admin/books', () => {
       data: expect.objectContaining({
         slug: 'leading-a-family',
         title: 'Leading a Family',
-        priceKes: 800,
-        priceUsd: 6,
+        priceKes: 550,
+        priceUsd: 4,
         fileName: 'leading-a-family.pdf',
         coverPath: '/api/books/cover/leading-a-family-cover.webp',
         status: 'draft',

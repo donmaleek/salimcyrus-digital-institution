@@ -12,6 +12,14 @@ jest.mock('../../../../lib/api/paypal', () => ({
 jest.mock('../../../../services/payments/coaching-bookings', () => ({
   recordCoachingPayment: jest.fn(),
 }))
+jest.mock('../../../../lib/data/coaching-catalog', () => {
+  const { coachingOffers: offers } = jest.requireActual('../../../../lib/data/coaching-offers')
+  return {
+    getCoachingOfferByName: jest.fn((name: string) =>
+      Promise.resolve(offers.find((offer: { name: string }) => offer.name === name) ?? null)
+    ),
+  }
+})
 
 import { GET } from './route'
 import { getServerSession } from 'next-auth'

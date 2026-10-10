@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { verifyPaystackTransaction } from '@/lib/api/paystack'
-import { coachingOffers } from '@/lib/data/coaching-offers'
+import { getCoachingOfferByName } from '@/lib/data/coaching-catalog'
 import { recordCoachingPayment } from '@/services/payments/coaching-bookings'
 
 export async function GET(request: NextRequest) {
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing Paystack payment reference.' }, { status: 400 })
   }
 
-  const offer = coachingOffers.find((candidate) => candidate.name === offerName)
+  const offer = await getCoachingOfferByName(offerName)
   if (!offer) return NextResponse.json({ error: 'Unknown session.' }, { status: 404 })
 
   const verification = await verifyPaystackTransaction(reference, secretKey)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { coachingOffers } from '@/lib/data/coaching-offers'
+import { getCoachingOfferByName } from '@/lib/data/coaching-catalog'
 import {
   coachingCheckoutRequestSchema,
   initializePaystackCoachingCheckout,
@@ -24,9 +24,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const offer = coachingOffers.find(
-    (candidate) => candidate.name === parsed.data.offerName
-  )
+  const offer = await getCoachingOfferByName(parsed.data.offerName)
   if (!offer) {
     return NextResponse.json(
       { error: 'This session is not available for booking.' },

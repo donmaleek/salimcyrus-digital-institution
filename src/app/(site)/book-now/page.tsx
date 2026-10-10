@@ -3,6 +3,9 @@ import { Button } from '@/components/ui/Button'
 import { PageHero } from '@/components/layout/PageHero'
 import { WHATSAPP_URL } from '@/lib/utils/constants'
 import { CoachingCategoryPicker } from '@/components/payments/CoachingCategoryPicker'
+import { getCoachingCategories, getCoachingOffers } from '@/lib/data/coaching-catalog'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Book Now | Private Coaching with Salim Cyrus',
@@ -29,7 +32,9 @@ const bookingSteps = [
   ],
 ]
 
-export default function BookNowPage() {
+export default async function BookNowPage() {
+  const [categories, offers] = await Promise.all([getCoachingCategories(), getCoachingOffers()])
+
   return (
     <>
       <PageHero
@@ -74,7 +79,7 @@ export default function BookNowPage() {
               </p>
             </div>
             <div className="mt-8">
-              <CoachingCategoryPicker />
+              <CoachingCategoryPicker categories={categories} offers={offers} />
             </div>
           </div>
         </section>

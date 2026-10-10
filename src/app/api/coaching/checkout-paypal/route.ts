@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getPayPalAccessToken, createPayPalOrder } from '@/lib/api/paypal'
-import { coachingOffers } from '@/lib/data/coaching-offers'
+import { getCoachingOfferByName } from '@/lib/data/coaching-catalog'
 
 const requestSchema = z.object({
   offerName: z.string().trim().min(1).max(200),
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request.' }, { status: 400 })
   }
 
-  const offer = coachingOffers.find((o) => o.name === parsed.data.offerName)
+  const offer = await getCoachingOfferByName(parsed.data.offerName)
   if (!offer) {
     return NextResponse.json({ error: 'This session is not available for booking.' }, { status: 404 })
   }

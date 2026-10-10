@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from 'fs'
 import { z } from 'zod'
 import { requireCrmApi } from '@/services/crm/access'
 import { db } from '@/lib/db'
-import { books } from '@/lib/data/books'
+import { books, BOOK_MAX_PRICE_KES } from '@/lib/data/books'
 import { slugify } from '@/lib/utils/slugify'
 import { booksStorageDir, bookFilePath } from '@/lib/api/books-storage'
 
@@ -16,7 +16,7 @@ const metaSchema = z.object({
   title: z.string().trim().min(1).max(200),
   subtitle: z.string().trim().max(200).optional(),
   description: z.string().trim().min(1).max(5000),
-  priceKes: z.coerce.number().int().min(1).max(1_000_000),
+  priceKes: z.coerce.number().int().min(1).max(BOOK_MAX_PRICE_KES),
   priceUsd: z.coerce.number().int().min(1).max(10_000),
   pageCount: z.coerce.number().int().min(1).max(5000).optional(),
   publish: z.coerce.boolean().optional(),

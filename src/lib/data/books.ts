@@ -1,7 +1,7 @@
 import { WHATSAPP_NUMBER } from '@/lib/utils/constants'
 
 export const BOOK_MIN_PRICE_KES = 500
-export const BOOK_MAX_PRICE_KES = 1000
+export const BOOK_MAX_PRICE_KES = 600
 
 export interface BookEntry {
   slug: string
@@ -59,14 +59,16 @@ function book(
 }
 
 // Priced by length (real page counts from each PDF) rather than one flat
-// rate: 14 distinct prices, evenly spread across KES 500-1,000, shortest
-// book cheapest, longest priciest. Every title has a unique price.
+// rate: 14 distinct prices, spread across KES 500-600 (the site's required
+// ceiling), shortest book cheapest, longest priciest, same relative spread
+// as before the cap just compressed to fit under it. Every title has a
+// unique price.
 export const books: BookEntry[] = [
   book(
     'understanding-the-marketplace',
     'Understanding the Marketplace',
-    850,
-    7,
+    570,
+    4,
     133,
     'A Kingdom-minded guide for entrepreneurs, leaders, and professionals navigating business, stewardship, innovation, and economic change.',
     'Navigating the Storms of Business',
@@ -75,8 +77,8 @@ export const books: BookEntry[] = [
   book(
     'the-greatest-tragedy',
     'The Greatest Tragedy Is Not Death',
-    690,
-    5,
+    538,
+    4,
     83,
     'An exploration of identity, calling, and Kingdom purpose for anyone determined to build a meaningful life in a world full of distraction.',
     'It Is a Life Without Purpose',
@@ -85,7 +87,7 @@ export const books: BookEntry[] = [
   book(
     'emotional-blackmail',
     'Emotional Blackmail',
-    580,
+    516,
     4,
     64,
     'A practical guide to recognizing manipulation, confronting guilt and fear, setting boundaries, and breaking patterns of toxic control.',
@@ -105,8 +107,8 @@ export const books: BookEntry[] = [
   book(
     'the-great-deception',
     'The Great Deception',
-    650,
-    5,
+    530,
+    4,
     70,
     'A brutal accounting of how the stories you tell yourself keep stealing your focus, and how to reclaim the narrative with accountability and clarity.',
     undefined,
@@ -115,8 +117,8 @@ export const books: BookEntry[] = [
   book(
     'the-cost-of-infidelity',
     'The Cost of Infidelity',
-    620,
-    5,
+    524,
+    4,
     66,
     'An honest examination of betrayal, broken trust, and the emotional and relational cost of infidelity.',
     undefined,
@@ -125,8 +127,8 @@ export const books: BookEntry[] = [
   book(
     'ritual-scorecard',
     'Ritual Scorecard',
-    810,
-    6,
+    562,
+    4,
     102,
     'A structured practice for measuring daily alignment and weekly truth across discipline, identity, purpose, and accountability.',
     'The Discipline of Daily Alignment and Weekly Truth',
@@ -135,8 +137,8 @@ export const books: BookEntry[] = [
   book(
     'pornography-and-the-death-of-purpose',
     'Pornography and the Death of Purpose',
-    1000,
-    8,
+    600,
+    5,
     185,
     'A focused examination of identity theft in the digital age and the way destructive media habits erode direction, discipline, and purpose.',
     'Identity Theft in the Digital Age',
@@ -145,8 +147,8 @@ export const books: BookEntry[] = [
   book(
     'god-do-you-need-my-money',
     'God, Do You Need My Money?',
-    880,
-    7,
+    576,
+    4,
     134,
     'A challenge to religious manipulation that reclaims biblical truth, generosity, stewardship, and integrity.',
     'Exposing the Manipulation, Reclaiming the Truth, and Returning to Biblical Generosity',
@@ -155,8 +157,8 @@ export const books: BookEntry[] = [
   book(
     'digital-economic-systems-decoded',
     'Digital Economic Systems Decoded',
-    920,
-    7,
+    584,
+    5,
     148,
     'An accessible look at how platforms, governments, and algorithms influence identity, data, opportunity, and economic power.',
     undefined,
@@ -165,8 +167,8 @@ export const books: BookEntry[] = [
   book(
     'unless-they-kill-god',
     'Unless They Kill God',
-    730,
-    6,
+    546,
+    4,
     87,
     'A forceful reflection on why no system, religion, or power can stop the purposes of God in a person’s life.',
     'Why No System, Religion, or Power Can Stop the Purposes of God in a Man’s Life',
@@ -175,8 +177,8 @@ export const books: BookEntry[] = [
   book(
     'concealed-redemption',
     'Concealed Redemption',
-    770,
-    6,
+    554,
+    4,
     100,
     'A hopeful exploration of how God works behind broken places to reveal purpose, renewal, and restoration.',
     'How God Works Behind the Broken Places to Reveal His Greatest Purpose',
@@ -185,8 +187,8 @@ export const books: BookEntry[] = [
   book(
     'the-deception',
     'The Deception',
-    960,
-    7,
+    592,
+    5,
     157,
     'A brutal accounting of the lies you live by across ten territories of self-deception, from personal narrative to spiritual performance, and the truth that sets you free.',
     undefined,
@@ -195,7 +197,7 @@ export const books: BookEntry[] = [
   book(
     'marriage-and-knowing-the-right-partner',
     'Marriage and Knowing the Right Partner',
-    540,
+    508,
     4,
     64,
     'A framework for discerning character and compatibility before marriage, covering self-knowledge, observation, hard conversations, evaluation, and decision, so commitment follows real covenant readiness rather than chemistry alone.',

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import { PageHero } from '@/components/layout/PageHero'
+import { BookingIntro } from '@/components/layout/BookingIntro'
 import { CoachingPurchaseReturn } from '@/components/payments/CoachingPurchaseReturn'
 
 export const metadata: Metadata = {
@@ -12,14 +12,13 @@ export const metadata: Metadata = {
 export default function ConfirmBookingPage() {
   return (
     <>
-      <PageHero
-        eyebrow="Confirm Your Booking"
-        title="Already Paid? Let's Get You Scheduled"
-        description="If you paid with Paystack or PayPal, we confirm automatically below, then you can choose an available time."
+      <BookingIntro
+        title="Choose your session time"
+        description="Confirm your payment and choose an available time. If no suitable time is listed, the team will help you schedule."
       />
       <section className="bg-cream">
-        <div className="mx-auto max-w-content px-6 py-20">
-          <div className="max-w-xl rounded-2xl border border-navy-100 bg-white p-8">
+        <div className="mx-auto max-w-content px-5 py-8 sm:px-6 sm:py-12">
+          <div className="max-w-2xl rounded-xl border border-navy-100 bg-white p-5 sm:p-8">
             <Suspense>
               <CoachingPurchaseReturn />
             </Suspense>

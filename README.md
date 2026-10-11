@@ -248,3 +248,17 @@ Playwright's Chromium (already a project dependency for e2e tests, so no
 new npm package was needed) from `scripts/lib/render-worksheet-pdf.js`,
 using the actual curriculum content in
 `scripts/lib/parental-guidance-curriculum.js`.
+
+### Guided booking experience
+
+`/book-now` presents one decision at a time: session type, session, then details
+and payment. Shared offer links open checkout directly; browser back and type
+changes restore the appropriate step. Quote requests open immediately and travel
+logistics are collected before checkout. Admin-edited prices and locations stay
+visible. After payment, `/book-now/confirm` verifies the receipt and offers time
+selection or scheduling help.
+
+Run `bash scripts/check-booking.sh` for the booking gate and content evals. With
+a running app and accessible catalog, set `PLAYWRIGHT_BASE_URL` to include browser
+checks. The tests intercept all booking writes and provider requests. See
+[the guided booking guide](docs/booking/guided-booking.md) for contracts and QA.

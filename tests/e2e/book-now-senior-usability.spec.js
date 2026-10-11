@@ -1,60 +1,50 @@
 const { test, expect } = require('@playwright/test')
 
-test('all session types are visible without horizontal scrolling', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/book-now')
-
-  const choices = page.getByRole('tab')
-  await expect(choices).toHaveCount(7)
-
-  for (const choice of await choices.all()) {
-    await choice.scrollIntoViewIfNeeded()
-    await expect(choice).toBeVisible()
+for (const width of [390, 768, 1440]) {
+  test(`guided booking is usable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 })
+    await page.goto('/book-now')
+    const choice = page.getByRole('button', { name: 'Choose Standard Sessions', exact: true })
     const box = await choice.boundingBox()
-    expect(box.width).toBeLessThanOrEqual(390)
-    expect(box.height).toBeGreaterThanOrEqual(44)
-  }
+    expect(box.y).toBeLessThan(700)
+    expect(box.height).toBeGreaterThanOrEqual(48)
+    await expect(page.getByTestId('booking-categories').getByRole('button')).toHaveCount(8)
+    await choice.click()
+    await expect(page.getByTestId('booking-step-heading')).toBeFocused()
+    expect((await page.getByTestId('booking-step-heading').boundingBox()).y).toBeLessThan(200)
+    expect((await page.getByRole('button', { name: 'Change session type' }).boundingBox()).y).toBeGreaterThanOrEqual(0)
+    await page.getByRole('button', { name: 'Book Starter Session', exact: true }).click()
+    await expect(page.getByTestId('booking-selection-summary')).toBeVisible()
+    await expect(page.getByTestId('booking-step-heading')).toBeFocused()
+    const headingBox = await page.getByTestId('booking-step-heading').boundingBox()
+    expect(headingBox.y).toBeLessThan(200)
+    expect((await page.getByRole('button', { name: 'Back to sessions' }).boundingBox()).y).toBeGreaterThanOrEqual(0)
+    for (const target of await page.getByTestId('coaching-checkout-form').getByRole('button').all()) {
+      expect((await target.boundingBox()).height).toBeGreaterThanOrEqual(48)
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
+    await page.getByRole('button', { name: 'Back to sessions' }).click()
+    await page.getByRole('button', { name: 'Change session type' }).click()
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
+  })
+}
 
-  const pageWidth = await page.evaluate(
-    () => document.documentElement.scrollWidth
-  )
-  expect(pageWidth).toBeLessThanOrEqual(390)
-})
-
-test('booking choices use three plain steps and preserve the selected category in the URL', async ({
-  page,
-}) => {
+test('a keyboard user can choose a session and reach the payment form', async ({ page }) => {
   await page.goto('/book-now')
-
-  await expect(
-    page.getByText('Choose the kind of help you need', { exact: true })
-  ).toBeVisible()
-  await page.getByRole('tab', { name: /Couples Coaching/ }).click()
-  await expect(page).toHaveURL(/category=couples/)
-  await expect(page.getByText('Choose your session')).toBeVisible()
-
-  await page
-    .getByRole('button', {
-      name: "Select Couples Coaching, At Salim's Location",
-    })
-    .click()
-  await expect(page.getByText('Choose how to pay', { exact: true })).toBeVisible()
-  await expect(page.getByTestId('coaching-checkout-form')).toHaveCount(1)
+  await page.getByRole('button', { name: 'Choose Standard Sessions', exact: true }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByTestId('booking-step-heading')).toBeFocused()
+  await page.getByRole('button', { name: 'Book Starter Session', exact: true }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByTestId('booking-step-heading')).toBeFocused()
+  await page.keyboard.press('Tab')
+  await expect(page.getByLabel('Email for Paystack receipt')).toBeFocused()
 })
 
-test('a shared category URL restores the correct session choices', async ({
-  page,
-}) => {
-  await page.goto('/book-now?category=single-motherhood-alignment')
-
-  await expect(
-    page.getByRole('tab', { name: /Single Motherhood & Life Alignment/ })
-  ).toHaveAttribute('aria-selected', 'true')
-  await expect(
-    page.getByRole('heading', {
-      name: 'Single Motherhood & Life Alignment Session',
-    })
-  ).toBeVisible()
+test('an existing paid client sees scheduling without a tall hero', async ({ page }) => {
+  await page.route('**/api/booking/available-slots', route => route.fulfill({ json: { slots: [] } }))
+  await page.goto('/book-now/confirm')
+  await expect(page.getByRole('heading', { name: 'Choose your session time', exact: true })).toBeVisible()
+  await expect(page.getByTestId('page-hero')).toHaveCount(0)
+  expect((await page.getByTestId('booking-intro').boundingBox()).height).toBeLessThan(400)
 })

@@ -65,11 +65,11 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3" data-testid="coaching-trip-details-form">
-      <p className="text-sm font-semibold text-navy">
+      <p className="text-base font-semibold text-navy">
         We travel to you, so we need a few logistics details first.
       </p>
 
-      <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-name`}>
+      <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-name`}>
         {variant === 'couples' ? 'Names of participants' : 'Your name'}
       </label>
       <input
@@ -79,10 +79,10 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
         minLength={2}
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+        className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
       />
 
-      <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-phone`}>
+      <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-phone`}>
         Phone number
       </label>
       <input
@@ -91,10 +91,10 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
         required
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
-        className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+        className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
       />
 
-      <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-email`}>
+      <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-email`}>
         Email
       </label>
       <input
@@ -103,10 +103,10 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+        className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
       />
 
-      <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-location`}>
+      <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-location`}>
         County / town / location
       </label>
       <input
@@ -116,12 +116,12 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
         minLength={2}
         value={location}
         onChange={(e) => setLocation(e.target.value)}
-        className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+        className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
       />
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-date`}>
+          <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-date`}>
             Preferred date
           </label>
           <input
@@ -130,11 +130,11 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
             required
             value={preferredDate}
             onChange={(e) => setPreferredDate(e.target.value)}
-            className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-time`}>
+          <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-time`}>
             Preferred time
           </label>
           <input
@@ -143,14 +143,14 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
             required
             value={preferredTime}
             onChange={(e) => setPreferredTime(e.target.value)}
-            className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
         </div>
       </div>
 
       {variant === 'couples' && (
         <>
-          <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-participants`}>
+          <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-participants`}>
             Number of participants
           </label>
           <input
@@ -160,12 +160,12 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
             required
             value={participants}
             onChange={(e) => setParticipants(e.target.value)}
-            className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
         </>
       )}
 
-      <label className="block text-sm font-semibold text-navy" htmlFor={`${idPrefix}-notes`}>
+      <label className="block text-base font-semibold text-navy" htmlFor={`${idPrefix}-notes`}>
         Any additional information <span className="font-normal text-navy-400">(optional)</span>
       </label>
       <textarea
@@ -174,16 +174,16 @@ export function CoachingTripDetailsForm({ offerName, variant, onSubmitted }: Coa
         maxLength={1500}
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        className="w-full resize-y rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+        className="w-full resize-y rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
       />
 
       {error && (
-        <p role="alert" className="text-sm leading-6 text-red-700">
+        <p role="alert" className="text-base leading-6 text-red-700">
           {error}
         </p>
       )}
 
-      <Button type="submit" loading={submitting} className="w-full">
+      <Button type="submit" loading={submitting} className="min-h-12 w-full">
         Continue to Payment
       </Button>
     </form>

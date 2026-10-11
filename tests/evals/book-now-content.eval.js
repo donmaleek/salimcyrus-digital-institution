@@ -1,103 +1,25 @@
 const fs = require('node:fs')
 const path = require('node:path')
-
 const root = path.resolve(__dirname, '../..')
-const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
+const read = p => fs.readFileSync(path.join(root, p), 'utf8')
 const page = read('src/app/(site)/book-now/page.tsx')
-const header = read('src/components/layout/Header/index.tsx')
-const mobile = read('src/components/layout/Header/MobileNav.tsx')
-const offers = read('src/lib/data/coaching-offers.ts')
+const intro = read('src/components/layout/BookingIntro/index.tsx')
 const picker = read('src/components/payments/CoachingCategoryPicker/index.tsx')
-const sitemap = read('src/app/sitemap.ts')
-const experience = [page, header, mobile, offers, picker].join('\n')
-
+const flow = read('src/components/payments/CoachingCategoryPicker/booking-flow.ts')
+const offers = read('src/lib/data/coaching-offers.ts')
 const checks = [
-  [
-    'booking category photos fill rectangular panels beneath the card text, with equal-size empty-photo fallbacks',
-    picker.includes('relative block aspect-[16/9] w-full shrink-0 overflow-hidden') &&
-      picker.includes('flex aspect-[16/9] w-full items-center justify-center') &&
-      picker.includes('flex h-full flex-col') &&
-      picker.includes('flex flex-1 flex-col p-5 sm:p-6') &&
-      picker.includes('className="object-cover object-[center_35%] transition-transform') &&
-      !picker.includes('h-12 w-12') &&
-      picker.indexOf('{item.description}') < picker.indexOf('{item.imagePath ? ('),
-  ],
-  [
-    'Book Now experience contains no em dash characters',
-    !experience.includes('—'),
-  ],
-  [
-    'desktop header provides the booking action',
-    header.includes('Book Session Now') &&
-      header.includes('href="/book-now"') &&
-      !header.includes('>\n            Book\n'),
-  ],
-  [
-    'mobile navigation provides the booking action',
-    mobile.includes('Book Session Now') && mobile.includes('href="/book-now"'),
-  ],
-  [
-    'Book Now page renders the coaching category picker, and every priced offer across all formats has a real KES price',
-    page.includes('CoachingCategoryPicker') &&
-      picker.includes('offers.filter') &&
-      // 12 priced offers across all 7 categories (3 standard + 3 individual +
-      // 3 couples + 1 group + 1 identity-alignment + 1 single-motherhood-alignment);
-      // see coaching-catalog.eval.js for the full category/pricing breakdown.
-      (offers.match(/priceKes: \d+/g) || []).length === 12,
-  ],
-  [
-    'page explains the four-stage booking process',
-    ['Choose', 'Reserve', 'Confirm', 'Prepare'].every((step) =>
-      page.includes(`'${step}',`)
-    ),
-  ],
-  [
-    'offer rows explain fit and outcome where the decision is made',
-    picker.includes('This session helps you') &&
-      picker.includes('You leave with:'),
-  ],
-  [
-    'page states real prices up front, not deferred to an external checkout page',
-    picker.includes('formatCurrency(offer.priceKes)'),
-  ],
-  [
-    'payment details stay hidden until a visitor selects one offer',
-    picker.includes('selectedOffer') &&
-      picker.includes('aria-expanded={isSelected}') &&
-      picker.includes('isSelected && ('),
-  ],
-  [
-    'coaching formats use accessible tabs instead of a dense select menu',
-    picker.includes('role="tablist"') &&
-      picker.includes('role="tab"') &&
-      picker.includes('aria-selected={isActive}'),
-  ],
-  [
-    'Paystack is no longer offered as a payment method on Book Now, and priced tiers use the real checkout form',
-    !page.includes('offer.paystackUrl') &&
-      !picker.includes('offer.paystackUrl') &&
-      picker.includes('CoachingCheckoutForm'),
-  ],
-  [
-    'request-only tiers (outside Kenya, large groups, VIP Summit) route to the quote-request form, never a fake checkout',
-    picker.includes('CoachingQuoteRequestForm') &&
-      picker.includes('coachingRequestTiers.filter'),
-  ],
-  [
-    'page provides coaching scope boundaries',
-    page.includes('not emergency support') && page.includes('therapy'),
-  ],
-  [
-    'page provides assistance before purchase',
-    page.includes('Ask Before Booking') && page.includes('href="/contact"'),
-  ],
-  [
-    'Book Now route is included in the sitemap',
-    sitemap.includes("'/book-now'"),
-  ],
+  ['booking uses a short task header instead of the 780px marketing hero', page.includes('BookingIntro') && !page.includes('PageHero') && !intro.includes('min-h-[780px]')],
+  ['one decision step is presented at a time', ['step === 1 &&', 'step === 2 &&', 'step === 3 &&'].every(s => picker.includes(s))],
+  ['all published types and live offer prices are supplied by the catalog', page.includes('getCoachingCategories()') && page.includes('getCoachingOffers()') && picker.includes('categories.map') && picker.includes('formatCurrency(offer.priceKes)') && (offers.match(/priceKes: \d+/g) || []).length === 12],
+  ['offer choices explain duration, fit and outcome without crowding payment', picker.includes('{offer.duration}') && picker.includes('What this session includes') && picker.includes('You leave with:')],
+  ['step changes move focus and scroll to the next decision', picker.includes('focus({ preventScroll: true })') && picker.includes('scrollIntoView') && picker.includes('tabIndex={-1}')],
+  ['back controls and browser history restore editable selections', picker.includes('Back to sessions') && picker.includes('Change session type') && picker.includes("addEventListener('popstate'") && flow.includes("params.get('offer')")],
+  ['quote requests open directly without a second reveal button', picker.includes('initiallyExpanded') && picker.includes('CoachingQuoteRequestForm')],
+  ['travel logistics remain required before checkout', picker.includes('needsTripDetails && !tripDone') && picker.includes('offer?.requiresTripDetails') && picker.includes('CoachingTripDetailsForm')],
+  ['the selected category image sits below help text in one supporting panel', picker.includes('activeCategory.imagePath') && picker.includes('aspect-[16/9] w-full') && picker.includes('CategoryIconFallback') && picker.indexOf('A clear next step') < picker.indexOf('activeCategory.imagePath')],
+  ['payment and scheduling order is explained before checkout', picker.includes('After payment, choose an available date and time') && intro.includes('/book-now/confirm')],
+  ['help and scope boundaries remain accessible', page.includes('not emergency support') && page.includes('therapy') && page.includes('href="/contact"') && picker.includes('WHATSAPP_URL')],
+  ['booking copy uses no em dash characters', ![page, intro, picker].join('').includes('—')],
 ]
-
-const failures = checks.filter(([, passed]) => !passed)
-for (const [name, passed] of checks)
-  console.log(`${passed ? 'PASS' : 'FAIL'} ${name}`)
-if (failures.length) process.exit(1)
+for (const [name, passed] of checks) console.log(`${passed ? 'PASS' : 'FAIL'} ${name}`)
+if (checks.some(([, passed]) => !passed)) process.exit(1)

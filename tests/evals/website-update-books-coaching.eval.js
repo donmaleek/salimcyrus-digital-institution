@@ -151,7 +151,7 @@ const checks = [
   ],
   [
     'trip details are captured before the payment step is shown, and only for offers flagged requiresTripDetails, never inserted into every booking flow',
-    picker.includes('needsTripDetails') && picker.includes('CoachingTripDetailsForm') && picker.includes('offer.requiresTripDetails'),
+    picker.includes('needsTripDetails') && picker.includes('CoachingTripDetailsForm') && picker.includes('offer?.requiresTripDetails'),
   ],
   [
     'the trip-details capture route records a CRM lead/task rather than silently discarding the logistics information, and requires a participant count specifically for the couples category',
@@ -165,7 +165,7 @@ const checks = [
   [
     'every coaching category can carry a dedicated admin-uploaded card image, with a tasteful fallback when none has been uploaded yet',
     schema.includes('model CoachingCategoryImage') &&
-      picker.includes('item.imagePath') &&
+      picker.includes('activeCategory.imagePath') &&
       picker.includes('CategoryIconFallback'),
   ],
   [
@@ -211,8 +211,8 @@ const checks = [
 
   // Final structure: Image -> Service -> Duration -> Description -> Price -> Book Now, Admin -> Edit Service
   [
-    'each coaching card follows Image -> Service -> Duration -> Description -> Price -> Book Now: the category tab shows the image, and the offer card leads with name and ends with a Book Session action',
-    picker.includes("Book Session") && picker.includes('item.imagePath'),
+    'the selected category has a supporting image and session choices show duration and price before a named booking action',
+    picker.includes("Book this session") && picker.includes('activeCategory.imagePath'),
   ],
 
   [

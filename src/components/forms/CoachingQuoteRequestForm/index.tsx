@@ -26,14 +26,17 @@ interface CoachingQuoteRequestFormProps {
    * (currently the international one-on-one/couples tiers), so the first
    * follow-up already has logistics to work with. */
   collectsLocationAndDate?: boolean
+  /** Open immediately when the guided booking flow already selected a tier. */
+  initiallyExpanded?: boolean
 }
 
 export function CoachingQuoteRequestForm({
   category,
   tierLabel,
   collectsLocationAndDate = false,
+  initiallyExpanded = false,
 }: CoachingQuoteRequestFormProps) {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(initiallyExpanded)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
@@ -42,10 +45,12 @@ export function CoachingQuoteRequestForm({
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
   const { showToast } = useToast()
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setError('')
     setSubmitting(true)
 
     const response = await fetch('/api/coaching/request-quote', {
@@ -66,6 +71,7 @@ export function CoachingQuoteRequestForm({
     setSubmitting(false)
 
     if (!response || !response.ok) {
+      setError('Could not send your request. Please try again.')
       showToast('Could not send your request. Please try again.', 'error')
       return
     }
@@ -77,7 +83,7 @@ export function CoachingQuoteRequestForm({
     return (
       <div className="mt-4 rounded-xl border border-gold/40 bg-gold-50 p-4" data-testid="quote-request-sent" role="status">
         <p className="font-semibold text-navy">Request sent</p>
-        <p className="mt-1 text-sm text-navy-600">
+        <p className="mt-1 text-base leading-7 text-navy-600">
           Salim&apos;s team will follow up by email or WhatsApp to discuss rates and availability.
         </p>
       </div>
@@ -87,12 +93,12 @@ export function CoachingQuoteRequestForm({
   return (
     <div className="mt-4" data-testid="coaching-quote-request-form">
       {!expanded ? (
-        <Button type="button" variant="outline" className="w-full" onClick={() => setExpanded(true)}>
+        <Button type="button" variant="outline" className="min-h-12 w-full" onClick={() => setExpanded(true)}>
           Request a Quote
         </Button>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3 rounded-xl border border-navy-200 bg-cream p-4">
-          <label className="block text-sm font-semibold text-navy" htmlFor={`quote-name-${category}`}>
+          <label className="block text-base font-semibold text-navy" htmlFor={`quote-name-${category}`}>
             Name
           </label>
           <input
@@ -103,9 +109,9 @@ export function CoachingQuoteRequestForm({
             maxLength={100}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
-          <label className="block text-sm font-semibold text-navy" htmlFor={`quote-email-${category}`}>
+          <label className="block text-base font-semibold text-navy" htmlFor={`quote-email-${category}`}>
             Email
           </label>
           <input
@@ -114,9 +120,9 @@ export function CoachingQuoteRequestForm({
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
-          <label className="block text-sm font-semibold text-navy" htmlFor={`quote-whatsapp-${category}`}>
+          <label className="block text-base font-semibold text-navy" htmlFor={`quote-whatsapp-${category}`}>
             WhatsApp <span className="font-normal text-navy-400">(optional)</span>
           </label>
           <input
@@ -125,11 +131,11 @@ export function CoachingQuoteRequestForm({
             placeholder="Include country code"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
-            className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
           {collectsLocationAndDate && (
             <>
-              <label className="block text-sm font-semibold text-navy" htmlFor={`quote-location-${category}`}>
+              <label className="block text-base font-semibold text-navy" htmlFor={`quote-location-${category}`}>
                 Preferred location
               </label>
               <input
@@ -141,9 +147,9 @@ export function CoachingQuoteRequestForm({
                 placeholder="City and country"
                 value={preferredLocation}
                 onChange={(e) => setPreferredLocation(e.target.value)}
-                className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
+                className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
-              <label className="block text-sm font-semibold text-navy" htmlFor={`quote-date-${category}`}>
+              <label className="block text-base font-semibold text-navy" htmlFor={`quote-date-${category}`}>
                 Preferred dates
               </label>
               <input
@@ -155,11 +161,11 @@ export function CoachingQuoteRequestForm({
                 placeholder="e.g. Week of 12 January 2027"
                 value={preferredDate}
                 onChange={(e) => setPreferredDate(e.target.value)}
-                className="w-full rounded-lg border border-navy-200 px-3 py-2 text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
+                className="min-h-12 w-full rounded-lg border border-navy-200 px-4 py-3 text-base text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
               />
             </>
           )}
-          <label className="block text-sm font-semibold text-navy" htmlFor={`quote-message-${category}`}>
+          <label className="block text-base font-semibold text-navy" htmlFor={`quote-message-${category}`}>
             Details
           </label>
           <textarea
@@ -171,9 +177,10 @@ export function CoachingQuoteRequestForm({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={MESSAGE_PLACEHOLDER[category]}
-            className="w-full resize-y rounded-lg border border-navy-200 px-3 py-2 text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
+            className="w-full resize-y rounded-lg border border-navy-200 px-4 py-3 text-base text-navy placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold/30"
           />
-          <Button type="submit" loading={submitting} className="w-full">
+          {error && <p role="alert" className="text-base leading-7 text-red-700">{error}</p>}
+          <Button type="submit" loading={submitting} className="min-h-12 w-full">
             Send Request
           </Button>
         </form>

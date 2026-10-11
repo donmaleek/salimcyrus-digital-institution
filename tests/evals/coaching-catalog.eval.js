@@ -6,6 +6,7 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 
 const offersFile = read('src/lib/data/coaching-offers.ts')
 const picker = read('src/components/payments/CoachingCategoryPicker/index.tsx')
+const flow = read('src/components/payments/CoachingCategoryPicker/booking-flow.ts')
 const quoteForm = read('src/components/forms/CoachingQuoteRequestForm/index.tsx')
 const quoteRoute = read('src/app/api/coaching/request-quote/route.ts')
 const bookNowPage = read('src/app/(site)/book-now/page.tsx')
@@ -32,9 +33,9 @@ const detailDeepLinksToIdentityOffer = () =>
   alignmentDetail.includes(
     '/book-now?offer=Identity%20%26%20Life%20Alignment%20Session#choose-session'
   ) &&
-  picker.includes("searchParams.get('offer')") &&
-  picker.includes('setCategory(requestedOffer.category)') &&
-  picker.includes('setSelectedOffer(requestedOffer.name)')
+  flow.includes("params.get('offer')") &&
+  flow.includes('category: requestedOffer.category') &&
+  flow.includes('selectedOffer: requestedOffer.name')
 
 const checks = [
   [
@@ -89,9 +90,9 @@ const checks = [
       alignmentDetail.includes('/book-now?offer=Single%20Motherhood%20%26%20Life%20Alignment%20Session#choose-session'),
   ],
   [
-    'the Book Now page presents tabs to switch between the seven formats, not seven separate flat sections',
+    'the Book Now page presents named choices and then only the selected format',
     bookNowPage.includes('CoachingCategoryPicker') &&
-      picker.includes('role="tablist"') &&
+      picker.includes('aria-label="Session types"') &&
       picker.includes('categories.map'),
   ],
   [

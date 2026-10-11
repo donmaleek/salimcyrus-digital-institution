@@ -24,7 +24,7 @@ test('confirmation requires a Paystack reference and gives truthful guest next s
   )
   await page.goto('/book-now/confirm')
 
-  const paymentReference = page.getByLabel('Paystack payment reference')
+  const paymentReference = page.getByLabel('Payment reference')
   await expect(paymentReference).toHaveAttribute('required', '')
   await page.getByLabel('Name').fill('Guest Client')
   await page.locator('#booking-email').fill('guest@example.com')
@@ -59,7 +59,7 @@ test('linked customer receives a direct dashboard booking link', async ({ page }
   await page.goto('/book-now/confirm')
   await page.getByLabel('Name').fill('Member Client')
   await page.locator('#booking-email').fill('member@example.com')
-  await page.getByLabel('Paystack payment reference').fill('PS_MEMBER_1')
+  await page.getByLabel('Payment reference').fill('PS_MEMBER_1')
   await page.getByRole('button', { name: 'Confirm My Booking' }).click()
 
   await expect(page.getByRole('link', { name: 'View My Booking' })).toHaveAttribute(

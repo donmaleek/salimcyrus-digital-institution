@@ -1,55 +1,18 @@
 const fs = require('node:fs')
 const path = require('node:path')
-
-const root = path.resolve(__dirname, '../..')
-const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
+const read = p => fs.readFileSync(path.resolve(__dirname, '../..', p), 'utf8')
 const picker = read('src/components/payments/CoachingCategoryPicker/index.tsx')
 const page = read('src/app/(site)/book-now/page.tsx')
-const surface = `${page}\n${picker}`
-
+const checkout = read('src/components/payments/CoachingCheckoutForm/index.tsx')
 const checks = [
-  [
-    'all session types use a wrapping grid instead of hidden horizontal scrolling',
-    picker.includes('grid gap-3 sm:grid-cols-2 lg:grid-cols-3') &&
-      !picker.includes('overflow-x-auto'),
-  ],
-  [
-    'the booking decision is presented as three plain steps',
-    [
-      'Choose the kind of help you need',
-      'Choose your session',
-      'Choose how to pay',
-    ].every((label) => picker.includes(label)),
-  ],
-  [
-    'each session type shows a description, a starting price, and a text selected state',
-    picker.includes('{item.description}') &&
-      picker.includes('From ${formatCurrency') &&
-      picker.includes("isActive ? 'Selected' : 'Choose'"),
-  ],
-  [
-    'decision controls use senior-friendly text and touch target sizes',
-    picker.includes('min-h-[132px]') &&
-      picker.includes('min-h-14') &&
-      picker.includes('text-base font-bold'),
-  ],
-  [
-    'category selection is reflected in the URL and can be restored',
-    picker.includes("searchParams.get('category')") &&
-      picker.includes("url.searchParams.set('category', nextCategory)"),
-  ],
-  [
-    'the page promises price visibility before payment',
-    page.includes('Every price is shown before') && page.includes('payment.'),
-  ],
-  [
-    'the redesigned surface contains no em dash characters',
-    !surface.includes('—'),
-  ],
+  ['choices wrap and do not require sideways scrolling', picker.includes('grid gap-3 sm:grid-cols-2') && !picker.includes('overflow-x-auto')],
+  ['one clear heading and three plain progress steps orient the client', picker.includes('What would you like help with?') && picker.includes('Choose your session') && picker.includes('Your details & payment') && picker.includes('Booking progress')],
+  ['type choices have explicit accessible names and live starting prices', picker.includes('aria-label={`Choose ${item.name}`}') && picker.includes('From ${formatCurrency') && picker.includes('{item.description}')],
+  ['decision and payment controls use readable text and 48px touch targets', picker.includes('min-h-12') && picker.includes('text-base font-semibold') && checkout.includes('min-h-12')],
+  ['client can edit the type and session without searching another screen', picker.includes('Change session type') && picker.includes('Back to sessions')],
+  ['payment is hidden until a session is chosen', picker.includes('step === 3 && offer') && picker.includes('step === 3 && tier')],
+  ['every price is visible before payment', page.includes('Every price is shown before payment.')],
+  ['booking is no longer buried behind a marketing hero or process essay', !page.includes('PageHero') && !page.includes('bookingSteps')],
 ]
-
-const failures = checks.filter(([, passed]) => !passed)
-for (const [name, passed] of checks) {
-  console.log(`${passed ? 'PASS' : 'FAIL'} ${name}`)
-}
-if (failures.length) process.exit(1)
+for (const [name, passed] of checks) console.log(`${passed ? 'PASS' : 'FAIL'} ${name}`)
+if (checks.some(([, passed]) => !passed)) process.exit(1)

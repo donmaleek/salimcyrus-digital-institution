@@ -30,7 +30,7 @@ function CategoryIconFallback({ slug }: { slug: CoachingCategorySlug }) {
   return (
     <span
       aria-hidden
-      className="flex aspect-[16/10] w-full items-center justify-center bg-gold/15 font-heading text-5xl font-bold text-gold-700"
+      className="flex aspect-[16/9] w-full items-center justify-center bg-gold/15 font-heading text-5xl font-bold text-gold-700"
     >
       {initials}
     </span>
@@ -120,28 +120,14 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
               aria-selected={isActive}
               aria-controls="coaching-offers-panel"
               onClick={() => chooseCategory(item.slug)}
-              className={`h-full overflow-hidden border text-left transition-[background-color,border-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 active:translate-y-px ${
+              className={`group h-full overflow-hidden border text-left transition-[background-color,border-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 active:translate-y-px ${
                 isActive
                   ? 'border-navy bg-navy text-white ring-2 ring-navy ring-offset-2'
                   : 'border-navy-200 bg-white text-navy hover:border-gold-500 hover:bg-cream'
               }`}
             >
               <span className="flex h-full flex-col">
-                {item.imagePath ? (
-                  <span className="relative block aspect-[16/10] w-full overflow-hidden bg-cream">
-                    <Image
-                      src={item.imagePath}
-                      alt=""
-                      fill
-                      unoptimized
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover"
-                    />
-                  </span>
-                ) : (
-                  <CategoryIconFallback slug={item.slug} />
-                )}
-                <span className="block flex-1 p-5">
+                <span className="flex flex-1 flex-col p-5 sm:p-6">
                   <span className="flex items-start justify-between gap-3">
                     <span className="text-lg font-bold leading-6">{item.name}</span>
                     <span
@@ -160,13 +146,27 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
                     {item.description}
                   </span>
                   <span
-                    className={`mt-3 block text-base font-bold ${
+                    className={`mt-auto block pt-4 text-base font-bold ${
                       isActive ? 'text-gold' : 'text-gold-700'
                     }`}
                   >
                     {priceLabel}
                   </span>
                 </span>
+                {item.imagePath ? (
+                  <span className="relative block aspect-[16/9] w-full shrink-0 overflow-hidden border-t border-current/10 bg-cream">
+                    <Image
+                      src={item.imagePath}
+                      alt=""
+                      fill
+                      unoptimized
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover object-top transition-transform duration-500 motion-safe:group-hover:scale-[1.03] motion-reduce:transition-none"
+                    />
+                  </span>
+                ) : (
+                  <CategoryIconFallback slug={item.slug} />
+                )}
               </span>
             </button>
           )

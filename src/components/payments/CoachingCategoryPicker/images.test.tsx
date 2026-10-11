@@ -19,7 +19,7 @@ function render(imagePath: string | null) {
 it('renders uploaded photos in full-width rectangular frames below the card text', () => {
   const html = render('/images/coaching.jpg')
   expect(html).toContain('relative block aspect-[16/9] w-full shrink-0 overflow-hidden')
-  expect(html).toContain('class="object-cover object-top transition-transform')
+  expect(html).toContain('class="object-cover object-[center_35%] transition-transform')
   expect(html).toContain('data-nimg="fill"')
   expect(html).not.toContain('h-12 w-12')
   expect(html.indexOf('/images/coaching.jpg')).toBeGreaterThan(html.indexOf(coachingCategories[0].name))

@@ -3,7 +3,7 @@
 The coaching format cards previously constrained uploaded photos to 48px circles.
 Photos now occupy the full card width in a 16:9 panel below the name,
 description and price. `object-cover` preserves image proportions while cropping
-edges to fill the frame. Top alignment keeps portrait faces visible. Categories without photos reserve the same space using
+edges to fill the frame. An upper-center focal point gives portraits more headroom. Categories without photos reserve the same space using
 initials. Prices align at the bottom of the text panel; photos align along each
 row. A subtle hover zoom respects reduced-motion preferences. The one/two/three-column responsive grid and selection behavior remain.
 
@@ -19,7 +19,7 @@ checks image geometry and text-first order and booking flow contracts. The regre
 against the former circular layout.
 
 When uploading category images, use landscape photos and keep the subject near
-the top center so the cover crop works on mobile and desktop. Deploy the change and
+the upper center so the cover crop works on mobile and desktop. Deploy the change and
 restart the `salimcyrus` PM2 process to update production.
 
 A browser preview using the rendered component and compiled Tailwind CSS passed

@@ -18,7 +18,7 @@ const checks = [
       picker.includes('flex aspect-[16/9] w-full items-center justify-center') &&
       picker.includes('flex h-full flex-col') &&
       picker.includes('flex flex-1 flex-col p-5 sm:p-6') &&
-      picker.includes('className="object-cover object-top transition-transform') &&
+      picker.includes('className="object-cover object-[center_35%] transition-transform') &&
       !picker.includes('h-12 w-12') &&
       picker.indexOf('{item.description}') < picker.indexOf('{item.imagePath ? ('),
   ],

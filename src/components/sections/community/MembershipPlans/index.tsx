@@ -5,7 +5,12 @@ const plans = [
   {
     name: 'Basic',
     price: 500,
-    features: ['Weekly teaching', 'Exclusive articles', 'Private community', 'Monthly Q&A'],
+    features: [
+      'Weekly teaching',
+      'Exclusive articles',
+      'Private community',
+      'Monthly Q&A',
+    ],
   },
   {
     name: 'Inner Circle',
@@ -35,29 +40,41 @@ const plans = [
 
 export function MembershipPlans() {
   return (
-    <div className="grid gap-6 sm:grid-cols-3">
+    <div className="grid gap-6 lg:grid-cols-3">
       {plans.map((plan) => (
         <div
           key={plan.name}
-          className={`flex flex-col rounded-2xl border p-6 ${
-            plan.featured ? 'border-gold bg-gold-50' : 'border-navy-100 bg-white'
+          className={`flex flex-col border p-7 sm:p-8 ${
+            plan.featured
+              ? 'border-gold-600 bg-white'
+              : 'border-navy-200 bg-white'
           }`}
         >
-          <h3 className="font-heading text-lg font-semibold text-navy">{plan.name}</h3>
-          <p className="mt-2 text-2xl font-bold text-navy">
+          <h3 className="font-heading text-3xl text-navy">{plan.name}</h3>
+          <p className="mt-5 text-3xl font-semibold text-navy">
             {formatCurrency(plan.price)}
-            <span className="text-sm font-normal text-navy-400">/month</span>
+            <span className="mt-2 block text-sm font-normal text-navy-600">per month</span>
           </p>
-          <ul className="mt-4 flex-1 space-y-2">
+          <ul className="mt-7 flex-1 space-y-4 border-t border-navy-200 pt-6">
             {plan.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2 text-sm text-navy-600">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" aria-hidden />
+              <li
+                key={feature}
+                className="flex items-start gap-3 text-base leading-7 text-navy-600"
+              >
+                <span
+                  className="mt-3 h-1.5 w-1.5 shrink-0 rounded-full bg-gold"
+                  aria-hidden
+                />
                 {feature}
               </li>
             ))}
           </ul>
-          <Button href="/contact" className="mt-6" variant={plan.featured ? 'primary' : 'outline'}>
-            Join {plan.name}
+          <Button
+            href="/contact"
+            className="mt-6"
+            variant={plan.featured ? 'primary' : 'outline'}
+          >
+            Enquire About {plan.name}
           </Button>
         </div>
       ))}

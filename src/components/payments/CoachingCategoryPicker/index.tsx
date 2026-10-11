@@ -30,7 +30,7 @@ function CategoryIconFallback({ slug }: { slug: CoachingCategorySlug }) {
   return (
     <span
       aria-hidden
-      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold/15 font-heading text-lg font-bold text-gold-700"
+      className="flex aspect-[16/10] w-full items-center justify-center bg-gold/15 font-heading text-5xl font-bold text-gold-700"
     >
       {initials}
     </span>
@@ -120,21 +120,28 @@ export function CoachingCategoryPicker({ categories, offers }: CoachingCategoryP
               aria-selected={isActive}
               aria-controls="coaching-offers-panel"
               onClick={() => chooseCategory(item.slug)}
-              className={`min-h-[132px] border p-5 text-left transition-[background-color,border-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 active:translate-y-px ${
+              className={`h-full overflow-hidden border text-left transition-[background-color,border-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 active:translate-y-px ${
                 isActive
                   ? 'border-navy bg-navy text-white ring-2 ring-navy ring-offset-2'
                   : 'border-navy-200 bg-white text-navy hover:border-gold-500 hover:bg-cream'
               }`}
             >
-              <span className="flex items-start gap-3">
+              <span className="flex h-full flex-col">
                 {item.imagePath ? (
-                  <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
-                    <Image src={item.imagePath} alt="" fill unoptimized className="object-cover" />
+                  <span className="relative block aspect-[16/10] w-full overflow-hidden bg-cream">
+                    <Image
+                      src={item.imagePath}
+                      alt=""
+                      fill
+                      unoptimized
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                    />
                   </span>
                 ) : (
                   <CategoryIconFallback slug={item.slug} />
                 )}
-                <span className="flex-1">
+                <span className="block flex-1 p-5">
                   <span className="flex items-start justify-between gap-3">
                     <span className="text-lg font-bold leading-6">{item.name}</span>
                     <span

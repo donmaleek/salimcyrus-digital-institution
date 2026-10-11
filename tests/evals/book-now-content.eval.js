@@ -13,6 +13,15 @@ const experience = [page, header, mobile, offers, picker].join('\n')
 
 const checks = [
   [
+    'booking category photos fill rectangular card headers, with equal-size empty-photo fallbacks',
+    picker.includes('relative block aspect-[16/10] w-full overflow-hidden') &&
+      picker.includes('flex aspect-[16/10] w-full items-center justify-center') &&
+      picker.includes('flex h-full flex-col') &&
+      picker.includes('block flex-1 p-5') &&
+      picker.includes('className="object-cover"') &&
+      !picker.includes('h-12 w-12'),
+  ],
+  [
     'Book Now experience contains no em dash characters',
     !experience.includes('—'),
   ],

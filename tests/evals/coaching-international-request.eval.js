@@ -72,10 +72,10 @@ const checks = [
       picker.includes('coaching-request-arrangements'),
   ],
   [
-    'the picker shows the tier CTA label on its button and falls back gracefully for tiers with no detail (Group, VIP Summit)',
-    picker.includes("detail?.ctaLabel ?? 'Request a proposal'") &&
-      picker.includes("detail?.durationNote ?? 'By mutual agreement'") &&
-      picker.includes("detail?.rateNote ?? 'Custom proposal'"),
+    'the picker shows the tier CTA label and rate on its card and falls back gracefully for tiers with no detail (Group, VIP Summit); durationNote is only ever read inside a tier.detail guard, so a detail-less tier never reads an undefined field',
+    picker.includes("detail?.ctaLabel ?? 'Request this session'") &&
+      picker.includes("detail?.rateNote ?? 'Ask for a quote'") &&
+      /tier\.detail\s*&&[\s\S]{0,400}tier\.detail\.durationNote/.test(picker),
   ],
   [
     'the picker passes collectsLocationAndDate through to the quote request form rather than hard-coding the field set per category',

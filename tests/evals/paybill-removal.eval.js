@@ -18,7 +18,10 @@ const adminClaimsPage = read('src/app/(dashboard)/dashboard/admin/payment-claims
 const bookCheckout = read('src/components/payments/BookCheckoutForm/index.tsx')
 const teachingCheckout = read('src/components/payments/TeachingCheckoutForm/index.tsx')
 const courseCheckout = read('src/components/payments/CourseCheckoutForm/index.tsx')
-const coachingCheckout = read('src/components/payments/CoachingCheckoutForm/index.tsx')
+// checkout.ts holds the actual network call (split out as part of the
+// guided three-step booking flow rework); the component itself just calls
+// requestCoachingCheckout, so the surface needs both files.
+const coachingCheckout = read('src/components/payments/CoachingCheckoutForm/index.tsx') + read('src/components/payments/CoachingCheckoutForm/checkout.ts')
 const journalSubscribe = read('src/components/payments/JournalSubscribeForm/index.tsx')
 const membershipSubscribe = read('src/components/payments/ParentMembershipSubscribeForm/index.tsx')
 const donationOptions = read('src/components/payments/DonationPaymentOptions/index.tsx')
@@ -143,8 +146,8 @@ const checks = [
       donationOptions.includes('paypal-donate'),
   ],
   [
-    'the coaching category picker no longer advertises three payment methods, only Paystack and PayPal',
-    coachingPicker.includes('Choose Paystack or PayPal') && !/paybill/i.test(coachingPicker),
+    'the coaching booking flow no longer advertises three payment methods, only Paystack and PayPal (payment-method copy now lives in CoachingCheckoutForm, not the picker, after the guided three-step booking flow rework)',
+    coachingCheckout.includes('Paystack') && coachingCheckout.includes('PayPal') && !/paybill/i.test(coachingCheckout) && !/paybill/i.test(coachingPicker),
   ],
   [
     'the coaching offers data file itself (prices, categories) is untouched by the payment-method removal: this was a checkout-surface change, not a catalog change',

@@ -44,8 +44,12 @@ const checks = [
     ].every((item) => page.includes(item)),
   ],
   [
-    'live and planned learning are clearly separated',
-    page.includes('Available Now') && page.includes('In Development'),
+    'live programs, masterclasses, and courses are presented as three distinct, all-currently-live formats, never falsely described as still in development (courses launched and are purchasable)',
+    page.includes('Live Programs') &&
+      page.includes('Masterclasses') &&
+      page.includes('Courses') &&
+      !page.includes('In Development') &&
+      !page.includes('still in development'),
   ],
   [
     'Academy links to program and contact routes',

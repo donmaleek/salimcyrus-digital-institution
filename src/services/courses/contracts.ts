@@ -4,6 +4,11 @@ export const courseKinds = ['course', 'masterclass'] as const
 export const courseStatuses = ['draft', 'published', 'archived'] as const
 
 const lessonSchema = z.object({
+  // Only used to look up which existing lesson this is, so a resave can
+  // carry over its uploaded video/resource (see nestedSections in
+  // course-service.ts); never trusted for anything else, and ignored
+  // entirely for a brand-new lesson.
+  id: z.string().trim().optional(),
   title: z.string().trim().min(1).max(180),
   description: z.string().trim().max(1000).optional().default(''),
   content: z.string().trim().max(50_000).optional().default(''),
@@ -33,6 +38,9 @@ export const courseInputSchema = z.object({
   sections: z.array(sectionSchema).min(1).max(50),
   status: z.enum(courseStatuses).default('draft'),
   featured: z.coerce.boolean().optional().default(false),
+  // Days of video access from enrollment; null/omitted means lifetime.
+  // See Course.accessWindowDays in schema.prisma for the full rationale.
+  accessWindowDays: z.union([z.coerce.number().int().min(1).max(3650), z.null()]).optional(),
 })
 
 export type CourseInput = z.infer<typeof courseInputSchema>

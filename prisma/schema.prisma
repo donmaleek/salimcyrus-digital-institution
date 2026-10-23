@@ -38,25 +38,36 @@ model User {
 }
 
 model Course {
-  id           String             @id @default(cuid())
-  slug         String             @unique
-  title        String
-  subtitle     String?
-  description  String
-  kind         String             @default("course")
-  category     String
-  level        String             @default("all-levels")
-  priceKes     Int
-  priceUsd     Int
-  thumbnailUrl String?
-  trailerUrl   String?
-  outcomes     String[]
-  status       String             @default("draft")
-  featured     Boolean            @default(false)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  sections     CourseSection[]
-  enrollments  CourseEnrollment[]
+  id               String             @id @default(cuid())
+  slug             String             @unique
+  title            String
+  subtitle         String?
+  description      String
+  kind             String             @default("course")
+  category         String
+  level            String             @default("all-levels")
+  priceKes         Int
+  priceUsd         Int
+  thumbnailUrl     String?
+  trailerUrl       String?
+  outcomes         String[]
+  status           String             @default("draft")
+  featured         Boolean            @default(false)
+  /// Days of lesson-video access from CourseEnrollment.enrolledAt; null
+  /// means lifetime access (the default for every self-paced course). A
+  /// masterclass is sold as "N days of replay access", not a permanent
+  /// library addition, both as an honest product difference from a course
+  /// and because an access window caps how long a leaked recording stays
+  /// useful. Enforced only against video streaming (see
+  /// /api/courses/lessons/[lessonId]/video); lesson notes and downloadable
+  /// resources are unaffected. Never applied retroactively: changing this
+  /// on a course with existing enrollments only affects access computed
+  /// from that point forward.
+  accessWindowDays Int?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  sections         CourseSection[]
+  enrollments      CourseEnrollment[]
 
   @@index([status, kind, category])
 }
@@ -74,28 +85,46 @@ model CourseSection {
 }
 
 model CourseLesson {
-  id               String                 @id @default(cuid())
-  sectionId        String
-  section          CourseSection          @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  title            String
-  description      String?
-  content          String?
-  videoUrl         String?
-  durationSeconds  Int?
-  position         Int
-  isPreview        Boolean                @default(false)
-  status           String                 @default("published")
+  id                    String                 @id @default(cuid())
+  sectionId             String
+  section               CourseSection          @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title                 String
+  description           String?
+  content               String?
+  /// Legacy/external embed (e.g. a YouTube or Vimeo iframe src). Left in
+  /// place for content created before self-hosted video existed, and for
+  /// an admin who deliberately wants an external embed; the editor labels
+  /// this as less secure, since an iframe src is a public URL with no
+  /// relationship to purchase once someone inspects the page. videoFileName
+  /// below is the recommended path for any paid content, especially a
+  /// masterclass.
+  videoUrl              String?
+  /// Filename under COURSE_VIDEOS_STORAGE_DIR; never a public URL. Streamed
+  /// only through /api/courses/lessons/[lessonId]/video, which re-checks
+  /// enrollment (or an active membership) and the course's access window on
+  /// every request, the same pattern already proven for Teaching videos.
+  videoFileName         String?
+  /// Mirrors Teaching.processingStatus exactly: 'processing' while the
+  /// background ffmpeg compression pass runs on a freshly uploaded video,
+  /// 'ready' once it succeeds, 'failed' if it errors (videoFileName then
+  /// stays pointed at the original uncompressed upload rather than
+  /// blocking on a retry, so the lesson is never unplayable).
+  videoProcessingStatus String                 @default("ready")
+  durationSeconds       Int?
+  position              Int
+  isPreview             Boolean                @default(false)
+  status                String                 @default("published")
   /// Display name for an optional downloadable PDF attached to this lesson
   /// (a worksheet, planner, or checklist), e.g. "Family rules planner".
   /// Null means the lesson has no downloadable resource.
-  resourceLabel    String?
+  resourceLabel         String?
   /// Filename under COURSE_RESOURCES_STORAGE_DIR; never a public URL, same
   /// private-storage-dir pattern as book PDFs and teaching videos. Gated by
   /// the same access check as the lesson itself (enrollment or an active
   /// membership covering this course's category), see
   /// /api/courses/lessons/[lessonId]/resource.
-  resourceFileName String?
-  progress         CourseLessonProgress[]
+  resourceFileName      String?
+  progress              CourseLessonProgress[]
 
   @@unique([sectionId, position])
 }
@@ -114,6 +143,7 @@ model CourseEnrollment {
   completedAt       DateTime?
   lastLessonId      String?
   progress          CourseLessonProgress[]
+  streamEvents      CourseStreamEvent[]
 
   @@unique([courseId, userId])
   @@unique([provider, externalReference])
@@ -132,6 +162,25 @@ model CourseLessonProgress {
 
   @@unique([enrollmentId, lessonId])
   @@index([lessonId])
+}
+
+/// One row per successful lesson-video stream request, written by
+/// /api/courses/lessons/[lessonId]/video so an admin can see when one
+/// enrollment is being watched from far more distinct IPs than a single
+/// buyer plausibly would (the exact "shared to a dozen WhatsApp groups"
+/// pattern), see getSuspiciousStreamingActivity(). Never used to
+/// auto-block anything: IP churn from mobile networks, VPNs, and travel
+/// makes this a signal for a human to judge, not a rule to enforce
+/// automatically.
+model CourseStreamEvent {
+  id           String           @id @default(cuid())
+  enrollmentId String
+  enrollment   CourseEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lessonId     String
+  ipAddress    String
+  createdAt    DateTime         @default(now())
+
+  @@index([enrollmentId, createdAt])
 }
 
 model PasswordResetToken {

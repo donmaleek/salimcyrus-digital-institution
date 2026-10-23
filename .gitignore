@@ -45,3 +45,8 @@ playwright-report/
 # scripts/seed-parental-guidance.js, not source. Lives in
 # COURSE_RESOURCES_STORAGE_DIR outside the repo in production.
 /CourseResources/
+
+# Self-hosted course/masterclass lesson video files: admin-uploaded,
+# private, paid/enrollment-gated content; never belongs in git. Lives in
+# COURSE_VIDEOS_STORAGE_DIR outside the repo in production.
+/CourseVideos/

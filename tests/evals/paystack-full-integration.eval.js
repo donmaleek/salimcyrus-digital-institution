@@ -8,7 +8,10 @@ const surfaces = {
   books: read('src/components/payments/BookCheckoutForm/index.tsx'),
   teachings: read('src/components/payments/TeachingCheckoutForm/index.tsx'),
   courses: read('src/components/payments/CourseCheckoutForm/index.tsx'),
-  coaching: read('src/components/payments/CoachingCheckoutForm/index.tsx'),
+  // The actual network call lives in checkout.ts (the UI component just
+  // calls requestCoachingCheckout), split out as part of the guided
+  // three-step booking flow rework.
+  coaching: read('src/components/payments/CoachingCheckoutForm/index.tsx') + read('src/components/payments/CoachingCheckoutForm/checkout.ts'),
   donations: read('src/components/payments/DonationPaymentOptions/index.tsx'),
   journal: read('src/components/payments/JournalSubscribeForm/index.tsx'),
 }
@@ -32,7 +35,11 @@ const checks = [
     surfaces.books.includes("fetch('/api/books/checkout'") &&
       surfaces.teachings.includes("fetch('/api/teachings/checkout'") &&
       surfaces.courses.includes("'/api/courses/checkout'") &&
-      surfaces.coaching.includes("fetch('/api/coaching/checkout'") &&
+      // checkout.ts injects fetch as a `transport` parameter (default
+      // `= fetch`) rather than calling the global directly, so the
+      // request stays unit-testable; the call site is `transport(url, ...)`.
+      surfaces.coaching.includes("transport(") &&
+      surfaces.coaching.includes("'/api/coaching/checkout'") &&
       surfaces.donations.includes("fetch('/api/payments/initiate'") &&
       surfaces.journal.includes("fetch('/api/journal/checkout'"),
   ],

@@ -79,9 +79,9 @@ const academyQuestions = [
       'The Academy currently lists seven live, cohort, private, intensive, bootcamp, and membership programs. Each program page contains its current focus, format, price, and application link.',
   },
   {
-    question: 'Are self-paced courses available?',
+    question: 'What is the difference between a live program, a masterclass, and a course?',
     answer:
-      'Recorded self-paced courses are still in development. The live programs and masterclasses currently provide the most direct learning path and access to Salim.',
+      'A live program is scheduled time with Salim directly (cohort, private, intensive, bootcamp, or membership). A masterclass is a single recorded session on one topic, watched in one sitting within its listed replay window. A course is a full, multi-lesson curriculum you work through at your own pace and keep for life.',
   },
   {
     question: 'Can I compare prices before choosing?',
@@ -353,44 +353,48 @@ export default function AcademyPage() {
 
         <section className="bg-white" aria-labelledby="formats-heading">
           <div className="mx-auto max-w-content px-6 py-20 sm:py-24">
-            <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-              <div className="border-t-4 border-gold-500 bg-navy-50 p-8 sm:p-10">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
-                  Available Now
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-500">
+              Three Ways to Learn, All Available Now
+            </p>
+            <h2
+              id="formats-heading"
+              className="mt-3 font-heading text-3xl font-bold text-navy"
+            >
+              Choose the Format That Fits
+            </h2>
+            <p className="mt-5 max-w-3xl leading-7 text-navy-600">
+              These are three different products, not three names for the same thing: a live program is time with
+              Salim directly, a masterclass is a single recorded session you watch on your own schedule, and a course
+              is a full curriculum you work through step by step.
+            </p>
+            <div className="mt-10 grid gap-8 lg:grid-cols-3">
+              <div className="border-t-4 border-gold-500 bg-navy-50 p-8">
+                <h3 className="font-heading text-2xl font-bold text-navy">Live Programs</h3>
+                <p className="mt-3 text-sm leading-7 text-navy-600">
+                  Cohort, private, intensive, bootcamp, and membership tracks with direct access to Salim, scheduled
+                  and applied for individually.
                 </p>
-                <h2
-                  id="formats-heading"
-                  className="mt-3 font-heading text-3xl font-bold text-navy"
-                >
-                  Live programs and masterclasses
-                </h2>
-                <p className="mt-5 leading-7 text-navy-600">
-                  Choose from flagship programs, private or cohort tracks,
-                  bootcamps, intensives, and monthly memberships with direct
-                  links to current details and payment.
-                </p>
-                <Button href="/academy/masterclasses" className="mt-8">
-                  Browse Live Programs
+                <Button href="/academy#programs" variant="outline" className="mt-6">
+                  View Live Programs
                 </Button>
               </div>
-              <div className="border-t-4 border-navy-300 bg-navy-50 p-8 sm:p-10">
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-navy-400">
-                  In Development
+              <div className="border-t-4 border-navy-500 bg-navy-50 p-8">
+                <h3 className="font-heading text-2xl font-bold text-navy">Masterclasses</h3>
+                <p className="mt-3 text-sm leading-7 text-navy-600">
+                  A single, focused recorded session on one topic. Watch it in one sitting; each masterclass lists
+                  its exact replay access window before you buy.
                 </p>
-                <h2 className="mt-3 font-heading text-3xl font-bold text-navy">
-                  Self-paced recorded courses
-                </h2>
-                <p className="mt-5 leading-7 text-navy-600">
-                  Planned subjects include Relationship Mastery, Defining
-                  Manhood, Kingdom Mentality, Purpose Discovery, Marriage
-                  Intelligence, and Emotional Maturity.
+                <Button href="/academy/masterclasses" className="mt-6">
+                  Browse Masterclasses
+                </Button>
+              </div>
+              <div className="border-t-4 border-gold-700 bg-navy-50 p-8">
+                <h3 className="font-heading text-2xl font-bold text-navy">Courses</h3>
+                <p className="mt-3 text-sm leading-7 text-navy-600">
+                  A structured, multi-lesson curriculum you work through at your own pace, yours to keep for life.
                 </p>
-                <Button
-                  href="/academy/courses"
-                  variant="outline"
-                  className="mt-8"
-                >
-                  View the Course Roadmap
+                <Button href="/academy/courses" variant="outline" className="mt-6">
+                  Browse Courses
                 </Button>
               </div>
             </div>

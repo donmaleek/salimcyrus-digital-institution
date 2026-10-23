@@ -203,7 +203,7 @@ export function BookEditForm({ id, title: initialTitle, subtitle: initialSubtitl
         </label>
         <div className="mt-3 flex items-center gap-4">
           <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-md bg-navy-50">
-            <Image src={coverPath} alt="" fill unoptimized className="object-cover" />
+            <Image src={coverPath} alt="" fill unoptimized className="object-contain" />
           </div>
           <input
             id="book-edit-cover"

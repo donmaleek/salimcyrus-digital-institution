@@ -5,6 +5,8 @@ import Image from 'next/image'
  * shadows simulate a stack of page edges on the right, plus a soft drop
  * shadow for depth, matching how Amazon/Kindle product pages present a
  * cover rather than showing a bare rectangular image.
+ * Preserve the entire uploaded artwork with contain: cover crops tall titles
+ * and author credits whenever the source ratio differs from the 4:5 frame.
  */
 export function BookCover({
   src,
@@ -25,7 +27,7 @@ export function BookCover({
         fill
         unoptimized
         sizes={sizes ?? '(max-width: 640px) 60vw, (max-width: 1024px) 30vw, 280px'}
-        className="object-cover"
+        className="object-contain"
         priority={priority}
       />
     </div>

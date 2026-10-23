@@ -79,7 +79,7 @@ export function BookManager({ initialBooks }: { initialBooks: BookSummary[] }) {
               className="grid gap-4 rounded-2xl border border-navy-100 bg-white p-4 shadow-sm transition hover:border-gold-300 sm:grid-cols-[64px_1fr_auto] sm:items-center"
             >
               <div className="relative aspect-[4/5] w-16 overflow-hidden rounded-md bg-navy-50">
-                <Image src={book.coverPath} alt="" fill unoptimized className="object-cover" />
+                <Image src={book.coverPath} alt="" fill unoptimized className="object-contain" />
               </div>
               <div>
                 <div className="flex items-center gap-3">

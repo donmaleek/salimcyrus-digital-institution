@@ -126,7 +126,7 @@ export default async function DashboardOverviewPage() {
                         alt={`${book?.title ?? purchase.bookSlug} cover`}
                         fill
                         sizes="(min-width: 640px) 25vw, 45vw"
-                        className="object-cover transition group-hover:scale-[1.03]"
+                        className="object-contain"
                       />
                     )}
                   </div>
@@ -153,7 +153,7 @@ export default async function DashboardOverviewPage() {
                       alt={`${book.title} cover`}
                       fill
                       sizes="(min-width: 640px) 25vw, 45vw"
-                      className="object-cover transition group-hover:scale-[1.03]"
+                      className="object-contain"
                     />
                   )}
                 </div>

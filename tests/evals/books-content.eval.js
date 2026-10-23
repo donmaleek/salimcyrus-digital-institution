@@ -45,7 +45,7 @@ const checks = [
   ],
   [
     'covers render as physical books (page-edge shadow), not bare images',
-    bookCover.includes('shadow-[') && bookCover.includes('aspect-[4/5]') && bookCover.includes('object-cover'),
+    bookCover.includes('shadow-[') && bookCover.includes('aspect-[4/5]') && bookCover.includes('object-contain'),
   ],
   [
     'detail page reads as a product page: breadcrumb, author byline, format badge, and a buy box',

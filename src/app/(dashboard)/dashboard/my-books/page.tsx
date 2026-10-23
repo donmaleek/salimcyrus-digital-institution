@@ -61,7 +61,7 @@ export default async function MyBooksPage() {
               >
                 <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-md bg-navy-50">
                   {book?.cover && (
-                    <Image src={book.cover} alt={`${book.title} cover`} fill sizes="64px" className="object-cover" />
+                    <Image src={book.cover} alt={`${book.title} cover`} fill sizes="64px" className="object-contain" />
                   )}
                 </div>
                 <div className="min-w-[180px] flex-1">
@@ -93,7 +93,7 @@ export default async function MyBooksPage() {
                       alt={`${book.title} cover`}
                       fill
                       sizes="(min-width: 640px) 25vw, 45vw"
-                      className="object-cover transition group-hover:scale-[1.03]"
+                      className="object-contain"
                     />
                   )}
                 </div>

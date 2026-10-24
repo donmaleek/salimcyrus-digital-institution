@@ -45,6 +45,36 @@ export const courseInputSchema = z.object({
 
 export type CourseInput = z.infer<typeof courseInputSchema>
 
+const FRIENDLY_FIELD_LABELS: Record<string, string> = {
+  priceKes: 'Price (KES)',
+  priceUsd: 'Price (USD)',
+  accessWindowDays: 'Replay access window (days)',
+}
+
+/**
+ * The course form's number inputs (price, access window, lesson duration)
+ * only snap to whole numbers on blur/change in the client; typing a decimal
+ * (or scrolling/arrow-keying one in on some browsers, since the editor's
+ * custom save button bypasses native HTML5 step validation) still reaches
+ * here as a float and fails courseInputSchema's `.int()` check. Zod's raw
+ * message for that ("Expected integer, received float") means nothing to
+ * an admin, so translate the common whole-number cases into plain language
+ * before falling back to the raw Zod message for anything else.
+ */
+export function courseInputErrorMessage(error: z.ZodError): string {
+  const issue = error.issues[0]
+  if (!issue) return 'Invalid course.'
+  const isFloatIssue = issue.message.includes('received float')
+  if (isFloatIssue && issue.path[issue.path.length - 1] === 'durationMinutes') {
+    return 'Lesson duration (minutes) must be a whole number, not a decimal.'
+  }
+  const label = typeof issue.path[0] === 'string' ? FRIENDLY_FIELD_LABELS[issue.path[0]] : undefined
+  if (isFloatIssue && label) {
+    return `${label} must be a whole number, not a decimal.`
+  }
+  return issue.message
+}
+
 export const progressInputSchema = z.object({
   completed: z.boolean(),
   lastPositionSeconds: z.coerce.number().int().min(0).max(604_800).optional().default(0),

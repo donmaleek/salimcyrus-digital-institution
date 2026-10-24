@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmApi } from '@/services/crm/access'
 import { db } from '@/lib/db'
-import { courseInputSchema } from '@/services/courses/contracts'
+import { courseInputSchema, courseInputErrorMessage } from '@/services/courses/contracts'
 import { updateCourse } from '@/services/courses/course-service'
 
 export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
@@ -13,7 +13,7 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   if (!(await requireCrmApi('content:write'))) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const parsed = courseInputSchema.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid course.' }, { status: 400 })
+  if (!parsed.success) return NextResponse.json({ error: courseInputErrorMessage(parsed.error) }, { status: 400 })
   const existing = await db.course.findUnique({ where: { id: params.id } })
   if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   try {

@@ -1,4 +1,4 @@
-import { courseInputSchema, progressInputSchema } from './contracts'
+import { courseInputSchema, courseInputErrorMessage, progressInputSchema } from './contracts'
 import { completionPercent } from './course-service'
 
 const validCourse = { title: 'Purpose and Practice', subtitle: '', description: 'A structured path from insight to consistent daily practice.', kind: 'course', category: 'Purpose', level: 'all-levels', priceKes: 0, priceUsd: 0, thumbnailUrl: '', trailerUrl: '', outcomes: ['Build one repeatable practice'], status: 'published', featured: false, sections: [{ title: 'Start Here', description: '', lessons: [{ title: 'Orientation', description: '', content: 'Begin with a clear intention.', videoUrl: '', durationMinutes: 8, isPreview: true }] }] }
@@ -8,6 +8,41 @@ describe('course contract', () => {
   it('rejects a course with no outcome', () => { expect(courseInputSchema.safeParse({ ...validCourse, outcomes: [] }).success).toBe(false) })
   it('rejects an empty section so members never meet a dead end', () => { expect(courseInputSchema.safeParse({ ...validCourse, sections: [{ title: 'Empty', lessons: [] }] }).success).toBe(false) })
   it('rejects malformed lesson video URLs', () => { expect(courseInputSchema.safeParse({ ...validCourse, sections: [{ title: 'Start', lessons: [{ ...validCourse.sections[0].lessons[0], videoUrl: 'not-a-url' }] }] }).success).toBe(false) })
+})
+
+describe('courseInputErrorMessage', () => {
+  it('translates a non-integer lesson duration into a plain-language message, not the raw Zod wording', () => {
+    const result = courseInputSchema.safeParse({
+      ...validCourse,
+      sections: [{ title: 'Start', lessons: [{ ...validCourse.sections[0].lessons[0], durationMinutes: 15.5 }] }],
+    })
+    expect(result.success).toBe(false)
+    if (result.success) return
+    const message = courseInputErrorMessage(result.error)
+    expect(message).toBe('Lesson duration (minutes) must be a whole number, not a decimal.')
+    expect(message).not.toMatch(/float/i)
+  })
+
+  it('translates a non-integer price into a plain-language message', () => {
+    const result = courseInputSchema.safeParse({ ...validCourse, priceKes: 1999.5 })
+    expect(result.success).toBe(false)
+    if (result.success) return
+    expect(courseInputErrorMessage(result.error)).toBe('Price (KES) must be a whole number, not a decimal.')
+  })
+
+  it('translates a non-integer access window into a plain-language message', () => {
+    const result = courseInputSchema.safeParse({ ...validCourse, accessWindowDays: 180.5 })
+    expect(result.success).toBe(false)
+    if (result.success) return
+    expect(courseInputErrorMessage(result.error)).toBe('Replay access window (days) must be a whole number, not a decimal.')
+  })
+
+  it('falls back to the raw Zod message for an unmapped validation failure', () => {
+    const result = courseInputSchema.safeParse({ ...validCourse, outcomes: [] })
+    expect(result.success).toBe(false)
+    if (result.success) return
+    expect(courseInputErrorMessage(result.error)).toBe(result.error.issues[0].message)
+  })
 })
 
 describe('course progress', () => {

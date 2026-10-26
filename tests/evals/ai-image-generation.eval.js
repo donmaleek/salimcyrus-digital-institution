@@ -5,12 +5,14 @@ const root = path.resolve(__dirname, '../..')
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 
 const client = read('src/lib/api/openai-images.ts')
+const freeClient = read('src/lib/api/free-image-generation.ts')
+const selector = read('src/lib/api/image-generation.ts')
 const generateRoute = read('src/app/api/admin/coaching/categories/[slug]/image/generate/route.ts')
 const manager = read('src/components/dashboard/CoachingOfferManager/index.tsx')
 const envExample = read('.env.example')
 const readme = read('README.md')
 
-const surface = [client, generateRoute, manager].join('\n')
+const surface = [client, freeClient, selector, generateRoute, manager].join('\n')
 
 const checks = [
   [
@@ -22,20 +24,22 @@ const checks = [
     /export async function POST[\s\S]{0,120}requireCrmApi\('content:write'\)/.test(generateRoute),
   ],
   [
-    'the admin permission check happens before the API key check, which happens before any external call: a forbidden request can never trigger a paid API call',
+    'the admin permission check happens before any external call: a forbidden request can never trigger a generation request to any provider',
     generateRoute.indexOf("requireCrmApi('content:write')") <
-      generateRoute.indexOf('process.env.OPENAI_API_KEY') &&
-      generateRoute.indexOf('process.env.OPENAI_API_KEY') < generateRoute.indexOf('generateImage('),
+      generateRoute.indexOf('generateCategoryImage('),
   ],
   [
-    'a missing OPENAI_API_KEY degrades gracefully with a clear 503, the same pattern as every other unconfigured third-party credential on this site (Paystack/PayPal/Resend), never a crash or a silent no-op',
-    generateRoute.includes('if (!apiKey)') &&
-      generateRoute.includes('status: 503') &&
-      generateRoute.includes('not configured yet'),
+    'with no credential configured the feature still works through the free model (Pollinations, no key), OpenAI is opt-in via IMAGE_GENERATION_PROVIDER (a key alone never switches, and a failure falls back to free), and the route no longer refuses with a 503',
+    !generateRoute.includes('status: 503') &&
+      selector.includes("process.env.IMAGE_GENERATION_PROVIDER === 'openai'") &&
+      selector.includes('falling back to the free model') &&
+      selector.includes('generateFreeImage') &&
+      freeClient.includes('image.pollinations.ai') &&
+      freeClient.includes('fetcher?: typeof fetch'),
   ],
   [
     'a failed generation (rate limit, safety rejection, network error) returns a clean error and never writes a partial/corrupt file to the image storage directory',
-    /try \{[\s\S]*?generateImage\([\s\S]*?\} catch \(error\) \{[\s\S]*?status: 502/.test(generateRoute),
+    /try \{[\s\S]*?generateCategoryImage\([\s\S]*?\} catch \(error\) \{[\s\S]*?status: 502/.test(generateRoute),
   ],
   [
     'a successful generation is saved through the exact same storage path and DB upsert shape as a manual upload, so the picker and every other consumer cannot tell an AI-generated image from an uploaded one',
@@ -56,9 +60,12 @@ const checks = [
     (manager.match(/onUploaded\(payload\.image\.imagePath\)/g) || []).length === 2,
   ],
   [
-    'OPENAI_API_KEY is documented in .env.example with no real secret committed, and the README explains the degrade-gracefully behavior and that it is admin-only / costs money',
+    'both optional keys are documented in .env.example with no real secret committed, and the README explains the free default, the watermark note, the OpenAI upgrade and that it is admin-only',
     envExample.includes('OPENAI_API_KEY=') &&
-      !/OPENAI_API_KEY=\S/.test(envExample) &&
+      envExample.includes('POLLINATIONS_API_KEY=') &&
+      envExample.includes('IMAGE_GENERATION_PROVIDER=') &&
+      !/(OPENAI|POLLINATIONS)_API_KEY=\S/.test(envExample) &&
+      readme.includes('POLLINATIONS_API_KEY') &&
       readme.includes('OPENAI_API_KEY') &&
       readme.includes('gpt-image-1') &&
       readme.toLowerCase().includes('admin-only'),

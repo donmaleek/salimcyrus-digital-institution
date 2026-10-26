@@ -13,19 +13,19 @@ jest.mock('../../../../../../../../services/crm/access', () => ({
 jest.mock('../../../../../../../../lib/db', () => ({
   db: { coachingCategoryImage: { upsert: jest.fn() } },
 }))
-jest.mock('../../../../../../../../lib/api/openai-images', () => ({
-  generateImage: jest.fn(),
+jest.mock('../../../../../../../../lib/api/image-generation', () => ({
+  generateCategoryImage: jest.fn(),
 }))
 
 import { POST } from './route'
 import { requireCrmApi } from '@/services/crm/access'
 import { db } from '@/lib/db'
-import { generateImage } from '@/lib/api/openai-images'
+import { generateCategoryImage } from '@/lib/api/image-generation'
 import { writeFileSync } from 'fs'
 
 const mockRequireCrmApi = requireCrmApi as jest.Mock
 const mockUpsert = db.coachingCategoryImage.upsert as jest.Mock
-const mockGenerateImage = generateImage as jest.Mock
+const mockGenerateImage = generateCategoryImage as jest.Mock
 const mockWriteFileSync = writeFileSync as jest.Mock
 
 function params(slug: string) {
@@ -40,18 +40,11 @@ function request(body: unknown) {
 }
 
 describe('POST /api/admin/coaching/categories/[slug]/image/generate', () => {
-  const originalKey = process.env.OPENAI_API_KEY
-
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireCrmApi.mockResolvedValue(true)
-    process.env.OPENAI_API_KEY = 'sk-test-key'
     mockUpsert.mockResolvedValue({ categorySlug: 'identity-alignment', imagePath: '/api/coaching/image/identity-alignment.png' })
-    mockGenerateImage.mockResolvedValue(Buffer.from('fake png bytes'))
-  })
-
-  afterEach(() => {
-    process.env.OPENAI_API_KEY = originalKey
+    mockGenerateImage.mockResolvedValue({ buffer: Buffer.from('fake png bytes'), extension: 'png', provider: 'free' })
   })
 
   it('returns 403 without the content:write permission', async () => {
@@ -61,13 +54,11 @@ describe('POST /api/admin/coaching/categories/[slug]/image/generate', () => {
     expect(mockGenerateImage).not.toHaveBeenCalled()
   })
 
-  it('returns 503 and never calls the API when OPENAI_API_KEY is not configured, the same degrade-gracefully pattern as Paystack/PayPal elsewhere', async () => {
+  it('works with no API key configured, because the free model needs none', async () => {
     delete process.env.OPENAI_API_KEY
     const response = await POST(request({ prompt: 'a gold compass' }), params('identity-alignment'))
-    const payload = await response.json()
-    expect(response.status).toBe(503)
-    expect(payload.error).toContain('OPENAI_API_KEY')
-    expect(mockGenerateImage).not.toHaveBeenCalled()
+    expect(response.status).toBe(200)
+    expect(mockGenerateImage).toHaveBeenCalledWith('a gold compass')
   })
 
   it('returns 404 for an unknown category slug', async () => {
@@ -87,7 +78,7 @@ describe('POST /api/admin/coaching/categories/[slug]/image/generate', () => {
     const payload = await response.json()
 
     expect(response.status).toBe(200)
-    expect(mockGenerateImage).toHaveBeenCalledWith({ prompt: 'a minimalist gold compass on navy', apiKey: 'sk-test-key' })
+    expect(mockGenerateImage).toHaveBeenCalledWith('a minimalist gold compass on navy')
     expect(mockWriteFileSync).toHaveBeenCalledWith(
       expect.stringContaining('identity-alignment.png'),
       expect.any(Buffer)
@@ -106,5 +97,16 @@ describe('POST /api/admin/coaching/categories/[slug]/image/generate', () => {
     expect(response.status).toBe(502)
     expect(mockWriteFileSync).not.toHaveBeenCalled()
     expect(mockUpsert).not.toHaveBeenCalled()
+  })
+
+  it('saves a JPEG from the free model under a .jpg name, so the serving route sends the right content type', async () => {
+    mockGenerateImage.mockResolvedValue({ buffer: Buffer.from('jpeg bytes'), extension: 'jpg', provider: 'free' })
+    mockUpsert.mockResolvedValue({ categorySlug: 'identity-alignment', imagePath: '/api/coaching/image/identity-alignment.jpg' })
+    const response = await POST(request({ prompt: 'a gold compass' }), params('identity-alignment'))
+    expect(response.status).toBe(200)
+    expect(mockWriteFileSync).toHaveBeenCalledWith(expect.stringContaining('identity-alignment.jpg'), expect.any(Buffer))
+    expect(mockUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ update: { imagePath: '/api/coaching/image/identity-alignment.jpg' } })
+    )
   })
 })

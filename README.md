@@ -191,13 +191,15 @@ Safe to re-run; it overwrites the existing files and DB rows in place.
 
 An admin can also replace any individual category's image from
 `/dashboard/admin/coaching` (`CoachingOfferManager`) two ways: upload a
-file directly, or click "Generate with AI" to call the OpenAI Images API
-(gpt-image-1) with an editable, brand-styled prompt. The AI option needs
-`OPENAI_API_KEY` set (see `.env.example`); without it, the button returns
-a clear "not configured" message rather than failing silently, same
-degrade-gracefully pattern as Paystack/PayPal/Resend elsewhere in this
-app. Every call costs real money on that key's account, so it's admin-only
-and never reachable from a public route.
+file directly, or click "Generate with AI" with an editable, brand-styled
+prompt. By default this uses the free Pollinations model (flux), which needs
+no account or key; anonymous images carry a small "pollinations.ai" mark, and
+an optional free `POLLINATIONS_API_KEY` removes it. To use the paid OpenAI
+Images API (gpt-image-1) for higher quality, set both
+`IMAGE_GENERATION_PROVIDER=openai` and `OPENAI_API_KEY` (see `.env.example`);
+a key alone never switches providers, an OpenAI failure falls back to the free
+model, and every OpenAI call costs real money on that key's account.
+Generation is admin-only and never reachable from a public route.
 
 ## Parental Guidance (parenting curriculum platform)
 

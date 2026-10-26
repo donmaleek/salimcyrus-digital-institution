@@ -54,16 +54,16 @@ test('Contact form uses honest action language and preserves its draft', async (
     'I would like to discuss a community partnership for a leadership gathering in Nairobi.'
   )
 
-  await page.evaluate(() => {
-    window.addEventListener('beforeunload', (event) => event.preventDefault())
-  })
-  await form.getByRole('button', { name: 'Prepare Email' }).click()
+  await page.route('**/api/contact', (route) =>
+    route.fulfill({ status: 500, contentType: 'application/json', body: '{"error":"temporarily unavailable"}' })
+  )
+  await form.getByRole('button', { name: 'Send Enquiry' }).click()
 
+  // A failed send must never wipe what the visitor typed.
   await expect(message).toHaveValue(
     'I would like to discuss a community partnership for a leadership gathering in Nairobi.'
   )
   await expect(form.getByLabel('Name', { exact: true })).toHaveValue('Amina')
-  await expect(form.getByText(/Review the draft and press send/)).toBeVisible()
 })
 
 test('Contact content contains no em dash characters', async ({ page }) => {

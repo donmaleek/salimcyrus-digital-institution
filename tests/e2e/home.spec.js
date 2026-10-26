@@ -16,9 +16,9 @@ test('footer uses the cinematic background with readable content', async ({
 
   const background = footer.locator('img[alt=""]')
   await expect(background).toBeVisible()
-  expect(
-    await background.evaluate((image) => image.naturalWidth)
-  ).toBeGreaterThan(1000)
+  await expect
+    .poll(() => background.evaluate((image) => image.naturalWidth), { timeout: 15000 })
+    .toBeGreaterThan(1000)
 })
 
 test('homepage hero includes the sliding media recognition strip', async ({

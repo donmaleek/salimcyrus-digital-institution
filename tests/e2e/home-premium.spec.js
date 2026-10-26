@@ -7,7 +7,7 @@ test.describe('premium institutional homepage', () => {
     await expect(page.getByTestId('home-authority')).toContainText('Certified Life Coach')
     await expect(page.getByTestId('home-pathways')).toContainText('I need clarity now')
     await expect(page.getByTestId('home-academy')).toContainText('Identity Reformation Program')
-    await expect(page.getByTestId('home-books')).toContainText('Concealed Redemption')
+    await expect(page.getByTestId('home-books')).toContainText('Understanding the Marketplace')
     await expect(page.getByTestId('home-knowledge')).toContainText('Seven fields of thought')
     await expect(page.getByTestId('home-community-journal')).toContainText('Halisi Hub Connect')
     await expect(page.getByRole('link', { name: 'Contact the Institution' })).toBeVisible()

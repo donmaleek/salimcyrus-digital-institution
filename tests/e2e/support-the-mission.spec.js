@@ -23,11 +23,11 @@ test('Paystack form validates required donation fields in the browser', async ({
   await page.goto('/support-the-mission')
   await page.getByRole('button', { name: 'Continue to Paystack' }).click()
 
-  await expect(page.locator('#support-email')).toHaveJSProperty(
+  await expect(page.locator('#support-paystack-email')).toHaveJSProperty(
     'validity.valueMissing',
     true
   )
-  await expect(page.locator('#support-amount')).toHaveJSProperty(
+  await expect(page.locator('#support-amount-kes')).toHaveJSProperty(
     'validity.valueMissing',
     true
   )

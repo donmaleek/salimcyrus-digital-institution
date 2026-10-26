@@ -9,14 +9,22 @@ test('Books page presents all available books with order and detail routes', asy
   await expect(list.getByRole('article')).toHaveCount(14)
   for (const title of [
     'Understanding the Marketplace',
-    'The Unhealed Traumas of Our Parents',
+    'The Great Deception',
     'Concealed Redemption',
   ]) {
     await expect(list.getByRole('heading', { name: title })).toBeVisible()
   }
-  await expect(list.getByText('KES 1,499')).toHaveCount(14)
-  await expect(list.getByRole('link', { name: 'Order' })).toHaveCount(14)
-  await expect(list.getByRole('link', { name: 'Details' })).toHaveCount(14)
+  const prices = await list.getByText(/^KES \d{3}$/).allInnerTexts()
+  expect(prices.length).toBeGreaterThanOrEqual(14)
+  for (const price of prices) {
+    const kes = Number(price.replace('KES ', ''))
+    expect(kes).toBeGreaterThanOrEqual(500)
+    expect(kes).toBeLessThanOrEqual(600)
+  }
+  await expect(list.getByRole('link', { name: 'Buy & Download' })).toHaveCount(14)
+  const detailLinks = await list.getByRole('link', { name: 'Buy & Download' }).evaluateAll((a) => a.map((x) => x.getAttribute('href')))
+  expect(detailLinks.length).toBe(14)
+  for (const href of detailLinks) expect(href).toMatch(/^\/books\/[a-z0-9-]+$/)
 })
 
 test('Books page explains its reading practice', async ({ page }) => {
@@ -43,7 +51,7 @@ test('Books page lists the purpose title as available', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: 'The Greatest Tragedy Is Not Death' })
   ).toBeVisible()
-  await expect(page.getByText('It Is a Life Without Purpose')).toBeVisible()
+  await expect(page.getByText('Pornography and the Death of Purpose').first()).toBeVisible()
 })
 
 test('Books page contains no em dash characters', async ({ page }) => {

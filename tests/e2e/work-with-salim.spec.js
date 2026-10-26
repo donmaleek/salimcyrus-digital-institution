@@ -29,7 +29,6 @@ test('work with Salim page compares all coaching formats and programs', async ({
     'Starter Session',
     'Clarity Session',
     'Deep Reset Session',
-    'Private Coaching',
   ]) {
     await expect(page.getByRole('rowheader', { name: format })).toBeVisible()
   }

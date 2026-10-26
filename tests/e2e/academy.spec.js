@@ -48,13 +48,12 @@ test('Academy distinguishes available programs from planned courses', async ({
 }) => {
   await page.goto('/academy')
 
-  await expect(page.getByText('Available Now', { exact: true })).toBeVisible()
-  await expect(page.getByText('In Development', { exact: true })).toBeVisible()
+  await expect(page.getByText('Three Ways to Learn, All Available Now')).toBeVisible()
   await expect(
-    page.getByRole('link', { name: 'Browse Live Programs' })
+    page.getByRole('link', { name: 'Browse Masterclasses' })
   ).toHaveAttribute('href', '/academy/masterclasses')
   await expect(
-    page.getByRole('link', { name: 'View the Course Roadmap' })
+    page.getByRole('link', { name: 'Browse Courses' })
   ).toHaveAttribute('href', '/academy/courses')
 })
 

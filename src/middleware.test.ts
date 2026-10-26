@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 import { NextRequest } from 'next/server'
-import { middleware } from './middleware'
+import { middleware, config } from './middleware'
 import { BYPASS_COOKIE_NAME } from './lib/suspension'
 
 const originalEnv = { ...process.env }
@@ -68,5 +68,22 @@ describe('middleware (site suspension)', () => {
     process.env.SUSPENSION_BYPASS_TOKEN = 'the-real-secret'
     const response = await middleware(request('https://salimcyrus.com/anything', `${BYPASS_COOKIE_NAME}=an-old-or-forged-value`))
     expect(response.status).toBe(503)
+  })
+})
+
+describe('middleware matcher (large uploads)', () => {
+  const re = new RegExp(
+    require('next/dist/build/analysis/get-page-static-info').getMiddlewareMatchers(config.matcher, { i18n: undefined })[0].regexp
+  )
+
+  it('skips only the two admin video-upload endpoints, so Next 15.5 cannot truncate their bodies at 10MB', () => {
+    expect(re.test('/api/admin/courses/c1/lessons/l1/video')).toBe(false)
+    expect(re.test('/api/admin/teachings')).toBe(false)
+  })
+
+  it('still runs the suspension check on pages and every other API route', () => {
+    for (const path of ['/', '/academy', '/api/admin/courses/c1/lessons/l1/resource', '/api/admin/teachings/t1', '/api/courses/lessons/l1/video', '/api/payments/webhook']) {
+      expect(re.test(path)).toBe(true)
+    }
   })
 })

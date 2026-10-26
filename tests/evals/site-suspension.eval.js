@@ -30,8 +30,11 @@ const checks = [
     middleware.includes("status: 503") && middleware.includes('Retry-After'),
   ],
   [
-    'middleware has no path matcher narrowing it to only pages: it runs on every request by default, so API routes are suspended too, not just the pages client-side code happens to render',
-    !middleware.includes('export const config'),
+    'middleware matcher only carves out the two admin video-upload endpoints (Next 15.5 truncates middleware-buffered bodies at 10MB); pages and every other API route are still suspended',
+    (middleware.match(/matcher:/g) || []).length === 1 &&
+      middleware.includes('api/admin/courses/[^/]+/lessons/[^/]+/video$') &&
+      middleware.includes('api/admin/teachings$') &&
+      !/matcher:\s*\[\s*'\/api/.test(middleware),
   ],
   [
     'a valid bypass token both unblocks the current request and persists via a cookie, so the developer is not forced to keep the token in every URL',

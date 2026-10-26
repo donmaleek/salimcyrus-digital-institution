@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   title: 'Watch Teaching',
 }
 
-export default async function WatchTeachingPage({ params }: { params: { teachingId: string } }) {
+export default async function WatchTeachingPage(props: { params: Promise<{ teachingId: string }> }) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
   const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin === true

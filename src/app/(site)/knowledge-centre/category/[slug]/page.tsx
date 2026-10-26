@@ -5,14 +5,15 @@ import { CategoryFilter } from '@/components/sections/knowledge/CategoryFilter'
 import { PageHero } from '@/components/layout/PageHero'
 
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export function generateStaticParams() {
   return knowledgeCategories.map((category) => ({ slug: category.slug }))
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const category = knowledgeCategories.find((c) => c.slug === params.slug)
   return {
     title: category ? category.name : 'Category',
@@ -20,7 +21,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   }
 }
 
-export default function CategoryPage({ params }: PageProps) {
+export default async function CategoryPage(props: PageProps) {
+  const params = await props.params;
   const category = knowledgeCategories.find((c) => c.slug === params.slug)
   if (!category) notFound()
 

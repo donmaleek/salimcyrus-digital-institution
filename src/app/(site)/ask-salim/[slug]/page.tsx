@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/utils/formatting'
 export const dynamic = 'force-dynamic'
 
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 async function getAnswer(slug: string) {
@@ -16,7 +16,8 @@ async function getAnswer(slug: string) {
   })
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const entry = await getAnswer(params.slug)
   if (!entry) {
     return { title: 'Ask Salim', robots: { index: false, follow: false } }
@@ -35,7 +36,8 @@ function askerLabel(entry: { publicationPreference: string; askerName: string | 
   return 'Anonymous'
 }
 
-export default async function AskSalimAnswerPage({ params }: PageProps) {
+export default async function AskSalimAnswerPage(props: PageProps) {
+  const params = await props.params;
   const entry = await getAnswer(params.slug)
 
   if (!entry || !entry.answer) {

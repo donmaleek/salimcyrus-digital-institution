@@ -24,11 +24,12 @@ function formatSlotTime(date: Date, durationMinutes: number): string {
   })} (${durationMinutes} min)`
 }
 
-export default async function BookingConfirmationPage({
-  params,
-}: {
-  params: { 'booking-id': string }
-}) {
+export default async function BookingConfirmationPage(
+  props: {
+    params: Promise<{ 'booking-id': string }>
+  }
+) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
 

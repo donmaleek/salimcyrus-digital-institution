@@ -43,7 +43,7 @@ describe('GET /api/books/download/[token]', () => {
   it('returns 404 when the token matches no grant', async () => {
     mockFindUnique.mockResolvedValue(null)
 
-    const response = await GET(makeRequest(), { params: { token: 'unknown' } })
+    const response = await GET(makeRequest(), { params: Promise.resolve({ token: 'unknown' }) })
 
     expect(response.status).toBe(404)
     expect(mockUpdate).not.toHaveBeenCalled()
@@ -59,7 +59,7 @@ describe('GET /api/books/download/[token]', () => {
       purchase: { id: 'p1', bookSlug: 'the-cost-of-infidelity' },
     })
 
-    const response = await GET(makeRequest(), { params: { token: 'abc' } })
+    const response = await GET(makeRequest(), { params: Promise.resolve({ token: 'abc' }) })
     const body = await response.json()
 
     expect(response.status).toBe(410)
@@ -76,7 +76,7 @@ describe('GET /api/books/download/[token]', () => {
       purchase: { id: 'p1', bookSlug: 'the-cost-of-infidelity' },
     })
 
-    const response = await GET(makeRequest(), { params: { token: 'abc' } })
+    const response = await GET(makeRequest(), { params: Promise.resolve({ token: 'abc' }) })
     const body = await response.json()
 
     expect(response.status).toBe(410)
@@ -93,7 +93,7 @@ describe('GET /api/books/download/[token]', () => {
     })
     mockFileExists.mockReturnValue(false)
 
-    const response = await GET(makeRequest(), { params: { token: 'abc' } })
+    const response = await GET(makeRequest(), { params: Promise.resolve({ token: 'abc' }) })
 
     expect(response.status).toBe(503)
     expect(mockUpdate).not.toHaveBeenCalled()
@@ -109,7 +109,7 @@ describe('GET /api/books/download/[token]', () => {
     })
     mockFileExists.mockReturnValue(true)
 
-    const response = await GET(makeRequest(), { params: { token: 'abc' } })
+    const response = await GET(makeRequest(), { params: Promise.resolve({ token: 'abc' }) })
 
     expect(response.status).toBe(200)
     expect(response.headers.get('Content-Type')).toBe('application/pdf')
@@ -122,7 +122,7 @@ describe('GET /api/books/download/[token]', () => {
 
   it('looks up the grant by the SHA-256 hash of the raw token, never the raw token itself', async () => {
     mockFindUnique.mockResolvedValue(null)
-    await GET(makeRequest(), { params: { token: 'my-raw-token' } })
+    await GET(makeRequest(), { params: Promise.resolve({ token: 'my-raw-token' }) })
     expect(mockFindUnique).toHaveBeenCalledWith({
       where: { tokenHash: hashDownloadToken('my-raw-token') },
       include: { purchase: true },

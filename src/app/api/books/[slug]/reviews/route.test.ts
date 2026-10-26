@@ -38,13 +38,13 @@ describe('POST /api/books/[slug]/reviews', () => {
         method: 'POST',
         body: JSON.stringify({}),
       }),
-      { params: { slug: 'does-not-exist' } }
+      { params: Promise.resolve({ slug: 'does-not-exist' }) }
     )
     expect(response.status).toBe(404)
   })
 
   it('returns 400 for an invalid submission', async () => {
-    const response = await POST(request({ email: 'not-an-email' }), { params: { slug: realBook.slug } })
+    const response = await POST(request({ email: 'not-an-email' }), { params: Promise.resolve({ slug: realBook.slug }) })
     expect(response.status).toBe(400)
   })
 
@@ -52,7 +52,7 @@ describe('POST /api/books/[slug]/reviews', () => {
     mockFindFirst.mockResolvedValue(null)
     const response = await POST(
       request({ email: 'nobody@example.com', reviewerName: 'Jane', rating: 5, body: 'Great book, really.' }),
-      { params: { slug: realBook.slug } }
+      { params: Promise.resolve({ slug: realBook.slug }) }
     )
     expect(response.status).toBe(403)
     expect(mockCreate).not.toHaveBeenCalled()
@@ -62,7 +62,7 @@ describe('POST /api/books/[slug]/reviews', () => {
     mockFindFirst.mockResolvedValue({ id: 'purchase-1', review: { id: 'review-1' } })
     const response = await POST(
       request({ email: 'buyer@example.com', reviewerName: 'Jane', rating: 5, body: 'Great book, really.' }),
-      { params: { slug: realBook.slug } }
+      { params: Promise.resolve({ slug: realBook.slug }) }
     )
     expect(response.status).toBe(409)
     expect(mockCreate).not.toHaveBeenCalled()
@@ -80,7 +80,7 @@ describe('POST /api/books/[slug]/reviews', () => {
         title: 'Loved it',
         body: 'Great book, really changed how I think.',
       }),
-      { params: { slug: realBook.slug } }
+      { params: Promise.resolve({ slug: realBook.slug }) }
     )
     const payload = await response.json()
 
@@ -100,7 +100,7 @@ describe('POST /api/books/[slug]/reviews', () => {
   it('rejects a rating outside 1-5', async () => {
     const response = await POST(
       request({ email: 'buyer@example.com', reviewerName: 'Jane', rating: 6, body: 'Great book, really.' }),
-      { params: { slug: realBook.slug } }
+      { params: Promise.resolve({ slug: realBook.slug }) }
     )
     expect(response.status).toBe(400)
   })

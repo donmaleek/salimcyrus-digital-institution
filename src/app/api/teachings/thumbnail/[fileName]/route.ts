@@ -17,7 +17,8 @@ function contentTypeFor(fileName: string): string {
  * are meant to be publicly visible (unlike the video itself), so this
  * route has no auth check, just a real filesystem read each time.
  */
-export async function GET(_request: Request, { params }: { params: { fileName: string } }) {
+export async function GET(_request: Request, props: { params: Promise<{ fileName: string }> }) {
+  const params = await props.params;
   const fileName = params.fileName
   if (!teachingFileExists(fileName)) {
     return NextResponse.json({ error: 'Thumbnail not found.' }, { status: 404 })

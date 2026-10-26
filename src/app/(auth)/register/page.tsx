@@ -9,11 +9,12 @@ export const metadata: Metadata = {
   title: 'Create Account',
 }
 
-export default function RegisterPage({
-  searchParams,
-}: {
-  searchParams: { callbackUrl?: string }
-}) {
+export default async function RegisterPage(
+  props: {
+    searchParams: Promise<{ callbackUrl?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const callbackUrl = searchParams.callbackUrl
   const isBookPurchase = isSafeRedirectPath(callbackUrl) && callbackUrl.startsWith('/books/')
 

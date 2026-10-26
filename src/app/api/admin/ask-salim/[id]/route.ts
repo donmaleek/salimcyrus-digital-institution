@@ -9,7 +9,8 @@ const updateSchema = z.object({
   publish: z.boolean().optional(),
 })
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
@@ -59,7 +60,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   return NextResponse.json({ question })
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }

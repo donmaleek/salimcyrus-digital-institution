@@ -35,21 +35,21 @@ describe('PATCH /api/admin/teachings/[id]', () => {
 
   it('returns 403 without the content:write permission', async () => {
     mockRequireCrmApi.mockResolvedValue(false)
-    const response = await PATCH(patchRequest({ status: 'published' }), { params: { id: 't1' } })
+    const response = await PATCH(patchRequest({ status: 'published' }), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(403)
     expect(mockUpdate).not.toHaveBeenCalled()
   })
 
   it('returns 400 for an invalid status', async () => {
     mockRequireCrmApi.mockResolvedValue(true)
-    const response = await PATCH(patchRequest({ status: 'archived' }), { params: { id: 't1' } })
+    const response = await PATCH(patchRequest({ status: 'archived' }), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(400)
   })
 
   it('returns 404 when the teaching does not exist', async () => {
     mockRequireCrmApi.mockResolvedValue(true)
     mockFindUnique.mockResolvedValue(null)
-    const response = await PATCH(patchRequest({ status: 'published' }), { params: { id: 't1' } })
+    const response = await PATCH(patchRequest({ status: 'published' }), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(404)
   })
 
@@ -58,7 +58,7 @@ describe('PATCH /api/admin/teachings/[id]', () => {
     mockFindUnique.mockResolvedValue({ id: 't1', status: 'draft' })
     mockUpdate.mockResolvedValue({ id: 't1', status: 'published' })
 
-    const response = await PATCH(patchRequest({ status: 'published' }), { params: { id: 't1' } })
+    const response = await PATCH(patchRequest({ status: 'published' }), { params: Promise.resolve({ id: 't1' }) })
 
     expect(response.status).toBe(200)
     expect(mockUpdate).toHaveBeenCalledWith({ where: { id: 't1' }, data: { status: 'published' } })
@@ -72,7 +72,7 @@ describe('DELETE /api/admin/teachings/[id]', () => {
 
   it('returns 403 without permission', async () => {
     mockRequireCrmApi.mockResolvedValue(false)
-    const response = await DELETE(new NextRequest('https://salimcyrus.com/x'), { params: { id: 't1' } })
+    const response = await DELETE(new NextRequest('https://salimcyrus.com/x'), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(403)
     expect(mockDelete).not.toHaveBeenCalled()
   })
@@ -80,14 +80,14 @@ describe('DELETE /api/admin/teachings/[id]', () => {
   it('returns 404 when the teaching does not exist', async () => {
     mockRequireCrmApi.mockResolvedValue(true)
     mockFindUnique.mockResolvedValue(null)
-    const response = await DELETE(new NextRequest('https://salimcyrus.com/x'), { params: { id: 't1' } })
+    const response = await DELETE(new NextRequest('https://salimcyrus.com/x'), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(404)
   })
 
   it('deletes an existing teaching', async () => {
     mockRequireCrmApi.mockResolvedValue(true)
     mockFindUnique.mockResolvedValue({ id: 't1' })
-    const response = await DELETE(new NextRequest('https://salimcyrus.com/x'), { params: { id: 't1' } })
+    const response = await DELETE(new NextRequest('https://salimcyrus.com/x'), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(200)
     expect(mockDelete).toHaveBeenCalledWith({ where: { id: 't1' } })
   })

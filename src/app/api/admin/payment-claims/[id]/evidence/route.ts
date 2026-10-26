@@ -11,7 +11,8 @@ function contentTypeFor(fileName: string): string {
   return 'image/webp'
 }
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+export async function GET(_request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('finance:read'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }

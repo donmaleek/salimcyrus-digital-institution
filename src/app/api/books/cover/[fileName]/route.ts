@@ -18,7 +18,8 @@ function contentTypeFor(fileName: string): string {
  * visible (unlike the PDF itself), so this route has no auth check, just
  * a real filesystem read each time.
  */
-export async function GET(_request: Request, { params }: { params: { fileName: string } }) {
+export async function GET(_request: Request, props: { params: Promise<{ fileName: string }> }) {
+  const params = await props.params;
   const fileName = params.fileName
   if (!bookFileExists(fileName)) {
     return NextResponse.json({ error: 'Cover not found.' }, { status: 404 })

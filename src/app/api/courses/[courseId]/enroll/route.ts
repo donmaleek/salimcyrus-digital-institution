@@ -4,7 +4,8 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { enrollUser } from '@/services/courses/course-service'
 
-export async function POST(_request: NextRequest, { params }: { params: { courseId: string } }) {
+export async function POST(_request: NextRequest, props: { params: Promise<{ courseId: string }> }) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
   if (!userId) return NextResponse.json({ error: 'Sign in to enroll.' }, { status: 401 })

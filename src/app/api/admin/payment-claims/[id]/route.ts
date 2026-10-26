@@ -8,7 +8,8 @@ const reviewSchema = z.object({
   notes: z.string().trim().max(2000).optional(),
 })
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const principal = await requireCrmApi('finance:write')
   if (!principal || !principal.email) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

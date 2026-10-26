@@ -35,7 +35,7 @@ describe('POST /api/books/my-purchases/[purchaseId]/download', () => {
 
   it('returns 401 when signed out', async () => {
     mockGetServerSession.mockResolvedValue(null)
-    const response = await POST(request(), { params: { purchaseId: 'p1' } })
+    const response = await POST(request(), { params: Promise.resolve({ purchaseId: 'p1' }) })
     expect(response.status).toBe(401)
     expect(mockCreateGrant).not.toHaveBeenCalled()
   })
@@ -43,14 +43,14 @@ describe('POST /api/books/my-purchases/[purchaseId]/download', () => {
   it('returns 404 when the purchase does not exist', async () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1' } })
     mockFindUnique.mockResolvedValue(null)
-    const response = await POST(request(), { params: { purchaseId: 'p1' } })
+    const response = await POST(request(), { params: Promise.resolve({ purchaseId: 'p1' }) })
     expect(response.status).toBe(404)
   })
 
   it('returns 404 when the purchase belongs to someone else (no ownership leak)', async () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1' } })
     mockFindUnique.mockResolvedValue({ id: 'p1', userId: 'someone-else' })
-    const response = await POST(request(), { params: { purchaseId: 'p1' } })
+    const response = await POST(request(), { params: Promise.resolve({ purchaseId: 'p1' }) })
     expect(response.status).toBe(404)
     expect(mockCreateGrant).not.toHaveBeenCalled()
   })
@@ -60,7 +60,7 @@ describe('POST /api/books/my-purchases/[purchaseId]/download', () => {
     mockFindUnique.mockResolvedValue({ id: 'p1', userId: 'user-1' })
     mockCreateGrant.mockResolvedValue({ rawToken: 'fresh-token', expiresAt: new Date() })
 
-    const response = await POST(request(), { params: { purchaseId: 'p1' } })
+    const response = await POST(request(), { params: Promise.resolve({ purchaseId: 'p1' }) })
     const payload = await response.json()
 
     expect(response.status).toBe(200)

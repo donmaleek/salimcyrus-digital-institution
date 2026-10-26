@@ -7,7 +7,8 @@ const moderationSchema = z.object({
   status: z.enum(['approved', 'rejected']),
 })
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
@@ -30,7 +31,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   return NextResponse.json({ review })
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }

@@ -11,7 +11,8 @@ import { saveTeachingThumbnail, saveTeachingPreview } from '@/services/teachings
  * existed, or one whose admin skipped the thumbnail/preview at upload
  * time, had no way to ever get one afterward.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }

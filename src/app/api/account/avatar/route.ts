@@ -15,7 +15,7 @@ export async function GET() {
   if (!user?.profileImageData || !user.profileImageMime) {
     return NextResponse.json({ error: 'No profile image' }, { status: 404 })
   }
-  return new NextResponse(user.profileImageData, {
+  return new NextResponse(Buffer.from(user.profileImageData), {
     headers: { 'Content-Type': user.profileImageMime, 'Cache-Control': 'private, no-store' },
   })
 }

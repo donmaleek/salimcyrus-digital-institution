@@ -32,27 +32,27 @@ describe('GET /api/admin/payment-claims/[id]/evidence', () => {
 
   it('returns 403 without the finance:read permission', async () => {
     mockRequireCrmApi.mockResolvedValue(null)
-    const response = await GET(new Request('https://salimcyrus.com/x'), { params: { id: 'c1' } })
+    const response = await GET(new Request('https://salimcyrus.com/x'), { params: Promise.resolve({ id: 'c1' }) })
     expect(response.status).toBe(403)
   })
 
   it('returns 404 when the claim has no attached evidence', async () => {
     mockFindUnique.mockResolvedValue({ id: 'c1', evidenceFileName: null })
-    const response = await GET(new Request('https://salimcyrus.com/x'), { params: { id: 'c1' } })
+    const response = await GET(new Request('https://salimcyrus.com/x'), { params: Promise.resolve({ id: 'c1' }) })
     expect(response.status).toBe(404)
   })
 
   it('returns 503 when the file is missing on disk', async () => {
     mockFindUnique.mockResolvedValue({ id: 'c1', evidenceFileName: 'CODE1-123.jpg' })
     mockFileExists.mockReturnValue(false)
-    const response = await GET(new Request('https://salimcyrus.com/x'), { params: { id: 'c1' } })
+    const response = await GET(new Request('https://salimcyrus.com/x'), { params: Promise.resolve({ id: 'c1' }) })
     expect(response.status).toBe(503)
   })
 
   it('streams the evidence image with the correct content type', async () => {
     mockFindUnique.mockResolvedValue({ id: 'c1', evidenceFileName: 'CODE1-123.jpg' })
     mockFileExists.mockReturnValue(true)
-    const response = await GET(new Request('https://salimcyrus.com/x'), { params: { id: 'c1' } })
+    const response = await GET(new Request('https://salimcyrus.com/x'), { params: Promise.resolve({ id: 'c1' }) })
     expect(response.status).toBe(200)
     expect(response.headers.get('Content-Type')).toBe('image/jpeg')
     expect(response.headers.get('Cache-Control')).toBe('private, no-store')

@@ -19,7 +19,8 @@ function contentTypeFor(fileName: string): string {
  * /api/teachings/stream/[teachingId]) — playing this can never leak paid
  * content, because the paid video is never written here.
  */
-export async function GET(request: NextRequest, { params }: { params: { fileName: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ fileName: string }> }) {
+  const params = await props.params;
   const fileName = params.fileName
   if (!teachingFileExists(fileName)) {
     return NextResponse.json({ error: 'Preview not found.' }, { status: 404 })

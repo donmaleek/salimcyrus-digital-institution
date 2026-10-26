@@ -14,14 +14,15 @@ import { JournalSubscriptionReturn } from '@/components/payments/JournalSubscrip
 export const dynamic = 'force-dynamic'
 
 interface PageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 async function getEntry(slug: string) {
   return db.journalEntry.findFirst({ where: { slug, status: 'published' } })
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const entry = await getEntry(params.slug)
   if (!entry) return { title: 'Journal Entry Not Found' }
   return {
@@ -32,7 +33,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function JournalEntryPage({ params }: PageProps) {
+export default async function JournalEntryPage(props: PageProps) {
+  const params = await props.params;
   const entry = await getEntry(params.slug)
   if (!entry) notFound()
 

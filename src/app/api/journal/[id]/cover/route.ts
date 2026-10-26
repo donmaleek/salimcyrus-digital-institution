@@ -4,7 +4,8 @@ import { requireCrmApi } from '@/services/crm/access'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+export async function GET(_request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const entry = await db.journalEntry.findUnique({
     where: { id: params.id },
     select: { status: true, coverImageData: true, coverImageMime: true, updatedAt: true },
@@ -17,7 +18,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
     return new NextResponse(null, { status: 404 })
   }
 
-  return new NextResponse(entry.coverImageData, {
+  return new NextResponse(Buffer.from(entry.coverImageData), {
     headers: {
       'Content-Type': entry.coverImageMime,
       'Cache-Control': entry.status === 'published' ? 'public, max-age=3600, stale-while-revalidate=86400' : 'private, no-store',

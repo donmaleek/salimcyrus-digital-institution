@@ -45,7 +45,7 @@ describe('POST /api/admin/teachings/[id]/assets', () => {
     mockRequireCrmApi.mockResolvedValue(false)
     const form = new FormData()
     form.set('thumbnail', fakeFile('x.webp', 'image/webp'))
-    const response = await POST(request(form), { params: { id: 't1' } })
+    const response = await POST(request(form), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(403)
     expect(mockUpdate).not.toHaveBeenCalled()
   })
@@ -54,12 +54,12 @@ describe('POST /api/admin/teachings/[id]/assets', () => {
     mockFindUnique.mockResolvedValue(null)
     const form = new FormData()
     form.set('thumbnail', fakeFile('x.webp', 'image/webp'))
-    const response = await POST(request(form), { params: { id: 'missing' } })
+    const response = await POST(request(form), { params: Promise.resolve({ id: 'missing' }) })
     expect(response.status).toBe(404)
   })
 
   it('returns 400 when neither a thumbnail nor a preview clip is attached', async () => {
-    const response = await POST(request(new FormData()), { params: { id: 't1' } })
+    const response = await POST(request(new FormData()), { params: Promise.resolve({ id: 't1' }) })
     expect(response.status).toBe(400)
     expect(mockUpdate).not.toHaveBeenCalled()
   })
@@ -69,7 +69,7 @@ describe('POST /api/admin/teachings/[id]/assets', () => {
     const form = new FormData()
     form.set('thumbnail', fakeFile('x.webp', 'image/webp'))
 
-    const response = await POST(request(form), { params: { id: 't1' } })
+    const response = await POST(request(form), { params: Promise.resolve({ id: 't1' }) })
 
     expect(response.status).toBe(200)
     expect(mockSaveThumbnail).toHaveBeenCalledWith('my-teaching', expect.any(File))
@@ -85,7 +85,7 @@ describe('POST /api/admin/teachings/[id]/assets', () => {
     const form = new FormData()
     form.set('preview', fakeFile('x.mp4', 'video/mp4'))
 
-    const response = await POST(request(form), { params: { id: 't1' } })
+    const response = await POST(request(form), { params: Promise.resolve({ id: 't1' }) })
 
     expect(response.status).toBe(200)
     expect(mockSaveThumbnail).not.toHaveBeenCalled()
@@ -102,7 +102,7 @@ describe('POST /api/admin/teachings/[id]/assets', () => {
     form.set('thumbnail', fakeFile('a.webp', 'image/webp'))
     form.set('preview', fakeFile('b.mp4', 'video/mp4'))
 
-    await POST(request(form), { params: { id: 't1' } })
+    await POST(request(form), { params: Promise.resolve({ id: 't1' }) })
 
     expect(mockUpdate).toHaveBeenCalledWith({
       where: { id: 't1' },
@@ -115,7 +115,7 @@ describe('POST /api/admin/teachings/[id]/assets', () => {
     const form = new FormData()
     form.set('thumbnail', fakeFile('x.gif', 'image/gif'))
 
-    const response = await POST(request(form), { params: { id: 't1' } })
+    const response = await POST(request(form), { params: Promise.resolve({ id: 't1' }) })
     const payload = await response.json()
 
     expect(response.status).toBe(400)

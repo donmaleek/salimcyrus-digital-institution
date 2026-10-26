@@ -13,7 +13,7 @@ const reviewRequestSchema = z.object({
 })
 
 interface RouteParams {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 /**
@@ -22,7 +22,8 @@ interface RouteParams {
  * book they never bought. New reviews start "pending" and don't count
  * toward the public rating until an admin approves them.
  */
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(request: NextRequest, props: RouteParams) {
+  const params = await props.params;
   const book = await getBookBySlug(params.slug)
   if (!book) {
     return NextResponse.json({ error: 'Unknown book.' }, { status: 404 })

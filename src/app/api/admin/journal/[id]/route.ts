@@ -20,7 +20,8 @@ const updateEntrySchema = z.object({
   }).nullable().optional(),
 })
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
@@ -65,7 +66,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   return NextResponse.json({ entry })
 }
 
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await requireCrmApi('content:write'))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }

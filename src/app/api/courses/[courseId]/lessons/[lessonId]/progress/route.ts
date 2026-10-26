@@ -4,7 +4,11 @@ import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { progressInputSchema } from '@/services/courses/contracts'
 
-export async function PUT(request: NextRequest, { params }: { params: { courseId: string; lessonId: string } }) {
+export async function PUT(
+  request: NextRequest,
+  props: { params: Promise<{ courseId: string; lessonId: string }> }
+) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
   if (!userId) return NextResponse.json({ error: 'Sign in to save progress.' }, { status: 401 })

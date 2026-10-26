@@ -11,14 +11,15 @@ import {
 import { WHATSAPP_URL } from '@/lib/utils/constants'
 
 interface AlignmentSessionPageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export function generateStaticParams() {
   return alignmentSessions.map(({ slug }) => ({ slug }))
 }
 
-export function generateMetadata({ params }: AlignmentSessionPageProps): Metadata {
+export async function generateMetadata(props: AlignmentSessionPageProps): Promise<Metadata> {
+  const params = await props.params;
   const session = getAlignmentSession(params.slug)
   if (!session) return {}
 
@@ -28,7 +29,8 @@ export function generateMetadata({ params }: AlignmentSessionPageProps): Metadat
   }
 }
 
-export default function AlignmentSessionPage({ params }: AlignmentSessionPageProps) {
+export default async function AlignmentSessionPage(props: AlignmentSessionPageProps) {
+  const params = await props.params;
   const session = getAlignmentSession(params.slug)
   if (!session) notFound()
 

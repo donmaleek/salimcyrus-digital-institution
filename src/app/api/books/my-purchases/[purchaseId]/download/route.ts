@@ -11,10 +11,8 @@ import { createDownloadGrant, downloadUrlFor } from '@/services/payments/book-pu
  * limit any single leaked link, not to cap how many times the owner can
  * come back to My Books and get a working link again.
  */
-export async function POST(
-  _request: NextRequest,
-  { params }: { params: { purchaseId: string } }
-) {
+export async function POST(_request: NextRequest, props: { params: Promise<{ purchaseId: string }> }) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
   if (!userId) {

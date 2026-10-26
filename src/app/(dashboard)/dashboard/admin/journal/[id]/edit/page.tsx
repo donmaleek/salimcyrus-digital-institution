@@ -10,7 +10,8 @@ export const metadata: Metadata = {
   title: 'Edit Entry',
 }
 
-export default async function EditJournalEntryPage({ params }: { params: { id: string } }) {
+export default async function EditJournalEntryPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireCrmPage('content:write')
 
   const entry = await db.journalEntry.findUnique({ where: { id: params.id } })

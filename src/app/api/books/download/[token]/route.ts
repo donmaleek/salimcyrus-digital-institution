@@ -14,10 +14,11 @@ const GRANT_ERROR_MESSAGES: Record<'expired' | 'exhausted', string> = {
 }
 
 interface RouteParams {
-  params: { token: string }
+  params: Promise<{ token: string }>
 }
 
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, props: RouteParams) {
+  const params = await props.params;
   const tokenHash = hashDownloadToken(params.token)
   const grant = await db.bookDownloadGrant.findUnique({
     where: { tokenHash },

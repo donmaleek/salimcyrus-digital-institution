@@ -21,7 +21,8 @@ function contentTypeFor(fileName: string): string {
  * request, and Range support lets the player seek without downloading the
  * whole file first, which matters at video file sizes.
  */
-export async function GET(request: NextRequest, { params }: { params: { teachingId: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ teachingId: string }> }) {
+  const params = await props.params;
   const session = await getServerSession(authOptions)
   const userId = (session?.user as { id?: string } | undefined)?.id
   const isAdmin = (session?.user as { isAdmin?: boolean } | undefined)?.isAdmin === true

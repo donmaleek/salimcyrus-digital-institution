@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   title: 'Edit Teaching Media',
 }
 
-export default async function EditTeachingAssetsPage({ params }: { params: { id: string } }) {
+export default async function EditTeachingAssetsPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   await requireCrmPage('content:write')
 
   const teaching = await db.teaching.findUnique({ where: { id: params.id } })

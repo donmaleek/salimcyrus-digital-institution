@@ -37,14 +37,14 @@ describe('GET /api/teachings/stream/[teachingId]', () => {
 
   it('returns 401 when signed out', async () => {
     mockGetServerSession.mockResolvedValue(null)
-    const response = await GET(request(), { params: { teachingId: 't1' } })
+    const response = await GET(request(), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(401)
   })
 
   it('returns 404 for an unpublished or unknown teaching', async () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1' } })
     mockFindTeaching.mockResolvedValue({ id: 't1', status: 'draft' })
-    const response = await GET(request(), { params: { teachingId: 't1' } })
+    const response = await GET(request(), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(404)
   })
 
@@ -52,14 +52,14 @@ describe('GET /api/teachings/stream/[teachingId]', () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1' } })
     mockFindTeaching.mockResolvedValue({ id: 't1', status: 'published', videoFileName: 'x.mp4' })
     mockFindPurchase.mockResolvedValue(null)
-    const response = await GET(request(), { params: { teachingId: 't1' } })
+    const response = await GET(request(), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(403)
   })
 
   it('lets an admin stream without a purchase record (preview)', async () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'admin-1', isAdmin: true } })
     mockFindTeaching.mockResolvedValue({ id: 't1', status: 'published', videoFileName: 'x.mp4' })
-    const response = await GET(request(), { params: { teachingId: 't1' } })
+    const response = await GET(request(), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(200)
     expect(mockFindPurchase).not.toHaveBeenCalled()
   })
@@ -68,7 +68,7 @@ describe('GET /api/teachings/stream/[teachingId]', () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1' } })
     mockFindTeaching.mockResolvedValue({ id: 't1', status: 'published', videoFileName: 'x.mp4' })
     mockFindPurchase.mockResolvedValue({ id: 'purchase-1' })
-    const response = await GET(request(), { params: { teachingId: 't1' } })
+    const response = await GET(request(), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(200)
     expect(response.headers.get('Accept-Ranges')).toBe('bytes')
   })
@@ -77,7 +77,7 @@ describe('GET /api/teachings/stream/[teachingId]', () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1' } })
     mockFindTeaching.mockResolvedValue({ id: 't1', status: 'published', videoFileName: 'x.mp4' })
     mockFindPurchase.mockResolvedValue({ id: 'purchase-1' })
-    const response = await GET(request({ range: 'bytes=100-199' }), { params: { teachingId: 't1' } })
+    const response = await GET(request({ range: 'bytes=100-199' }), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(206)
     expect(response.headers.get('Content-Range')).toBe('bytes 100-199/1000')
     expect(response.headers.get('Content-Length')).toBe('100')
@@ -87,7 +87,7 @@ describe('GET /api/teachings/stream/[teachingId]', () => {
     mockGetServerSession.mockResolvedValue({ user: { id: 'user-1' } })
     mockFindTeaching.mockResolvedValue({ id: 't1', status: 'published', videoFileName: 'x.mp4' })
     mockFindPurchase.mockResolvedValue({ id: 'purchase-1' })
-    const response = await GET(request({ range: 'bytes=900-1999' }), { params: { teachingId: 't1' } })
+    const response = await GET(request({ range: 'bytes=900-1999' }), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(416)
   })
 
@@ -96,7 +96,7 @@ describe('GET /api/teachings/stream/[teachingId]', () => {
     mockFindTeaching.mockResolvedValue({ id: 't1', status: 'published', videoFileName: 'x.mp4' })
     mockFindPurchase.mockResolvedValue({ id: 'purchase-1' })
     mockFileExists.mockReturnValue(false)
-    const response = await GET(request(), { params: { teachingId: 't1' } })
+    const response = await GET(request(), { params: Promise.resolve({ teachingId: 't1' }) })
     expect(response.status).toBe(503)
   })
 })

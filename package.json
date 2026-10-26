@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src tests --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
     "test:e2e": "playwright test",
     "eval:hero": "node tests/evals/home-hero.eval.js",
@@ -62,11 +62,11 @@
     "@prisma/client": "6.12.0",
     "bcryptjs": "^3.0.3",
     "busboy": "^1.6.0",
-    "next": "15.5.28",
+    "next": "16.4.3",
     "next-auth": "^4.24.0",
     "prisma": "6.12.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "resend": "^3.4.0",
     "sharp": "^0.35.5",
     "tailwindcss": "^3.4.0",
@@ -80,8 +80,8 @@
     "@types/busboy": "^1.5.4",
     "@types/jest": "^30.0.0",
     "@types/node": "^20.14.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "15.5.28",
@@ -93,7 +93,7 @@
     "typescript": "^5.4.0"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=20.9.0"
   },
   "overrides": {
     "next": {

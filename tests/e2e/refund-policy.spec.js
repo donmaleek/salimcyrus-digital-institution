@@ -12,11 +12,9 @@ test('FAQ links to a real Refund and Cancellation Policy page', async ({ page })
   await expect(link).toBeVisible()
   await expect(link).toHaveAttribute('href', '/refund-policy')
 
-  const [response] = await Promise.all([
-    page.waitForResponse((res) => res.url().includes('/refund-policy')),
-    link.click(),
-  ])
-  expect(response.status()).toBe(200)
+  // Next prefetches linked pages, so the click may need no network response at
+  // all; assert on the navigation itself instead of a response that may not fire.
+  await Promise.all([page.waitForURL('**/refund-policy'), link.click()])
   await expect(
     page.getByRole('heading', { name: 'Refund & Cancellation Policy' })
   ).toBeVisible()

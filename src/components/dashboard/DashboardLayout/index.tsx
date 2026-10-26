@@ -60,7 +60,12 @@ export function DashboardLayout({ children, userName, userEmail, hasProfileImage
   const items = isAdmin
     ? [...crmNav, { label: 'Courses', href: '/dashboard/admin/courses' }, { label: 'Journal', href: '/dashboard/admin/journal' }, { label: 'Books', href: '/dashboard/admin/books' }, { label: 'Teaching Library', href: '/dashboard/admin/teachings' }, { label: 'Coaching Sessions', href: '/dashboard/admin/coaching' }, { label: 'Paybill Claims (legacy)', href: '/dashboard/admin/payment-claims' }, { label: 'Ask Salim', href: '/dashboard/admin/ask-salim' }, { label: 'Availability', href: '/dashboard/admin/availability' }]
     : memberNav
-  const active = (href: string) => pathname === href || (href !== '/dashboard' && pathname.startsWith(`${href}/`))
+  // Longest matching link wins, so /dashboard/admin/crm/relationships highlights
+  // Relationships only, not also its parent Command Center.
+  const activeHref = items
+    .filter((item) => pathname === item.href || pathname.startsWith(`${item.href}/`))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href
+  const active = (href: string) => href === activeHref
 
   return (
     <div className="min-h-screen bg-[#f7f5ef] lg:flex">

@@ -5,7 +5,7 @@ const root = path.resolve(__dirname, '../..')
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8')
 
 const suspensionLib = read('src/lib/suspension.ts')
-const middleware = read('src/middleware.ts')
+const middleware = read('src/proxy.ts')
 const toggleScript = read('scripts/toggle-site.js')
 const envExample = read('.env.example')
 const readme = read('README.md')
@@ -26,11 +26,11 @@ const checks = [
     !/pay|bill|invoice|overdue|salim/i.test(suspensionLib.slice(suspensionLib.indexOf('suspendedPageHtml'))),
   ],
   [
-    'middleware checks suspension before anything else and returns a real 503 (not a 200 page pretending to be down, and not a 404/403 that looks like a bug) with a Retry-After header',
+    'proxy checks suspension before anything else and returns a real 503 (not a 200 page pretending to be down, and not a 404/403 that looks like a bug) with a Retry-After header',
     middleware.includes("status: 503") && middleware.includes('Retry-After'),
   ],
   [
-    'middleware matcher only carves out the two admin video-upload endpoints (Next 15.5 truncates middleware-buffered bodies at 10MB); pages and every other API route are still suspended',
+    'proxy matcher only carves out the two admin video-upload endpoints (Next 15.5 truncates middleware-buffered bodies at 10MB); pages and every other API route are still suspended',
     (middleware.match(/matcher:/g) || []).length === 1 &&
       middleware.includes('api/admin/courses/[^/]+/lessons/[^/]+/video$') &&
       middleware.includes('api/admin/teachings$') &&

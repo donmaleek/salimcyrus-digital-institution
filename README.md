@@ -171,7 +171,7 @@ reached. Please contact your Contabo server provider or CDN for more
 information." (no mention of billing). The developer can still view the live site while
 suspended by visiting `https://salimcyrus.com/?bypass=<SUSPENSION_BYPASS_TOKEN>`
 once; that sets a long-lived cookie so the token doesn't need to be re-entered.
-See `src/middleware.ts` and `src/lib/suspension.ts`.
+See `src/proxy.ts` (the Next 16 name for middleware) and `src/lib/suspension.ts`.
 
 ## Coaching category card images
 

@@ -8,7 +8,7 @@ import {
   BYPASS_COOKIE_MAX_AGE_SECONDS,
 } from '@/lib/suspension'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (!isAppSuspended(process.env)) {
     return NextResponse.next()
   }
@@ -41,7 +41,7 @@ export function middleware(request: NextRequest) {
   })
 }
 
-// Next 15.5+ buffers each request body that passes through middleware and
+// Next 15.5+ (and 16) buffers each request body that passes through middleware and
 // truncates it at 10MB, which corrupts multi-gigabyte multipart video uploads
 // ("Invalid form submission"). These two admin-only, session-gated upload
 // endpoints are the only exclusions; every other path, API included, still

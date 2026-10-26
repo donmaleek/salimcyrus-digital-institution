@@ -65,3 +65,12 @@ test('teaching prices snap to whole numbers before saving', async ({ page }) => 
   await expect(page.getByLabel(/Price \(KES\)/)).toHaveValue('1501')
   await expect(page.getByLabel(/Price \(USD\)/)).toHaveValue('13')
 })
+
+test('sidebar highlights exactly one link, the page you are on', async ({ page }) => {
+  for (const href of ['/dashboard/admin/crm', '/dashboard/admin/crm/relationships', '/dashboard/admin/courses']) {
+    await page.goto(href)
+    const current = page.locator('nav[aria-label="Dashboard"] a[aria-current="page"]')
+    await expect(current).toHaveCount(1)
+    await expect(current).toHaveAttribute('href', href)
+  }
+})

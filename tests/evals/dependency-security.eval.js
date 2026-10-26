@@ -7,8 +7,8 @@ const lock = require(path.join(root, 'package-lock.json'))
 
 const installed = lock.packages
 const checks = [
-  ['Next.js is outside every vulnerability range reported through 2026-10-14', pkg.dependencies.next === '15.5.28'],
-  ['Next.js and its lint rules stay on the same release', pkg.devDependencies['eslint-config-next'] === pkg.dependencies.next],
+  ['Next.js is outside every vulnerability range reported through 2026-10-14', pkg.dependencies.next === '16.4.3'],
+  ['lint rules stay on the last eslint-config-next release that supports ESLint 8 (version 16 needs ESLint 9)', pkg.devDependencies['eslint-config-next'] === '15.5.28' && /^\^?8\./.test(pkg.devDependencies.eslint)],
   ['Next.js resolves the patched PostCSS implementation', installed['node_modules/next/node_modules/postcss'] === undefined && installed['node_modules/postcss']?.version === '8.5.26'],
   ['Prisma CLI and Client stay aligned on the audit-clean release', pkg.dependencies.prisma === '6.12.0' && pkg.dependencies['@prisma/client'] === '6.12.0'],
   ['Prisma no longer installs vulnerable deepmerge-ts or effect packages', !installed['node_modules/deepmerge-ts'] && !installed['node_modules/effect']],

@@ -20,7 +20,7 @@ describe('courseInputErrorMessage', () => {
     if (result.success) return
     const message = courseInputErrorMessage(result.error)
     expect(message).toBe('Lesson duration (minutes) must be a whole number, not a decimal.')
-    expect(message).not.toMatch(/float/i)
+    expect(message).not.toMatch(/expected int/i)
   })
 
   it('translates a non-integer price into a plain-language message', () => {

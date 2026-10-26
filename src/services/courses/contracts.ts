@@ -57,14 +57,19 @@ const FRIENDLY_FIELD_LABELS: Record<string, string> = {
  * (or scrolling/arrow-keying one in on some browsers, since the editor's
  * custom save button bypasses native HTML5 step validation) still reaches
  * here as a float and fails courseInputSchema's `.int()` check. Zod's raw
- * message for that ("Expected integer, received float") means nothing to
+ * message for that ("expected int, received number") means nothing to
  * an admin, so translate the common whole-number cases into plain language
  * before falling back to the raw Zod message for anything else.
  */
 export function courseInputErrorMessage(error: z.ZodError): string {
   const issue = error.issues[0]
   if (!issue) return 'Invalid course.'
-  const isFloatIssue = issue.message.includes('received float')
+  // accessWindowDays is a union (whole number | null), so zod 4 nests the
+  // real "expected int" issue one level down under invalid_union.
+  const candidates = issue.code === 'invalid_union' ? (issue as { errors?: Array<Array<unknown>> }).errors?.flat() ?? [] : [issue]
+  const isFloatIssue = candidates.some(
+    (candidate) => (candidate as { code?: string }).code === 'invalid_type' && (candidate as { expected?: string }).expected === 'int'
+  )
   if (isFloatIssue && issue.path[issue.path.length - 1] === 'durationMinutes') {
     return 'Lesson duration (minutes) must be a whole number, not a decimal.'
   }

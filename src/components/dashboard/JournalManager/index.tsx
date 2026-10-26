@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
+import { formatShortDate } from '@/lib/utils/formatting'
 
 interface EntrySummary {
   id: string
@@ -95,7 +96,7 @@ export function JournalManager({ initialEntries }: { initialEntries: EntrySummar
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-navy-400">
-                  {entry.category} · updated {new Date(entry.updatedAt).toLocaleDateString('en-KE')}
+                  {entry.category} · updated {formatShortDate(entry.updatedAt)}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">

@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/Toast'
 import { formatCurrency } from '@/lib/utils/currency'
 import type { CoachingOffer, CoachingCategorySlug } from '@/lib/data/coaching-offers'
 import type { ResolvedCoachingCategory } from '@/lib/data/coaching-catalog'
+import { toWholeNumberString } from '@/lib/utils/formatting'
 
 interface CoachingOfferManagerProps {
   initialOffers: CoachingOffer[]
@@ -113,8 +114,9 @@ function OfferRow({ offer, onSaved }: { offer: CoachingOffer; onSaved: (updated:
             <input
               type="number"
               min={1}
+              step={1}
               value={form.priceKes}
-              onChange={(e) => setForm((f) => ({ ...f, priceKes: e.target.value }))}
+              onChange={(e) => setForm((f) => ({ ...f, priceKes: toWholeNumberString(e.target.value) }))}
               className="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
             />
           </label>
@@ -123,8 +125,9 @@ function OfferRow({ offer, onSaved }: { offer: CoachingOffer; onSaved: (updated:
             <input
               type="number"
               min={1}
+              step={1}
               value={form.priceUsd}
-              onChange={(e) => setForm((f) => ({ ...f, priceUsd: e.target.value }))}
+              onChange={(e) => setForm((f) => ({ ...f, priceUsd: toWholeNumberString(e.target.value) }))}
               className="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-navy focus:outline-none focus:ring-2 focus:ring-gold/30"
             />
           </label>

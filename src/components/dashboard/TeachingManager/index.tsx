@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 import { formatCurrency } from '@/lib/utils/currency'
+import { formatShortDate } from '@/lib/utils/formatting'
 
 interface TeachingSummary {
   id: string
@@ -113,7 +114,7 @@ export function TeachingManager({ initialTeachings }: { initialTeachings: Teachi
                 </div>
                 <p className="mt-1 text-sm text-navy-400">
                   {teaching.category} &middot; {formatCurrency(teaching.priceKes)} &middot; updated{' '}
-                  {new Date(teaching.updatedAt).toLocaleDateString('en-KE')}
+                  {formatShortDate(teaching.updatedAt)}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">

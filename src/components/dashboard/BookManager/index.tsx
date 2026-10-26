@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
 import { formatCurrency } from '@/lib/utils/currency'
+import { formatShortDate } from '@/lib/utils/formatting'
 
 interface BookSummary {
   id: string
@@ -93,7 +94,7 @@ export function BookManager({ initialBooks }: { initialBooks: BookSummary[] }) {
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-navy-400">
-                  {formatCurrency(book.priceKes)} &middot; updated {new Date(book.updatedAt).toLocaleDateString('en-KE')}
+                  {formatCurrency(book.priceKes)} &middot; updated {formatShortDate(book.updatedAt)}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">

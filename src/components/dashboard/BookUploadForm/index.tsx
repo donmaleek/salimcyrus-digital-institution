@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
+import { toWholeNumberString } from '@/lib/utils/formatting'
 
 const fieldClass =
   'mt-3 w-full rounded-none border border-navy-200 bg-white px-4 py-3 text-base text-navy focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold/30'
@@ -158,8 +159,9 @@ export function BookUploadForm() {
             type="number"
             required
             min={1}
+            step={1}
             value={priceKes}
-            onChange={(e) => handlePriceKesChange(e.target.value)}
+            onChange={(e) => handlePriceKesChange(toWholeNumberString(e.target.value))}
             className={fieldClass}
           />
         </div>
@@ -173,10 +175,11 @@ export function BookUploadForm() {
             type="number"
             required
             min={1}
+            step={1}
             value={priceUsd}
             onChange={(e) => {
               setPriceUsdTouched(true)
-              setPriceUsd(e.target.value)
+              setPriceUsd(toWholeNumberString(e.target.value))
             }}
             className={fieldClass}
           />
@@ -189,8 +192,9 @@ export function BookUploadForm() {
             id="book-page-count"
             type="number"
             min={1}
+            step={1}
             value={pageCount}
-            onChange={(e) => setPageCount(e.target.value)}
+            onChange={(e) => setPageCount(toWholeNumberString(e.target.value))}
             className={fieldClass}
           />
         </div>

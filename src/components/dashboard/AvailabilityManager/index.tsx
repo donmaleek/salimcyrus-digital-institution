@@ -3,9 +3,10 @@
 import { useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
+import { formatDateTime } from '@/lib/utils/formatting'
 
 function formatSlotTime(isoString: string): string {
-  return new Date(isoString).toLocaleString('en-KE', {
+  return formatDateTime(isoString, {
     weekday: 'short',
     year: 'numeric',
     month: 'short',

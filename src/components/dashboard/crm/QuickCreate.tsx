@@ -20,6 +20,8 @@ export function QuickCreate({
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [pipelineId, setPipelineId] = useState(pipelines[0]?.id ?? '')
+  const selectedPipeline = pipelines.find((p) => p.id === pipelineId) ?? pipelines[0]
   const labels = {
     contact: 'Add relationship',
     task: 'Create task',
@@ -31,7 +33,9 @@ export function QuickCreate({
     setBusy(true)
     setError('')
     const form = new FormData(event.currentTarget)
-    const payload = Object.fromEntries(form.entries())
+    // Blank optional fields must be omitted, not sent as '': an empty date or
+    // id fails server validation and made most records impossible to save.
+    const payload = Object.fromEntries([...form.entries()].filter(([, value]) => value !== ''))
     const response = await fetch(
       `/api/admin/crm/${kind === 'opportunity' ? 'opportunities' : `${kind}s`}`,
       {
@@ -167,6 +171,8 @@ export function QuickCreate({
                     name="amount"
                     label="Expected value (KES)"
                     type="number"
+                    step="0.01"
+                    min="0"
                     required
                   />
                   {pipelines.length > 0 && (
@@ -176,12 +182,15 @@ export function QuickCreate({
                         label="Pipeline"
                         options={pipelines.map((p) => p.id)}
                         optionLabels={pipelines.map((p) => p.name)}
+                        value={pipelineId}
+                        onChange={setPipelineId}
                       />
                       <Select
                         name="stageId"
                         label="Stage"
-                        options={pipelines[0].stages.map((s) => s.id)}
-                        optionLabels={pipelines[0].stages.map((s) => s.name)}
+                        key={selectedPipeline.id}
+                        options={selectedPipeline.stages.map((s) => s.id)}
+                        optionLabels={selectedPipeline.stages.map((s) => s.name)}
                       />
                     </>
                   )}
@@ -216,11 +225,15 @@ function Field({
   label,
   type = 'text',
   required = false,
+  step,
+  min,
 }: {
   name: string
   label: string
   type?: string
   required?: boolean
+  step?: string
+  min?: string
 }) {
   return (
     <label className="text-sm font-semibold text-navy">
@@ -229,6 +242,8 @@ function Field({
         name={name}
         type={type}
         required={required}
+        step={step}
+        min={min}
         className="mt-1.5 w-full rounded-xl border border-navy-200 px-3 py-2.5 font-normal outline-none focus:border-gold"
       />
     </label>
@@ -239,17 +254,22 @@ function Select({
   label,
   options,
   optionLabels,
+  value,
+  onChange,
 }: {
   name: string
   label: string
   options: string[]
   optionLabels?: string[]
+  value?: string
+  onChange?: (value: string) => void
 }) {
   return (
     <label className="text-sm font-semibold text-navy">
       {label}
       <select
         name={name}
+        {...(value !== undefined ? { value, onChange: (event) => onChange?.(event.target.value) } : {})}
         className="mt-1.5 w-full rounded-xl border border-navy-200 px-3 py-2.5 font-normal outline-none focus:border-gold"
       >
         {options.map((option, index) => (

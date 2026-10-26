@@ -50,3 +50,8 @@ playwright-report/
 # private, paid/enrollment-gated content; never belongs in git. Lives in
 # COURSE_VIDEOS_STORAGE_DIR outside the repo in production.
 /CourseVideos/
+
+# Paid teaching videos and payment-claim evidence: private, never in git.
+# Live in TEACHINGS_STORAGE_DIR / PAYMENT_EVIDENCE_STORAGE_DIR in production.
+/Teachings/
+/PaymentEvidence/

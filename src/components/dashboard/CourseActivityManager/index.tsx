@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
+import { formatShortDate } from '@/lib/utils/formatting'
 
 export interface ActivityRow {
   enrollmentId: string
@@ -61,7 +62,7 @@ export function CourseActivityManager({ courseId, rows }: { courseId: string; ro
                 <p className="font-semibold text-navy">{row.userName}</p>
                 <p className="text-xs text-navy-400">{row.userEmail}</p>
               </td>
-              <td className="px-4 py-3 text-navy-600">{new Date(row.enrolledAt).toLocaleDateString()}</td>
+              <td className="px-4 py-3 text-navy-600">{formatShortDate(row.enrolledAt)}</td>
               <td className="px-4 py-3">
                 <span className={row.suspicious ? 'font-bold text-red-700' : 'text-navy-600'}>
                   {row.distinctIpCount}
